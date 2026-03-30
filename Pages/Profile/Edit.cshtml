@@ -1,0 +1,260 @@
+﻿@page
+@model DateBoard.Pages.Profile.EditModel
+@{
+    ViewData["Title"] = "Моя анкета";
+}
+ 
+<style>
+    .profile-field {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        border: 1.5px solid #F0F0F0;
+        transition: all 0.2s;
+        margin-bottom: 16px;
+    }
+    .profile-field:focus-within {
+        border-color: #FF5858;
+        box-shadow: 0 4px 16px rgba(255,88,88,0.08);
+    }
+    .profile-field label {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        color: #FF5858 !important;
+        letter-spacing: 0.8px !important;
+        margin-bottom: 6px !important;
+        display: block;
+    }
+    .profile-field input,
+    .profile-field textarea,
+    .profile-field select {
+        border: none !important;
+        background: transparent !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        color: #2D3436 !important;
+        padding: 0 !important;
+        height: auto !important;
+        width: 100% !important;
+        outline: none !important;
+        box-shadow: none !important;
+        font-family: 'Montserrat', sans-serif !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        resize: none;
+    }
+    .profile-field input::placeholder,
+    .profile-field textarea::placeholder { color: #B2BEC3; font-weight: 400; }
+    .checkbox-card {
+        background: white;
+        border-radius: 16px;
+        padding: 16px 24px;
+        border: 1.5px solid #F0F0F0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 16px;
+    }
+    .checkbox-card:hover { border-color: #FFE0E0; }
+    .checkbox-card.checked { border-color: #FF5858; background: rgba(255,88,88,0.02); }
+    .toggle {
+        width: 44px; height: 24px; border-radius: 12px;
+        background: #EFEFEF; position: relative;
+        transition: background 0.2s; flex-shrink: 0;
+    }
+    .toggle.on { background: linear-gradient(135deg, #FF5858, #F857A6); }
+    .toggle-knob {
+        width: 18px; height: 18px; border-radius: 50%;
+        background: white; position: absolute;
+        top: 3px; left: 3px;
+        transition: left 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    .toggle.on .toggle-knob { left: 23px; }
+    .goal-option {
+        flex: 1; background: white; border: 1.5px solid #F0F0F0;
+        border-radius: 12px; padding: 10px 8px;
+        text-align: center; cursor: pointer;
+        font-size: 13px; font-weight: 500; color: #636E72;
+        transition: all 0.2s; font-family: 'Montserrat', sans-serif;
+    }
+    .goal-option:hover { border-color: #FFE0E0; color: #FF5858; }
+    .goal-option.active { background: linear-gradient(135deg, #FF5858, #F857A6); color: white; border-color: transparent; font-weight: 600; }
+    .save-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #FF5858, #F857A6);
+        border: none; border-radius: 50px;
+        padding: 18px; color: white;
+        font-weight: 600; font-size: 16px;
+        cursor: pointer; font-family: 'Montserrat', sans-serif;
+        box-shadow: 0 8px 24px rgba(255,88,88,0.3);
+        transition: all 0.3s;
+    }
+    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,88,88,0.4); }
+    .section-title {
+        font-size: 11px; color: #B2BEC3; font-weight: 600;
+        letter-spacing: 1.5px; margin-bottom: 12px; margin-top: 8px;
+    }
+    .photo-circle {
+        width: 100px; height: 100px; border-radius: 50%;
+        cursor: pointer; flex-shrink: 0; position: relative;
+        overflow: hidden; border: 3px solid #FFE0E0;
+        transition: border-color 0.2s;
+    }
+    .photo-circle:hover { border-color: #FF5858; }
+    .photo-overlay {
+        position: absolute; top: 0; left: 0;
+        width: 100%; height: 100%; border-radius: 50%;
+        background: rgba(255,88,88,0.2);
+        opacity: 0; transition: opacity 0.2s;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .photo-circle:hover .photo-overlay { opacity: 1; }
+</style>
+ 
+<div style="background: #F8F9FA; min-height: 100vh; padding: 40px 0;">
+    <div class="container" style="max-width: 600px;">
+ 
+        <!-- Шапка -->
+        <div style="margin-bottom: 32px;">
+            <p style="font-size:12px; letter-spacing:2px; color:#F857A6; font-weight:600; margin-bottom:6px;">ПРОФИЛЬ</p>
+            <h1 style="font-size:32px; font-weight:700; color:#2D3436; margin:0;">Моя анкета</h1>
+        </div>
+ 
+        <form method="post" enctype="multipart/form-data">
+ 
+            <!-- Фото -->
+            <p class="section-title">ФОТО ПРОФИЛЯ</p>
+            <div style="display:flex; align-items:center; gap:20px; margin-bottom:24px; background:white; border-radius:20px; padding:20px 24px; border:1.5px solid #F0F0F0;">
+ 
+                <div class="photo-circle" onclick="document.getElementById('photoFileInput').click()">
+                    @if (!string.IsNullOrEmpty(Model.ProfileModel?.PhotoPath))
+                    {
+                        <img src="@Model.ProfileModel.PhotoPath" id="photoPreview"
+                             style="width:100%; height:100%; object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div id="photoPreviewWrap" style="width:100%; height:100%; background:linear-gradient(135deg,rgba(255,88,88,0.08),rgba(248,87,166,0.08)); display:flex; align-items:center; justify-content:center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <img id="photoPreview" style="display:none; width:100%; height:100%; object-fit:cover;" />
+                    }
+                    <div class="photo-overlay">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </div>
+                </div>
+ 
+                <div>
+                    <p style="font-size:15px; font-weight:600; color:#2D3436; margin:0 0 4px;">Фото профиля</p>
+                    <p style="font-size:13px; color:#B2BEC3; margin:0 0 12px; line-height:1.5;">Нажми на круг чтобы загрузить<br>или изменить фото</p>
+                    <button type="button" onclick="document.getElementById('photoFileInput').click()"
+                            style="background:rgba(255,88,88,0.07); border:none; border-radius:20px; padding:8px 16px; font-size:12px; color:#FF5858; font-weight:600; cursor:pointer; font-family:'Montserrat',sans-serif; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(255,88,88,0.12)'"
+                            onmouseout="this.style.background='rgba(255,88,88,0.07)'">
+                        Выбрать фото
+                    </button>
+                </div>
+ 
+                <input type="file" id="photoFileInput" name="Photo" accept="image/*" style="display:none;" onchange="previewPhoto(this)" />
+            </div>
+ 
+            <!-- Основная информация -->
+            <p class="section-title">ОСНОВНАЯ ИНФОРМАЦИЯ</p>
+ 
+            <div class="profile-field">
+                <label>ИМЯ</label>
+                <input asp-for="ProfileModel.Name" placeholder="Как тебя зовут?" />
+                <span asp-validation-for="ProfileModel.Name" style="font-size:11px; color:#FF5858;"></span>
+            </div>
+ 
+            <div class="profile-field">
+                <label>ГОРОД</label>
+                <input asp-for="ProfileModel.City" placeholder="Например, Москва" />
+                <span asp-validation-for="ProfileModel.City" style="font-size:11px; color:#FF5858;"></span>
+            </div>
+ 
+            <div class="profile-field">
+                <label>ВОЗРАСТ <span style="color:#B2BEC3; font-size:9px; font-weight:400;">(НЕОБЯЗАТЕЛЬНО)</span></label>
+                <input asp-for="ProfileModel.Age" type="number" placeholder="Сколько тебе лет?" min="16" max="99" />
+            </div>
+ 
+            <div class="profile-field">
+                <label>О СЕБЕ</label>
+                <textarea asp-for="ProfileModel.About" rows="3" placeholder="Расскажи немного о себе..."></textarea>
+            </div>
+ 
+            <div class="profile-field">
+                <label>УВЛЕЧЕНИЯ</label>
+                <input asp-for="ProfileModel.Hobbies" placeholder="Чем ты увлекаешься?" />
+            </div>
+ 
+            <!-- Цель -->
+            <p class="section-title">ЦЕЛЬ ЗНАКОМСТВА</p>
+            <input type="hidden" asp-for="ProfileModel.Goal" id="goalInput" />
+            <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+                @{
+                    var goals = new[] { "Дружба", "Отношения", "Брак", "Общение", "Другое" };
+                    foreach (var g in goals)
+                    {
+                        var isActive = Model.ProfileModel?.Goal == g;
+                        <div class="goal-option @(isActive ? "active" : "")" onclick="selectGoal('@g', this)">@g</div>
+                    }
+                }
+            </div>
+ 
+            <!-- Дети -->
+            <p class="section-title">О СЕМЬЕ</p>
+            <div class="checkbox-card @(Model.ProfileModel?.HasChildren == true ? "checked" : "")"
+                 id="childrenCard" onclick="toggleChildren()">
+                <div>
+                    <p style="font-size:15px; font-weight:600; color:#2D3436; margin:0 0 2px;">Есть дети</p>
+                    <p style="font-size:12px; color:#B2BEC3; margin:0;">Укажи если у тебя есть дети</p>
+                </div>
+                <div class="toggle @(Model.ProfileModel?.HasChildren == true ? "on" : "")" id="childrenToggle">
+                    <div class="toggle-knob"></div>
+                </div>
+                <input type="checkbox" asp-for="ProfileModel.HasChildren" id="hasChildrenInput" style="display:none;" />
+            </div>
+ 
+            <!-- Кнопка сохранить -->
+            <div style="margin-top:8px;">
+                <button type="submit" class="save-btn">Сохранить анкету</button>
+            </div>
+ 
+        </form>
+    </div>
+</div>
+ 
+<script>
+    function previewPhoto(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var preview = document.getElementById('photoPreview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                var wrap = document.getElementById('photoPreviewWrap');
+                if (wrap) wrap.style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+ 
+    function selectGoal(goal, el) {
+        document.querySelectorAll('.goal-option').forEach(function (o) { o.classList.remove('active'); });
+        el.classList.add('active');
+        document.getElementById('goalInput').value = goal;
+    }
+ 
+    function toggleChildren() {
+        var input = document.getElementById('hasChildrenInput');
+        var toggle = document.getElementById('childrenToggle');
+        var card = document.getElementById('childrenCard');
+        input.checked = !input.checked;
+        toggle.classList.toggle('on', input.checked);
+        card.classList.toggle('checked', input.checked);
+    }
+</script>

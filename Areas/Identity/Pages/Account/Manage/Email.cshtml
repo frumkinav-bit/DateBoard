@@ -1,0 +1,104 @@
+﻿@page
+@model EmailModel
+@{
+    ViewData["Title"] = "Email";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+}
+ 
+<style>
+    .manage-page { background: #F8F9FA; min-height: 100vh; padding: 40px 0 60px; }
+    .manage-card { background: white; border-radius: 20px; padding: 28px; border: 1px solid #EFEFEF; box-shadow: 0 4px 16px rgba(0,0,0,0.04); margin-bottom: 16px; }
+    .manage-field { background: #F8F9FA; border-radius: 14px; padding: 14px 18px; margin-bottom: 12px; border: 1.5px solid transparent; transition: all 0.2s; }
+    .manage-field:focus-within { border-color: #FF5858; background: white; box-shadow: 0 4px 16px rgba(255,88,88,0.08); }
+    .manage-field label { display: block; font-size: 10px; font-weight: 700; color: #FF5858; letter-spacing: 0.8px; margin-bottom: 4px; text-transform: uppercase; }
+    .manage-field input { border: none !important; background: transparent !important; font-size: 14px !important; font-weight: 500 !important; color: #2D3436 !important; padding: 0 !important; height: auto !important; width: 100% !important; outline: none !important; box-shadow: none !important; font-family: 'Montserrat', sans-serif !important; }
+    .manage-field input:disabled { color: #B2BEC3 !important; }
+    .manage-field input::placeholder { color: #B2BEC3; }
+    .save-btn { width: 100%; background: linear-gradient(135deg, #FF5858, #F857A6); border: none; border-radius: 50px; padding: 16px; color: white; font-weight: 700; font-size: 15px; cursor: pointer; font-family: 'Montserrat', sans-serif; box-shadow: 0 8px 24px rgba(255,88,88,0.3); transition: all 0.2s; }
+    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,88,88,0.4); }
+    .nav-link-manage { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #636E72; text-decoration: none; transition: all 0.15s; margin-bottom: 4px; }
+    .nav-link-manage:hover { background: rgba(255,88,88,0.06); color: #FF5858; }
+    .nav-link-manage.active { background: rgba(255,88,88,0.08); color: #FF5858; font-weight: 700; }
+</style>
+ 
+<div class="manage-page">
+    <div class="container" style="max-width:860px;">
+        <div style="margin-bottom:28px;">
+            <p style="font-size:12px; letter-spacing:2px; color:#F857A6; font-weight:600; margin-bottom:6px;">АККАУНТ</p>
+            <h1 style="font-size:28px; font-weight:700; color:#2D3436; margin:0;">Настройки</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="manage-card" style="padding:16px;">
+                    <a class="nav-link-manage" asp-page="./Index">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Профиль
+                    </a>
+                    <a class="nav-link-manage active" asp-page="./Email">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        Email
+                    </a>
+                    <a class="nav-link-manage" asp-page="./ChangePassword">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        Пароль
+                    </a>
+                    <a class="nav-link-manage" asp-page="./TwoFactorAuthentication">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        2FA
+                    </a>
+                    <a class="nav-link-manage" asp-page="./PersonalData">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        Данные
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="manage-card">
+                    <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:20px;">ЭЛЕКТРОННАЯ ПОЧТА</p>
+                    <partial name="_StatusMessage" for="StatusMessage" />
+                    <form id="email-form" method="post">
+                        <div asp-validation-summary="All" style="background:rgba(255,88,88,0.06); border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:#FF5858;"></div>
+ 
+                        <div class="manage-field">
+                            <label>ТЕКУЩИЙ EMAIL</label>
+                            <div style="display:flex; align-items:center; justify-content:space-between;">
+                                <input asp-for="Email" disabled placeholder="Твой email" />
+                                @if (Model.IsEmailConfirmed)
+                                {
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00C48C" stroke-width="2.5" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                }
+                                else
+                                {
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2.5" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                }
+                            </div>
+                        </div>
+ 
+                        @if (!Model.IsEmailConfirmed)
+                        {
+                            <button type="submit" asp-page-handler="SendVerificationEmail"
+                                    style="background:rgba(255,88,88,0.07); border:none; border-radius:20px; padding:8px 18px; font-size:13px; color:#FF5858; font-weight:600; cursor:pointer; font-family:'Montserrat',sans-serif; margin-bottom:16px;">
+                                Отправить подтверждение
+                            </button>
+                        }
+ 
+                        <div class="manage-field">
+                            <label asp-for="Input.NewEmail">НОВЫЙ EMAIL</label>
+                            <input asp-for="Input.NewEmail" autocomplete="email" placeholder="Введи новый email" />
+                            <span asp-validation-for="Input.NewEmail" style="font-size:11px; color:#FF5858;"></span>
+                        </div>
+ 
+                        <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="save-btn">
+                            Сохранить email
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+ 

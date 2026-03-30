@@ -1,0 +1,1106 @@
+﻿@page "{id}"
+@model DateBoard.Pages.Profile.ViewModel
+@using DateBoard.Data
+@using DateBoard.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext Db
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    ViewData["Title"] = Model.Profile?.Name ?? "Профиль";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isOwn = currentUser?.Id == Model.Profile?.UserId;
+    var profile = Model.Profile;
+    
+    var isFavorite = false;
+    var hasLike = false;
+    if (currentUser != null && !isOwn && profile != null)
+    {
+        isFavorite = await Db.Favorites.AnyAsync(f => f.UserId == currentUser.Id && f.ProfileId == profile.Id);
+        hasLike = await Db.Likes.AnyAsync(l => l.FromUserId == currentUser.Id && l.ToProfileId == profile.Id);
+    }
+    
+    var onlineStatus = Model.IsOnline ? "online" : "offline";
+    var lastSeen = Model.IsOnline ? "сейчас в сети" : $"был(а) {Model.LastSeenMinutes} мин назад";
+    var compatibility = Model.CompatibilityScore;
+    
+    var ageCategory = profile?.Age switch
+    {
+        <= 25 => "молодой",
+        <= 35 => "в расцвете сил",
+        <= 50 => "опытный",
+        _ => "зрелый"
+    };
+}
+ 
+<style>
+    :root {
+        --accent: #FF5858;
+        --accent2: #F857A6;
+        --text-main: #2D3436;
+        --text-muted: #636E72;
+        --bg: #F8F9FA;
+        --success: #00C853;
+    }
+    
+    .profile-page {
+        background: linear-gradient(180deg, #FFF5F7 0%, #F8F9FA 100%);
+        min-height: 100vh;
+        padding-bottom: 40px;
+    }
+    
+    .profile-header {
+        position: relative;
+        height: 420px;
+        overflow: hidden;
+    }
+    
+    .profile-cover {
+        position: absolute;
+        inset: -20px;
+        background-size: cover;
+        background-position: center;
+        filter: blur(30px) brightness(0.6);
+        transform: scale(1.2);
+        transition: transform 0.3s;
+    }
+    
+    .profile-header:hover .profile-cover {
+        transform: scale(1.25);
+    }
+    
+    .profile-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
+    }
+    
+    .header-actions {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        justify-content: space-between;
+        z-index: 10;
+    }
+    
+    .header-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: white;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    
+    .header-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.05);
+    }
+    
+    .header-btn.liked {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-color: transparent;
+    }
+    
+    .avatar-section {
+        position: absolute;
+        bottom: -80px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+    }
+    
+    .avatar-container {
+        position: relative;
+        width: 160px;
+        height: 160px;
+    }
+    
+    .avatar-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        box-shadow: 0 8px 32px rgba(255,88,88,0.4);
+    }
+    
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        background: white;
+        transition: transform 0.3s;
+    }
+    
+    .avatar-container:hover .avatar-img {
+        transform: scale(1.02);
+    }
+    
+    .online-indicator {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--success);
+        border: 4px solid white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        animation: pulse 2s infinite;
+    }
+    
+    .online-indicator.offline {
+        background: #B0BEC5;
+        animation: none;
+    }
+    
+    .verified-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #2196F3, #21CBF3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 4px 12px rgba(33,150,243,0.3);
+    }
+    
+    .profile-main {
+        padding-top: 100px;
+        text-align: center;
+        padding-bottom: 24px;
+    }
+    
+    .profile-name-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .profile-name {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--text-main);
+    }
+    
+    .profile-age {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--accent);
+    }
+    
+    .profile-meta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        color: var(--text-muted);
+        font-size: 15px;
+        font-weight: 500;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        background: rgba(0,200,83,0.1);
+        color: var(--success);
+        border-radius: 24px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+    
+    .status-badge.offline {
+        background: rgba(176,190,197,0.15);
+        color: var(--text-muted);
+    }
+    
+    .action-panel {
+        display: flex;
+        gap: 12px;
+        padding: 0 24px;
+        margin-bottom: 24px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .action-btn {
+        flex: 1;
+        height: 52px;
+        border-radius: 16px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: white;
+        box-shadow: 0 4px 20px rgba(255,88,88,0.35);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(255,88,88,0.45);
+    }
+    
+    .btn-secondary {
+        background: white;
+        color: var(--accent);
+        border: 2px solid #FFE0E0;
+    }
+    
+    .btn-secondary:hover {
+        background: #FFF5F7;
+        border-color: var(--accent);
+    }
+    
+    .btn-secondary.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: white;
+        border-color: transparent;
+    }
+    
+    .content-wrapper {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .section-card {
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .section-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+    }
+    
+    .section-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text-main);
+    }
+    
+    .compatibility-block {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        background: linear-gradient(135deg, #FFF5F7, #FFF0F5);
+        border-radius: 20px;
+    }
+    
+    .compatibility-score {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+        position: relative;
+    }
+    
+    .score-value {
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+    }
+    
+    .score-label {
+        font-size: 11px;
+        opacity: 0.9;
+        text-transform: uppercase;
+    }
+    
+    .compatibility-ring {
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: white;
+        animation: spin 3s linear infinite;
+    }
+    
+    .compatibility-info h4 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 8px;
+    }
+    
+    .compatibility-bar {
+        height: 8px;
+        background: #FFE0E0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+    
+    .compatibility-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        border-radius: 4px;
+        transition: width 1s ease;
+    }
+    
+    .compatibility-text {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+    
+    .about-content {
+        font-size: 16px;
+        line-height: 1.8;
+        color: var(--text-muted);
+        position: relative;
+        padding-left: 20px;
+        border-left: 3px solid var(--accent);
+    }
+    
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+    }
+    
+    .detail-card {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px;
+        background: #F8F9FA;
+        border-radius: 16px;
+        transition: all 0.2s;
+    }
+    
+    .detail-card:hover {
+        background: #FFF5F7;
+        transform: translateY(-2px);
+    }
+    
+    .detail-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+    }
+    
+    .detail-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    
+    .detail-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    
+    .tags-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .tag-item {
+        padding: 10px 18px;
+        background: linear-gradient(135deg, #FFF5F7, #FFF0F5);
+        border-radius: 24px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--accent);
+        border: 1px solid rgba(255,88,88,0.15);
+        transition: all 0.2s;
+    }
+    
+    .tag-item:hover {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: white;
+        transform: scale(1.05);
+    }
+    
+    .notes-form {
+        position: relative;
+    }
+    
+    .notes-textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 16px;
+        border: 2px solid #F0F0F0;
+        border-radius: 16px;
+        font-size: 15px;
+        resize: vertical;
+        transition: all 0.2s;
+        font-family: inherit;
+    }
+    
+    .notes-textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px rgba(255,88,88,0.1);
+    }
+    
+    .notes-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+    }
+    
+    .notes-counter {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+    
+    .save-notes-btn {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .save-notes-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(255,88,88,0.3);
+    }
+    
+    .photo-gallery {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .photo-item {
+        aspect-ratio: 1;
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .photo-item.main {
+        grid-column: span 2;
+        aspect-ratio: 16/9;
+    }
+    
+    .photo-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+    
+    .photo-item:hover img {
+        transform: scale(1.05);
+    }
+    
+    .photo-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        display: flex;
+        align-items: flex-end;
+        padding: 16px;
+    }
+    
+    .photo-item:hover .photo-overlay {
+        opacity: 1;
+    }
+    
+    .stats-row {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+    
+    .stat-item {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+        padding: 16px;
+        background: #F8F9FA;
+        border-radius: 16px;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--accent);
+        margin-bottom: 4px;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .photo-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.95);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .photo-modal.active {
+        display: flex;
+    }
+    
+    .modal-content {
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+    }
+    
+    .modal-img {
+        max-width: 100%;
+        max-height: 85vh;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: -50px;
+        right: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+    }
+    
+    .modal-close:hover {
+        background: rgba(255,255,255,0.2);
+        transform: rotate(90deg);
+    }
+    
+    .empty-profile {
+        text-align: center;
+        padding: 100px 20px;
+    }
+    
+    .empty-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 24px;
+        background: linear-gradient(135deg, #FFF5F7, #FFF0F5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .fade-in {
+        animation: fadeIn 0.6s ease;
+    }
+    
+    @@keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(0,200,83,0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(0,200,83,0); }
+    }
+    
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @@media (max-width: 480px) {
+        .profile-header {
+            height: 360px;
+        }
+        
+        .avatar-container {
+            width: 140px;
+            height: 140px;
+        }
+        
+        .profile-name {
+            font-size: 26px;
+        }
+        
+        .action-panel {
+            flex-direction: column;
+        }
+        
+        .details-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+ 
+<div class="profile-page fade-in">
+    @if (profile is null)
+    {
+        <div class="empty-profile">
+            <div class="empty-icon">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h2 style="color:#2D3436; margin-bottom:12px;">Профиль не найден</h2>
+            <p style="color:#636E72; margin-bottom:24px;">Возможно, пользователь удалил анкету или она ещё не создана</p>
+            <a href="/Feed/Index" class="action-btn btn-primary" style="display:inline-flex; max-width:200px;">
+                Вернуться в ленту
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="profile-header">
+            <div class="profile-cover" style="background-image: url('@(profile.PhotoPath ?? "")')"></div>
+            <div class="profile-overlay"></div>
+            
+            <div class="header-actions">
+                <a href="/Feed/Index" class="header-btn" title="Назад">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </a>
+                
+                @if (!isOwn && SignInManager.IsSignedIn(User))
+                {
+                    <form method="post" asp-page-handler="Like" style="margin:0;">
+                        <button type="submit" class="header-btn @(hasLike ? "liked" : "")" title="Нравится">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="@(hasLike ? "currentColor" : "none")" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                }
+            </div>
+            
+            <div class="avatar-section">
+                <div class="avatar-container">
+                    <div class="avatar-ring">
+                        @if (!string.IsNullOrEmpty(profile.PhotoPath))
+                        {
+                            <img src="@profile.PhotoPath" class="avatar-img" alt="@profile.Name" onclick="openPhoto('@profile.PhotoPath')" />
+                        }
+                        else
+                        {
+                            <div class="avatar-img" style="background:linear-gradient(135deg,#FF5858,#F857A6); display:flex; align-items:center; justify-content:center;">
+                                <span style="color:white; font-size:56px; font-weight:800;">@(profile.Name.Substring(0,1).ToUpper())</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="online-indicator @(onlineStatus)"></div>
+                    @if (profile.CreatedAt < DateTime.Now.AddMonths(-3))
+                    {
+                        <div class="verified-badge" title="Проверенный профиль">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-main">
+            <div class="profile-name-row">
+                <h1 class="profile-name">@profile.Name</h1>
+                <span class="profile-age">@profile.Age</span>
+            </div>
+            
+            <div class="profile-meta">
+                <span class="meta-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    @profile.City
+                </span>
+                @if (!string.IsNullOrEmpty(profile.Goal))
+                {
+                    <span class="meta-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        @profile.Goal
+                    </span>
+                }
+            </div>
+            
+            <div class="status-badge @(Model.IsOnline ? "" : "offline")">
+                <span style="width:8px; height:8px; border-radius:50%; background:currentColor;"></span>
+                @lastSeen
+            </div>
+        </div>
+        
+        @if (!isOwn && SignInManager.IsSignedIn(User))
+        {
+            <div class="action-panel">
+                <a href="/Messages/Dialog/@profile.UserId" class="action-btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Написать
+                </a>
+                <form method="post" asp-page-handler="ToggleFavorite" style="flex:1; display:contents;">
+                    <input type="hidden" name="profileId" value="@profile.Id" />
+                    <button type="submit" class="action-btn btn-secondary @(isFavorite ? "active" : "")">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="@(isFavorite ? "currentColor" : "none")" stroke="currentColor" stroke-width="2.5">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        @(isFavorite ? "В избранном" : "В избранное")
+                    </button>
+                </form>
+            </div>
+        }
+        else if (isOwn)
+        {
+            <div class="action-panel">
+                <a href="/Profile/Edit" class="action-btn btn-primary" style="max-width:100%;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Редактировать профиль
+                </a>
+            </div>
+        }
+        
+        <div class="content-wrapper">
+            @if (!isOwn && SignInManager.IsSignedIn(User))
+            {
+                <div class="section-card">
+                    <div class="compatibility-block">
+                        <div class="compatibility-score">
+                            <div class="compatibility-ring"></div>
+                            <span class="score-value">@compatibility%</span>
+                            <span class="score-label">Match</span>
+                        </div>
+                        <div class="compatibility-info">
+                            <h4>Совместимость с вами</h4>
+                            <div class="compatibility-bar">
+                                <div class="compatibility-fill" style="width: @compatibility%"></div>
+                            </div>
+                            <p class="compatibility-text">
+                                @if (compatibility > 90)
+                                {
+                                    <span>Отличная совместимость! У вас много общего.</span>
+                                }
+                                else if (compatibility > 75)
+                                {
+                                    <span>Хорошая совместимость. Стоит познакомиться!</span>
+                                }
+                                else
+                                {
+                                    <span>Интересная комбинация. Проверьте лично!</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            @if (!string.IsNullOrEmpty(profile.About))
+            {
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="section-title">О себе</div>
+                    </div>
+                    <div class="about-content">
+                        @profile.About
+                    </div>
+                </div>
+            }
+            
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                    </div>
+                    <div class="section-title">Подробности</div>
+                </div>
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </div>
+                        <div class="detail-label">Цель</div>
+                        <div class="detail-value">@(profile.Goal ?? "Не указана")</div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="detail-label">Дети</div>
+                        <div class="detail-value">@(profile.HasChildren ? "Есть" : "Нет")</div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="detail-label">Возраст</div>
+                        <div class="detail-value">@profile.Age (@ageCategory)</div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <div class="detail-label">На сайте</div>
+                        <div class="detail-value">@((DateTime.Now - profile.CreatedAt).Days) дней</div>
+                    </div>
+                </div>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(profile.Hobbies))
+            {
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </div>
+                        <div class="section-title">Увлечения</div>
+                    </div>
+                    <div class="tags-cloud">
+                        @foreach (var hobby in profile.Hobbies.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(h => h.Trim()).Where(h => !string.IsNullOrEmpty(h)))
+                        {
+                            <span class="tag-item">@hobby</span>
+                        }
+                    </div>
+                </div>
+            }
+            
+            @if (!isOwn && SignInManager.IsSignedIn(User))
+            {
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                        </div>
+                        <div class="section-title">Мои заметки</div>
+                    </div>
+                    <form method="post" asp-page-handler="SaveNotes" class="notes-form">
+                        <input type="hidden" name="profileId" value="@profile.Id" />
+                        <textarea name="notes" class="notes-textarea" placeholder="Заметки о встрече, впечатления, важные детали..." maxlength="500" oninput="updateCounter(this)">@(profile.MeetingNotes ?? "")</textarea>
+                        <div class="notes-actions">
+                            <span class="notes-counter" id="notesCounter">@(profile.MeetingNotes?.Length ?? 0)/500</span>
+                            <button type="submit" class="save-notes-btn">Сохранить заметки</button>
+                        </div>
+                    </form>
+                </div>
+            }
+            
+            @if (!string.IsNullOrEmpty(profile.PhotoPath))
+            {
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>
+                        <div class="section-title">Фото</div>
+                    </div>
+                    <div class="photo-gallery">
+                        <div class="photo-item main" onclick="openPhoto('@profile.PhotoPath')">
+                            <img src="@profile.PhotoPath" alt="Основное фото" />
+                            <div class="photo-overlay">
+                                <span style="color:white; font-size:14px; font-weight:600;">Нажмите для просмотра</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            @if (isOwn)
+            {
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                        </div>
+                        <div class="section-title">Статистика профиля</div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-value">@Model.ViewsCount</div>
+                            <div class="stat-label">Просмотров</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">@Model.LikesCount</div>
+                            <div class="stat-label">Лайков</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">@Model.FavoritesCount</div>
+                            <div class="stat-label">В избранном</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+ 
+<div id="photoModal" class="photo-modal" onclick="closePhoto()">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closePhoto()">×</button>
+        <img id="modalImg" class="modal-img" src="" alt="Фото профиля" />
+    </div>
+</div>
+ 
+<script>
+    function openPhoto(src) {
+        document.getElementById('modalImg').src = src;
+        document.getElementById('photoModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closePhoto() {
+        document.getElementById('photoModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    function updateCounter(textarea) {
+        const counter = document.getElementById('notesCounter');
+        counter.textContent = `${textarea.value.length}/500`;
+        
+        if (textarea.value.length > 450) {
+            counter.style.color = '#FF5858';
+        } else {
+            counter.style.color = '#636E72';
+        }
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closePhoto();
+        }
+    });
+</script>

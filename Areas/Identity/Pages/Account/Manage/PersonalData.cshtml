@@ -1,0 +1,89 @@
+﻿@page
+@model PersonalDataModel
+@{
+    ViewData["Title"] = "Личные данные";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+ 
+<style>
+    .manage-page { background: #F8F9FA; min-height: 100vh; padding: 40px 0 60px; }
+    .manage-card { background: white; border-radius: 20px; padding: 28px; border: 1px solid #EFEFEF; box-shadow: 0 4px 16px rgba(0,0,0,0.04); margin-bottom: 16px; }
+    .nav-link-manage { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #636E72; text-decoration: none; transition: all 0.15s; margin-bottom: 4px; }
+    .nav-link-manage:hover { background: rgba(255,88,88,0.06); color: #FF5858; }
+    .nav-link-manage.active { background: rgba(255,88,88,0.08); color: #FF5858; font-weight: 700; }
+</style>
+ 
+<div class="manage-page">
+    <div class="container" style="max-width:860px;">
+        <div style="margin-bottom:28px;">
+            <p style="font-size:12px; letter-spacing:2px; color:#F857A6; font-weight:600; margin-bottom:6px;">АККАУНТ</p>
+            <h1 style="font-size:28px; font-weight:700; color:#2D3436; margin:0;">Настройки</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="manage-card" style="padding:16px;">
+                    <a class="nav-link-manage" asp-page="./Index">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Профиль
+                    </a>
+                    <a class="nav-link-manage" asp-page="./Email">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        Email
+                    </a>
+                    <a class="nav-link-manage" asp-page="./ChangePassword">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        Пароль
+                    </a>
+                    <a class="nav-link-manage" asp-page="./TwoFactorAuthentication">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        2FA
+                    </a>
+                    <a class="nav-link-manage active" asp-page="./PersonalData">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        Данные
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="manage-card">
+                    <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:20px;">ЛИЧНЫЕ ДАННЫЕ</p>
+ 
+                    <p style="font-size:14px; color:#636E72; line-height:1.7; margin-bottom:20px;">
+                        Твой аккаунт содержит личные данные. Ты можешь скачать или удалить их.
+                    </p>
+ 
+                    <div style="background:rgba(255,88,88,0.05); border:1px solid rgba(255,88,88,0.15); border-radius:14px; padding:16px 18px; margin-bottom:24px; display:flex; align-items:flex-start; gap:12px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <p style="font-size:13px; color:#636E72; margin:0; line-height:1.6;">
+                            <strong style="color:#FF5858;">Внимание!</strong> Удаление данных приведёт к безвозвратному удалению аккаунта.
+                        </p>
+                    </div>
+ 
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <form id="download-data" asp-page="DownloadPersonalData" method="post">
+                            <button type="submit" style="width:100%; background:white; border:1.5px solid #FFE0E0; border-radius:50px; padding:14px; color:#FF5858; font-weight:600; font-size:14px; cursor:pointer; font-family:'Montserrat',sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s;"
+                                    onmouseover="this.style.borderColor='#FF5858'; this.style.background='rgba(255,88,88,0.03)'"
+                                    onmouseout="this.style.borderColor='#FFE0E0'; this.style.background='white'">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Скачать мои данные
+                            </button>
+                        </form>
+ 
+                        <a asp-page="DeletePersonalData"
+                           style="width:100%; background:linear-gradient(135deg,#FF5858,#F857A6); border-radius:50px; padding:14px; color:white !important; font-weight:600; font-size:14px; cursor:pointer; font-family:'Montserrat',sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; text-decoration:none; box-shadow:0 4px 16px rgba(255,88,88,0.25);"
+                           onmouseover="this.style.transform='translateY(-2px)'"
+                           onmouseout="this.style.transform='none'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
+                            Удалить аккаунт
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+ 

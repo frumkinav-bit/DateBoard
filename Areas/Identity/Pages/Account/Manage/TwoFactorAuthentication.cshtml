@@ -1,0 +1,143 @@
+﻿@page
+@using Microsoft.AspNetCore.Http.Features
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "Двухфакторная аутентификация";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+    var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
+    var canTrack = consentFeature?.CanTrack ?? true;
+}
+ 
+<style>
+    .manage-page { background: #F8F9FA; min-height: 100vh; padding: 40px 0 60px; }
+    .manage-card { background: white; border-radius: 20px; padding: 28px; border: 1px solid #EFEFEF; box-shadow: 0 4px 16px rgba(0,0,0,0.04); margin-bottom: 16px; }
+    .nav-link-manage { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #636E72; text-decoration: none; transition: all 0.15s; margin-bottom: 4px; }
+    .nav-link-manage:hover { background: rgba(255,88,88,0.06); color: #FF5858; }
+    .nav-link-manage.active { background: rgba(255,88,88,0.08); color: #FF5858; font-weight: 700; }
+    .tfa-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 50px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all 0.2s; text-decoration: none; border: none; margin-bottom: 10px; width: 100%; justify-content: center; }
+    .tfa-btn-primary { background: linear-gradient(135deg, #FF5858, #F857A6); color: white; box-shadow: 0 4px 16px rgba(255,88,88,0.25); }
+    .tfa-btn-primary:hover { transform: translateY(-2px); color: white; }
+    .tfa-btn-outline { background: white; color: #FF5858; border: 1.5px solid #FFE0E0 !important; }
+    .tfa-btn-outline:hover { border-color: #FF5858 !important; background: rgba(255,88,88,0.04); color: #FF5858; }
+    .alert-card { border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px; }
+    .alert-danger-custom { background: rgba(255,88,88,0.06); border: 1px solid rgba(255,88,88,0.15); }
+    .alert-warning-custom { background: rgba(255,165,0,0.06); border: 1px solid rgba(255,165,0,0.2); }
+</style>
+ 
+<div class="manage-page">
+    <div class="container" style="max-width:860px;">
+        <div style="margin-bottom:28px;">
+            <p style="font-size:12px; letter-spacing:2px; color:#F857A6; font-weight:600; margin-bottom:6px;">АККАУНТ</p>
+            <h1 style="font-size:28px; font-weight:700; color:#2D3436; margin:0;">Настройки</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="manage-card" style="padding:16px;">
+                    <a class="nav-link-manage" asp-page="./Index">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Профиль
+                    </a>
+                    <a class="nav-link-manage" asp-page="./Email">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        Email
+                    </a>
+                    <a class="nav-link-manage" asp-page="./ChangePassword">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        Пароль
+                    </a>
+                    <a class="nav-link-manage active" asp-page="./TwoFactorAuthentication">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        2FA
+                    </a>
+                    <a class="nav-link-manage" asp-page="./PersonalData">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        Данные
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="manage-card">
+                    <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:20px;">ДВУХФАКТОРНАЯ АУТЕНТИФИКАЦИЯ</p>
+                    <partial name="_StatusMessage" for="StatusMessage" />
+ 
+                    @if (!canTrack)
+                    {
+                        <div class="alert-card alert-danger-custom">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            <div>
+                                <p style="font-size:14px; font-weight:600; color:#FF5858; margin:0 0 4px;">Политика конфиденциальности не принята</p>
+                                <p style="font-size:13px; color:#636E72; margin:0;">Необходимо принять политику для включения 2FA.</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        @if (Model.Is2faEnabled)
+                        {
+                            @if (Model.RecoveryCodesLeft == 0)
+                            {
+                                <div class="alert-card alert-danger-custom">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line></svg>
+                                    <p style="font-size:13px; color:#636E72; margin:0;">Коды восстановления закончились. <a asp-page="./GenerateRecoveryCodes" style="color:#FF5858; font-weight:600;">Создать новые</a></p>
+                                </div>
+                            }
+                            else if (Model.RecoveryCodesLeft <= 3)
+                            {
+                                <div class="alert-card alert-warning-custom">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="orange" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line></svg>
+                                    <p style="font-size:13px; color:#636E72; margin:0;">Осталось @Model.RecoveryCodesLeft кодов. <a asp-page="./GenerateRecoveryCodes" style="color:#FF5858; font-weight:600;">Создать новые</a></p>
+                                </div>
+                            }
+ 
+                            @if (Model.IsMachineRemembered)
+                            {
+                                <form method="post" style="margin-bottom:10px;">
+                                    <button type="submit" class="tfa-btn tfa-btn-outline">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                        Забыть этот браузер
+                                    </button>
+                                </form>
+                            }
+ 
+                            <a asp-page="./Disable2fa" class="tfa-btn tfa-btn-outline" style="margin-bottom:10px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                Отключить 2FA
+                            </a>
+                            <a asp-page="./GenerateRecoveryCodes" class="tfa-btn tfa-btn-outline">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.4"></path></svg>
+                                Сбросить коды восстановления
+                            </a>
+                        }
+ 
+                        <div style="margin-top:20px; padding-top:20px; border-top:1px solid #F5F5F5;">
+                            <p style="font-size:13px; font-weight:600; color:#2D3436; margin-bottom:12px;">Приложение-аутентификатор</p>
+                            @if (!Model.HasAuthenticator)
+                            {
+                                <a asp-page="./EnableAuthenticator" class="tfa-btn tfa-btn-primary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                    Добавить аутентификатор
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-page="./EnableAuthenticator" class="tfa-btn tfa-btn-primary" style="margin-bottom:10px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                    <span style="color:white !important;">Настроить аутентификатор</span>
+                                </a>
+                                <a asp-page="./ResetAuthenticator" class="tfa-btn tfa-btn-outline">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.4"></path></svg>
+                                    Сбросить аутентификатор
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+ 

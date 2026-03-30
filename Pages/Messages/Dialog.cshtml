@@ -1,0 +1,227 @@
+﻿@page "{userId}"
+@model DateBoard.Pages.Messages.DialogModel
+@{
+    ViewData["Title"] = Model.OtherProfile?.Name ?? "Чат";
+    var otherName = Model.OtherProfile?.Name ?? "Пользователь";
+    var otherInitial = Model.OtherInitial;
+    var otherPhoto = Model.OtherProfile?.PhotoPath;
+}
+ 
+<style>
+    .pm-wrap { display: flex; flex-direction: column; height: calc(100vh - 64px); background: #F8F9FA; }
+    .pm-header { background: white; border-bottom: 1px solid #EFEFEF; padding: 14px 24px; display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+    .pm-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+    .pm-messages::-webkit-scrollbar { width: 4px; }
+    .pm-messages::-webkit-scrollbar-thumb { background: #FFE0E0; border-radius: 4px; }
+    .pm-row { display: flex; gap: 8px; align-items: flex-end; max-width: 70%; }
+    .pm-row.mine { align-self: flex-end; flex-direction: row-reverse; }
+    .pm-row.theirs { align-self: flex-start; }
+    .pm-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #FF5858, #F857A6); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; flex-shrink: 0; }
+    .pm-bubble { padding: 11px 15px; border-radius: 18px; font-size: 14px; line-height: 1.6; word-break: break-word; }
+    .pm-bubble.mine { background: linear-gradient(135deg, #FF5858, #F857A6); color: white; border-bottom-right-radius: 4px; }
+    .pm-bubble.theirs { background: white; color: #2D3436; border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .pm-time { font-size: 10px; color: #B2BEC3; padding: 0 4px; }
+    .pm-input-area { background: white; border-top: 1px solid #EFEFEF; padding: 14px 24px; display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+    .pm-input { flex: 1; background: #F8F9FA; border: 1.5px solid #F0F0F0; border-radius: 50px; padding: 12px 20px; font-size: 14px; font-weight: 500; color: #2D3436; outline: none; font-family: 'Montserrat', sans-serif; transition: all 0.2s; height: 48px; }
+    .pm-input:focus { border-color: #FF5858; background: white; box-shadow: 0 4px 16px rgba(255,88,88,0.08); }
+    .pm-input::placeholder { color: #B2BEC3; }
+    .pm-send-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #FF5858, #F857A6); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(255,88,88,0.3); transition: all 0.2s; flex-shrink: 0; }
+    .pm-send-btn:hover { transform: scale(1.08); }
+    .pm-photo-btn { width: 48px; height: 48px; border-radius: 50%; background: white; border: 1.5px solid #F0F0F0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+    .pm-photo-btn:hover { border-color: #FF5858; }
+    .pm-photo { max-width: 200px; border-radius: 12px; cursor: pointer; }
+</style>
+ 
+<div class="pm-wrap">
+    <!-- Шапка -->
+    <div class="pm-header">
+        <a href="/Messages" style="width:36px; height:36px; border-radius:50%; background:#F8F9FA; display:flex; align-items:center; justify-content:center; text-decoration:none; flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2D3436" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </a>
+        
+        @if (!string.IsNullOrEmpty(otherPhoto))
+        {
+            <img src="@otherPhoto" style="width:42px; height:42px; border-radius:50%; object-fit:cover; flex-shrink:0;" />
+        }
+        else
+        {
+            <div style="width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <span style="color:white; font-size:16px; font-weight:700;">@otherInitial</span>
+            </div>
+        }
+        
+        <div style="flex:1;">
+            <p style="font-size:15px; font-weight:700; color:#2D3436; margin:0;">@otherName</p>
+            @if (!string.IsNullOrEmpty(Model.OtherProfile?.City))
+            {
+                <p style="font-size:12px; color:#B2BEC3; margin:0;">@Model.OtherProfile.City</p>
+            }
+        </div>
+        
+        <a href="/Profile/View/@Model.OtherUserId" style="font-size:12px; color:#FF5858; font-weight:600; text-decoration:none; background:rgba(255,88,88,0.07); border-radius:20px; padding:6px 14px;">
+            Профиль
+        </a>
+    </div>
+ 
+    <!-- Сообщения -->
+    <div class="pm-messages" id="pmBox">
+        @if (!Model.Messages.Any())
+        {
+            <div style="text-align:center; margin:auto; padding:40px 0;">
+                <div style="width:64px; height:64px; border-radius:50%; background:rgba(255,88,88,0.08); margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+                <p style="font-size:14px; color:#B2BEC3;">Начни общение первым!</p>
+            </div>
+        }
+        @foreach (var msg in Model.Messages)
+        {
+            var isMine = msg.SenderId == Model.CurrentUserId;
+            <div class="pm-row @(isMine ? "mine" : "theirs")">
+                @if (!isMine)
+                {
+                    @if (!string.IsNullOrEmpty(otherPhoto))
+                    {
+                        <img src="@otherPhoto" class="pm-avatar" style="object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div class="pm-avatar">@otherInitial</div>
+                    }
+                }
+                <div style="display:flex; flex-direction:column; gap:3px; @(isMine ? "align-items:flex-end;" : "")">
+                    <div class="pm-bubble @(isMine ? "mine" : "theirs")">
+                        @if (msg.Text.StartsWith("[photo]"))
+                        {
+                            <img src="@msg.Text.Replace("[photo]", "")" class="pm-photo" onclick="openPhoto(this.src)" />
+                        }
+                        else
+                        {
+                            @msg.Text
+                        }
+                    </div>
+                    <span class="pm-time">@msg.SentAt.ToString("HH:mm")</span>
+                </div>
+            </div>
+        }
+    </div>
+ 
+    <!-- Поле ввода -->
+    <div class="pm-input-area">
+        <button class="pm-photo-btn" onclick="document.getElementById('pmPhotoInput').click()" title="Отправить фото">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        </button>
+        <input type="file" id="pmPhotoInput" accept="image/*" style="display:none;" onchange="sendPhoto(this)" />
+ 
+        <input type="text" id="pmInput" class="pm-input" placeholder="Написать сообщение..."
+               onkeydown="if(event.key==='Enter'){ event.preventDefault(); sendMessage(); }" />
+ 
+        <button class="pm-send-btn" onclick="sendMessage()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+    </div>
+</div>
+ 
+<script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+<script>
+    var receiverId = "@Model.OtherUserId";
+    var currentUserId = "@Model.CurrentUserId";
+    var otherInitial = "@otherInitial";
+    var otherPhoto = "@otherPhoto";
+ 
+    var connection = new signalR.HubConnectionBuilder().withUrl("/privateHub").build();
+ 
+    connection.on("ReceivePrivateMessage", function (senderId, text, time) {
+        var isMine = senderId === currentUserId;
+        var isFromOther = senderId === receiverId;
+        
+        // Показываем только сообщения между нами двумя
+        if (!isMine && !isFromOther) return;
+        
+        appendMessage(isMine, text, time);
+    });
+ 
+    connection.start().catch(function (err) { console.error(err); });
+ 
+    function sendMessage() {
+        var input = document.getElementById("pmInput");
+        var text = input.value.trim();
+        if (!text) return;
+        
+        connection.invoke("SendPrivateMessage", receiverId, text)
+            .catch(function (err) { console.error(err); });
+            
+        input.value = "";
+        input.focus();
+    }
+ 
+    function sendPhoto(input) {
+        var file = input.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            connection.invoke("SendPrivateMessage", receiverId, "[photo]" + e.target.result)
+                .catch(function (err) { console.error(err); });
+        };
+        reader.readAsDataURL(file);
+        input.value = "";
+    }
+ 
+    function appendMessage(isMine, text, time) {
+        var box = document.getElementById("pmBox");
+        
+        // Убираем "Начни общение первым!" если есть
+        var emptyState = box.querySelector('div[style*="text-align:center"]');
+        if (emptyState) emptyState.remove();
+        
+        var row = document.createElement("div");
+        row.className = "pm-row " + (isMine ? "mine" : "theirs");
+ 
+        var avatarHtml = "";
+        if (!isMine) {
+            if (otherPhoto) {
+                avatarHtml = '<img src="' + otherPhoto + '" class="pm-avatar" style="object-fit:cover;" />';
+            } else {
+                avatarHtml = '<div class="pm-avatar">' + otherInitial + '</div>';
+            }
+        }
+        
+        var isPhoto = text.startsWith('[photo]');
+        var content = isPhoto
+            ? '<img src="' + text.replace('[photo]', '') + '" class="pm-photo" onclick="openPhoto(this.src)" />'
+            : escapeHtml(text);
+ 
+        row.innerHTML = avatarHtml +
+            '<div style="display:flex; flex-direction:column; gap:3px; ' + (isMine ? 'align-items:flex-end;' : '') + '">' +
+                '<div class="pm-bubble ' + (isMine ? 'mine' : 'theirs') + '">' + content + '</div>' +
+                '<span class="pm-time">' + time + '</span>' +
+            '</div>';
+ 
+        box.appendChild(row);
+        box.scrollTop = box.scrollHeight;
+    }
+ 
+    function openPhoto(src) {
+        var overlay = document.createElement("div");
+        overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; display:flex; align-items:center; justify-content:center; cursor:pointer;";
+        overlay.onclick = function () { document.body.removeChild(overlay); };
+        var img = document.createElement("img");
+        img.src = src;
+        img.style.cssText = "max-width:90%; max-height:90%; border-radius:16px;";
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+    }
+ 
+    function escapeHtml(text) {
+        var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+    }
+ 
+    // Прокрутка вниз при загрузке
+    var box = document.getElementById("pmBox");
+    if (box) box.scrollTop = box.scrollHeight;
+</script>
+ 
