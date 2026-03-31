@@ -1,4 +1,5 @@
 using DateBoard.Data;
+using DateBoard.Services;  // ← ДОБАВЬ ЭТОТ using
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages();
+
+// ← ДОБАВЬ ЭТИ СТРОКИ: Регистрация сервисов
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IOnlineStatusService, OnlineStatusService>();
 
 var app = builder.Build();
 
