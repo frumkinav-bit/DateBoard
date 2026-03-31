@@ -17,9 +17,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Или если пока тестируешь локально — SQL Server:
-// builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//     options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -46,6 +43,13 @@ builder.Services.AddScoped<IOnlineStatusService, OnlineStatusService>();
 // === ПРИЛОЖЕНИЕ ===
 
 var app = builder.Build();
+
+// Автоматическое применение миграций при запуске
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 // Pipeline
 if (app.Environment.IsDevelopment())
