@@ -1,24 +1,40 @@
 using DateBoard.Data;
-using DateBoard.Services;  // ← ДОБАВЬ ЭТОТ using
+using DateBoard.Hubs;
+using DateBoard.Middleware;
+using DateBoard.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Настройка порта для Railway (исправлен пробел)
+// ===== НАСТРОЙКА ПОРТА ДЛЯ RAILWAY =====
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// Строка подключения (исправлен null)
+// ===== СТРОКА ПОДКЛЮЧЕНИЯ (PostgreSQL!) =====
 var connectionString = GetConnectionString()
     ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string not found");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString));  // ← ИСПРАВЛЕНО: UseNpgsql вместо UseSqlServer
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => {
-    options.SignIn.RequireConfirmedAccount = false;
+// ===== SignalR (ДО builder.Build()!) =====
+builder.Services.AddSignalR(options =>
+{
+    options.MaximumReceiveMessageSize = 10 * 1024 * 1024;
+});
+builder.Services.AddSingleton<IUserIdProvider, DefaultUserIdProvider>();
+
+// ===== СЕРВИСЫ =====
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IOnlineStatusService, OnlineStatusService>();
+
+// ===== IDENTITY =====
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;  // ← false для простоты
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
@@ -29,35 +45,43 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
 
 builder.Services.AddRazorPages();
 
-// ← ДОБАВЬ ЭТИ СТРОКИ: Регистрация сервисов
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IOnlineStatusService, OnlineStatusService>();
-
+// ===== СТРОИМ ПРИЛОЖЕНИЕ (после всех сервисов!) =====
 var app = builder.Build();
 
-// Миграции
+// ===== МИГРАЦИИ (при старте) =====
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
 }
 
-// Убрали HTTPS редирект для Railway (там только HTTP внутри контейнера)
+// ===== MIDDLEWARE ПАЙПЛАЙН =====
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // app.UseHsts(); // ← можно убрать для Railway
+    // app.UseHsts();  // ← закомментировано для Railway
 }
 
-// app.UseHttpsRedirection(); // ← УБРАТЬ для Railway!
+// app.UseHttpsRedirection();  // ← УБРАНО для Railway!
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();
+app.UseAuthentication();  // ← ДОБАВЛЕНО (было пропущено!)
 app.UseAuthorization();
+
+// ===== HUBS (ДО app.Run()!) =====
+app.MapHub<ChatHub>("/chatHub");
+app.MapHub<PrivateHub>("/privateHub");
+app.MapHub<NotificationHub>("/notificationHub");  // ← добавлен
+
 app.MapRazorPages();
 
+// ===== MIDDLEWARE ОНЛАЙН СТАТУСА =====
+app.UseMiddleware<OnlineStatusMiddleware>();
+
+// ===== ЗАПУСК (В САМОМ КОНЦЕ!) =====
 app.Run();
 
+// ===== МЕТОД ДЛЯ RAILWAY CONNECTION STRING =====
 static string GetConnectionString()
 {
     var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
