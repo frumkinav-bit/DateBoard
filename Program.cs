@@ -4,8 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Получаем строку подключения и конвертируем из Railway формата
-var connectionString = GetConnectionString();
+// Настройка порта для Railway (исправлен пробел)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+// Строка подключения (исправлен null)
+var connectionString = GetConnectionString()
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string not found");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -24,20 +30,21 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// Автоприменение миграций
+// Миграции
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
 }
 
+// Убрали HTTPS редирект для Railway (там только HTTP внутри контейнера)
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    // app.UseHsts(); // ← можно убрать для Railway
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // ← УБРАТЬ для Railway!
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
@@ -46,22 +53,15 @@ app.MapRazorPages();
 
 app.Run();
 
-// ⬇️ Метод конвертации строки подключения
 static string GetConnectionString()
 {
-    // Пробуем Railway формат
     var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-
     if (!string.IsNullOrEmpty(databaseUrl))
     {
-        // Конвертируем postgres:// в Npgsql формат
         var uri = new Uri(databaseUrl);
         var userInfo = uri.UserInfo.Split(':');
-
         return $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};" +
                $"Username={userInfo[0]};Password={userInfo[1]};SslMode=Require;TrustServerCertificate=true";
     }
-
-    // Fallback на appsettings.json для локальной разработки
-    return null; // Или получи из Configuration
+    return null;
 }

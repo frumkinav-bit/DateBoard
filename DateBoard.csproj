@@ -8,6 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="railway.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.4" />
@@ -27,6 +31,10 @@
 
 	<ItemGroup>
 		<Folder Include="wwwroot\lib\signalr\dist\browser\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="railway.json" />
 	</ItemGroup>
 
 </Project>
