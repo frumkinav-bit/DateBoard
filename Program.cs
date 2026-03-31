@@ -4,15 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Получаем строку подключения (Railway использует DATABASE_URL)
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
-
-// ⬇️ Добавь проверку на null
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("DATABASE_URL or DefaultConnection not configured");
-}
+// Получаем строку подключения и конвертируем из Railway формата
+var connectionString = GetConnectionString();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -31,7 +24,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// Автоматически применяем миграции при старте
+// Автоприменение миграций
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -52,3 +45,23 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+
+// ⬇️ Метод конвертации строки подключения
+static string GetConnectionString()
+{
+    // Пробуем Railway формат
+    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+    if (!string.IsNullOrEmpty(databaseUrl))
+    {
+        // Конвертируем postgres:// в Npgsql формат
+        var uri = new Uri(databaseUrl);
+        var userInfo = uri.UserInfo.Split(':');
+
+        return $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};" +
+               $"Username={userInfo[0]};Password={userInfo[1]};SslMode=Require;TrustServerCertificate=true";
+    }
+
+    // Fallback на appsettings.json для локальной разработки
+    return null; // Или получи из Configuration
+}
