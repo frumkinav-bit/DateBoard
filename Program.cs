@@ -1,84 +1,48 @@
 using DateBoard.Data;
-using DateBoard.Hubs;
-using DateBoard.Middleware;
-using DateBoard.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Получаем строку подключения
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// Получаем строку подключения (Railway использует DATABASE_URL, локально — из appsettings.json)
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// === СЕРВИСЫ ===
-
-// БД PostgreSQL (для Railway)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-// SignalR (настроен ДО Build!)
-builder.Services.AddSignalR(options =>
-{
-    options.MaximumReceiveMessageSize = 10 * 1024 * 1024;
-});
-
-// Identity
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = true;
+builder.Services.AddDefaultIdentity<IdentityUser>(options => {
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Razor Pages
 builder.Services.AddRazorPages();
-
-// Кастомные сервисы
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IOnlineStatusService, OnlineStatusService>();
-
-// === ПРИЛОЖЕНИЕ ===
 
 var app = builder.Build();
 
-// Автоматическое применение миграций при запуске
+// Автоматически применяем миграции при старте (важно для Railway)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    await db.Database.MigrateAsync();
 }
 
-// Pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseMigrationsEndPoint();
-}
-else
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Замена UseStaticAssets для совместимости
-
+app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication(); // Добавлено (было пропущено!)
+app.UseAuthentication();
 app.UseAuthorization();
-
-// Middleware
-app.UseMiddleware<OnlineStatusMiddleware>();
-
-// === МАРШРУТЫ ===
-
 app.MapRazorPages();
 
-// SignalR Hubs (только ОДИН раз!)
-app.MapHub<ChatHub>("/chatHub");
-app.MapHub<PrivateHub>("/privateHub");
-
-// Запуск
 app.Run();

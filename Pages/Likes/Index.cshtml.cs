@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using DateBoard.Data;
 using DateBoard.Models;
 
 namespace DateBoard.Pages.Likes
 {
+    [Authorize] //  ДОБАВЛЕНО: только для авторизованных пользователей
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -18,27 +20,36 @@ namespace DateBoard.Pages.Likes
             _userManager = userManager;
         }
 
-        // Кто меня лайкнул (с профилями)
         public List<LikeViewModel> ReceivedLikes { get; set; } = new();
-
-        // Кого я лайкнул
         public List<LikeViewModel> SentLikes { get; set; } = new();
-
-        // Взаимные лайки (Matches)
         public List<LikeViewModel> Matches { get; set; } = new();
-
         public string ActiveTab { get; set; } = "received";
 
-        public async Task OnGetAsync(string tab = "received")
+        public async Task<IActionResult> OnGetAsync(string tab = "received")
         {
             ActiveTab = tab;
+
             var currentUser = await _userManager.GetUserAsync(User);
+
+            //  ПРОВЕРКА: если пользователь не авторизован — редирект на логин
+            if (currentUser == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            //  ПРОВЕРКА: получаем ID профиля
             var myProfileId = await _context.Profiles
                 .Where(p => p.UserId == currentUser.Id)
                 .Select(p => p.Id)
                 .FirstOrDefaultAsync();
 
-            // Кто меня лайкнул (люди, у которых в избранном мой профиль)
+            //  ПРОВЕРКА: если профиль не создан — редирект на создание профиля
+            if (myProfileId == 0)
+            {
+                return RedirectToPage("/Profiles/Create");
+            }
+
+            // Кто меня лайкнул
             var receivedFavoriteIds = await _context.Favorites
                 .Where(f => f.ProfileId == myProfileId)
                 .Select(f => f.UserId)
@@ -76,8 +87,10 @@ namespace DateBoard.Pages.Likes
                 })
                 .ToListAsync();
 
-            // Взаимные лайки (Matches) — пересечение
+            // Взаимные лайки
             Matches = ReceivedLikes.Where(r => r.IsMatch).ToList();
+
+            return Page();
         }
 
         public class LikeViewModel
