@@ -46,7 +46,7 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ (только Главная и Чат) ===== */
+        /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ (Главная, Лента, Чат) ===== */
         .nav-menu-center {
             list-style: none;
             margin: 0;
@@ -408,17 +408,21 @@
                 overflow: hidden;
             }
             
-            /* Мобильные действия */
+            /* Мобильные действия - минимальные отступы */
             .nav-actions {
-                gap: 4px;
+                gap: 2px;
             }
             
-            /* Кнопка "Войти" максимально право */
-            .nav-actions .btn:first-child,
-            .nav-actions a.btn:first-child,
-            .nav-actions form:first-child .btn,
-            .nav-actions form:first-child a.btn {
-                margin-left: 16px !important;
+            /* Кнопки Войти и Регистрация рядом без лишних отступов */
+            .nav-actions .btn,
+            .nav-actions a.btn {
+                margin-left: 0 !important;
+                margin-right: 2px !important;
+            }
+            
+            /* Последняя кнопка (Регистрация) прижата к меню */
+            .nav-actions .btn:last-child,
+            .nav-actions a.btn:last-child {
                 margin-right: 4px !important;
             }
             
@@ -435,14 +439,6 @@
         @@media (max-width: 480px) {
             .nav-brand {
                 font-size: 20px;
-            }
-            
-            /* Ещё больше отступ для кнопки Войти */
-            .nav-actions .btn:first-child,
-            .nav-actions a.btn:first-child,
-            .nav-actions form:first-child .btn,
-            .nav-actions form:first-child a.btn {
-                margin-left: 20px !important;
             }
         }
         
@@ -686,9 +682,10 @@
                 <span>Date</span><span>Board</span>
             </a>
             
-            <!-- ЦЕНТР: Только Главная и Общий чат (Лента убрана в меню) -->
+            <!-- ЦЕНТР: Главная, Лента, Общий чат -->
             <ul class="nav-menu-center">
                 <li><a href="/" class="nav-link-custom nav-link-active">Главная</a></li>
+                <li><a href="/Feed/Index" class="nav-link-custom">Лента</a></li>
                 <li><a href="/Chat/Index" class="nav-link-custom">Общий чат</a></li>
             </ul>
             
@@ -735,7 +732,7 @@
                 }
                 else
                 {
-                    <!-- Для неавторизованных: кнопки как в _LoginPartial -->
+                    <!-- Для неавторизованных: кнопки как в _LoginPartial (рядом) -->
                     <partial name="_LoginPartial" />
                 }
                 
@@ -959,4 +956,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
- 
