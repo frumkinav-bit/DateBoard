@@ -155,17 +155,15 @@
         .chat-header-center {
             display: flex;
             align-items: center;
-            gap: 6px;
-            background: rgba(255,88,88,0.06);
-            border: 1px solid rgba(255,88,88,0.15);
-            border-radius: 50px;
-            padding: 6px 14px;
-            margin: 0 10px;
+            justify-content: center;
+            flex: 1;
         }
         
         .chat-header-right {
             display: flex;
             align-items: center;
+            justify-content: flex-end;
+            flex: 1;
         }
         
         /* Иконка чата в шапке справа */
@@ -192,6 +190,7 @@
             cursor: pointer;
             color: #FF5858;
             transition: transform 0.2s;
+            margin-left: 8px;
         }
         
         .quick-phrases-btn:hover {
@@ -201,13 +200,6 @@
         .quick-phrases-btn svg {
             width: 20px;
             height: 20px;
-        }
-        
-        /* Секция быстрых фраз в сайдбаре — убрали заголовок */
-        .quick-phrases-section {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid #EFEFEF;
         }
         
         .chat-messages {
@@ -273,14 +265,6 @@
             max-width: 90%;
         }
         
-        .chat-header-center {
-            padding: 4px 10px;
-        }
-        
-        .chat-header-center span {
-            font-size: 11px;
-        }
-        
         .chat-sidebar {
             width: 260px;
         }
@@ -300,7 +284,7 @@
             <p style="font-size:11px; letter-spacing:1.5px; color:#F857A6; font-weight:600; margin-bottom:6px;">ОБЩЕНИЕ</p>
             <h2 style="font-size:18px; font-weight:700; color:#2D3436; margin:0;">Общий чат</h2>
         </div>
-        <div style="padding:16px; flex:1; overflow-y:auto; display:flex; flex-direction:column;">
+        <div style="padding:16px; flex:1; overflow-y:auto;">
             <div style="margin-bottom:20px;">
                 <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">СТАТУС</p>
                 <div class="sidebar-stat">
@@ -328,9 +312,7 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Быстрые фразы внизу сайдбара -->
-            <div class="quick-phrases-section">
+            <div>
                 <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">БЫСТРЫЕ ФРАЗЫ</p>
                 <div style="display:flex; flex-direction:column; gap:6px;">
                     <button class="quick-btn" onclick="insertPhrase('Привет! Как дела?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>Привет! Как дела?</button>
@@ -359,22 +341,20 @@
             </div>
         </div>
  
-        <!-- Мобильная шапка (переставленные элементы) -->
+        <!-- Мобильная шапка -->
         <div class="chat-header mobile-header">
-            <!-- Слева: кнопка меню -->
+            <!-- Слева: стрелка меню -->
             <div class="chat-header-left">
                 <div class="menu-btn" onclick="toggleSidebar()" id="menuBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </div>
             </div>
             
-            <!-- По центру: Знакомьтесь -->
+            <!-- По центру: пусто (или можно добавить название) -->
             <div class="chat-header-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                <span style="font-size:12px; color:#FF5858; font-weight:600;">Знакомьтесь!</span>
             </div>
             
-            <!-- Справа: иконка чата и кнопка быстрых фраз -->
+            <!-- Справа: иконка чата и стрелка быстрых фраз -->
             <div class="chat-header-right">
                 <div class="header-chat-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -521,7 +501,7 @@
  
     connection.on("ReceiveMessage", function (userName, text, time) {
         var isMine = userName === currentUserName;
-        var initial = userName.charAt(0).toUpperCase();
+        var initial = userName.charAt(0).toUpperCase());
  
         var row = document.createElement("div");
         row.className = "msg-row " + (isMine ? "mine" : "theirs");
@@ -664,4 +644,3 @@
     var box = document.getElementById("chatBox");
     if (box) box.scrollTop = box.scrollHeight;
 </script>
- 
