@@ -1,9 +1,14 @@
-﻿<!DOCTYPE html>
+﻿
+# Create the updated _Layout.cshtml with new branding
+# Using the logo as data URI for the nav (small 40x40 version)
+
+layout_content = '''<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>@ViewData["Title"] - DateBoard</title>
+    <title>@ViewData["Title"] - Свах Купидонов</title>
+    <link rel="icon" type="image/png" href="~/images/logo_64.png" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -32,18 +37,42 @@
             justify-content: space-between;
         }
         
+        /* ===== НОВЫЙ ЛОГОТИП СВАХ КУПИДОНОВ ===== */
         .nav-brand {
-            font-weight: 700;
-            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             text-decoration: none;
             flex-shrink: 0;
         }
         
-        .nav-brand span:first-child { color: #2D3436; }
-        .nav-brand span:last-child {
+        .nav-brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(255,88,88,0.3);
+        }
+        
+        .nav-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .nav-brand-title {
+            font-weight: 800;
+            font-size: 20px;
             background: linear-gradient(135deg, #FF5858, #F857A6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        
+        .nav-brand-subtitle {
+            font-size: 11px;
+            color: #B2BEC3;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         
         /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ ===== */
@@ -270,6 +299,41 @@
             flex-shrink: 0;
         }
         
+        /* ===== ФРАЗЫ БРЕНДА - ВСПЛЫВАЮЩИЕ ПОДСКАЗКИ ===== */
+        .brand-tooltip {
+            position: fixed;
+            background: linear-gradient(135deg, #FF5858, #F857A6);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 8px 32px rgba(255,88,88,0.4);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            max-width: 280px;
+            text-align: center;
+        }
+        
+        .brand-tooltip.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .brand-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #F857A6;
+        }
+        
         /* ===== УВЕДОМЛЕНИЯ ===== */
         .nav-notification {
             position: relative;
@@ -396,6 +460,19 @@
                 display: none;
             }
             
+            .nav-brand-subtitle {
+                display: none;
+            }
+            
+            .nav-brand-logo {
+                width: 38px;
+                height: 38px;
+            }
+            
+            .nav-brand-title {
+                font-size: 18px;
+            }
+            
             .menu-btn {
                 display: none;
             }
@@ -445,8 +522,8 @@
         }
         
         @@media (max-width: 480px) {
-            .nav-brand {
-                font-size: 20px;
+            .nav-brand-title {
+                font-size: 16px;
             }
         }
         
@@ -689,29 +766,36 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
+    <!-- ВСПЛЫВАЮЩИЕ ФРАЗЫ БРЕНДА -->
+    <div class="brand-tooltip" id="brandTooltip"></div>
+    
     <!-- ШАПКА -->
     <header class="navbar-main">
         <div class="container">
-            <!-- Логотип -->
-            <a href="/" class="nav-brand">
-                <span>Date</span><span>Board</span>
+            <!-- Логотип Свах Купидонов -->
+            <a href="/" class="nav-brand" id="brandLogo">
+                <img src="~/images/logo_64.png" alt="Свах Купидонов" class="nav-brand-logo" />
+                <div class="nav-brand-text">
+                    <span class="nav-brand-title">Свах Купидонов</span>
+                    <span class="nav-brand-subtitle">Я всё устрою 💘</span>
+                </div>
             </a>
             
             <!-- ЦЕНТР: Главная, Лента (с проверкой), Общий чат -->
             <ul class="nav-menu-center">
-                <li><a href="/" class="nav-link-custom nav-link-active">Главная</a></li>
+                <li><a href="/" class="nav-link-custom nav-link-active" data-brand-phrase="Посмотрим, кто тебе подходит…">Главная</a></li>
                 
                 <!-- Лента: перенаправление на вход для неавторизованных -->
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li><a href="/Feed/Index" class="nav-link-custom">Лента</a></li>
+                    <li><a href="/Feed/Index" class="nav-link-custom" data-brand-phrase="Смотри внимательно">Лента</a></li>
                 }
                 else
                 {
-                    <li><a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="nav-link-custom nav-link-locked">Лента</a></li>
+                    <li><a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="nav-link-custom nav-link-locked" data-brand-phrase="Смотри внимательно">Лента</a></li>
                 }
                 
-                <li><a href="/Chat/Index" class="nav-link-custom">Общий чат</a></li>
+                <li><a href="/Chat/Index" class="nav-link-custom" data-brand-phrase="Не испорть всё">Общий чат</a></li>
             </ul>
             
             <!-- СПРАВА: Колокольчик + Аккаунт (с именем) + Меню -->
@@ -720,7 +804,7 @@
                 {
                     <!-- Колокольчик -->
                     <div class="nav-notification">
-                        <button class="notification-btn" onclick="toggleNotifications()" title="Уведомления">
+                        <button class="notification-btn" onclick="toggleNotifications()" title="Уведомления" data-brand-phrase="Я стараюсь, а ты?">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -748,7 +832,7 @@
                     </div>
                     
                     <!-- Иконка аккаунта с именем -->
-                    <a href="/Profile/Edit" class="nav-user" title="Мой профиль">
+                    <a href="/Profile/Edit" class="nav-user" title="Мой профиль" data-brand-phrase="Расскажи о себе">
                         <div class="nav-avatar">
                             @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "U")
                         </div>
@@ -762,7 +846,7 @@
                 }
                 
                 <!-- Кнопка Меню -->
-                <button class="menu-btn" onclick="toggleSideNav()">
+                <button class="menu-btn" onclick="toggleSideNav()" data-brand-phrase="Не переживай. Я разберусь">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="3" y1="12" x2="21" y2="12"></line>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -786,7 +870,11 @@
     <nav class="side-nav">
         <div class="side-nav-header">
             <a href="/" class="nav-brand">
-                <span>Date</span><span>Board</span>
+                <img src="~/images/logo_64.png" alt="Свах Купидонов" class="nav-brand-logo" />
+                <div class="nav-brand-text">
+                    <span class="nav-brand-title">Свах Купидонов</span>
+                    <span class="nav-brand-subtitle">Я всё устрою 💘</span>
+                </div>
             </a>
             <button class="side-nav-close" onclick="toggleSideNav()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -799,7 +887,7 @@
         <div class="side-nav-content">
             <!-- Главные разделы -->
             <div class="side-nav-section">Главное</div>
-            <a href="/" class="side-nav-link">
+            <a href="/" class="side-nav-link" data-brand-phrase="Посмотрим, кто тебе подходит…">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 Главная
             </a>
@@ -807,21 +895,21 @@
             <!-- Лента с проверкой авторизации -->
             @if (User.Identity.IsAuthenticated)
             {
-                <a href="/Feed/Index" class="side-nav-link">
+                <a href="/Feed/Index" class="side-nav-link" data-brand-phrase="Смотри внимательно">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     Лента анкет
                 </a>
             }
             else
             {
-                <a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="side-nav-link">
+                <a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="side-nav-link" data-brand-phrase="Смотри внимательно">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     Лента анкет
                     <span style="margin-left: auto; font-size: 11px; color: #FF5858; background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;">🔒</span>
                 </a>
             }
             
-            <a href="/Chat/Index" class="side-nav-link">
+            <a href="/Chat/Index" class="side-nav-link" data-brand-phrase="Не испорть всё">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 Общий чат
             </a>
@@ -831,22 +919,22 @@
             
             @if (User.Identity.IsAuthenticated)
             {
-                <a href="/Messages/Index" class="side-nav-link">
+                <a href="/Messages/Index" class="side-nav-link" data-brand-phrase="Начни первым">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                     Личные сообщения
                 </a>
                 
                 <!-- Профиль -->
                 <div class="side-nav-section">Мой профиль</div>
-                <a href="/Profile/Edit" class="side-nav-link">
+                <a href="/Profile/Edit" class="side-nav-link" data-brand-phrase="Расскажи о себе">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     Мой профиль
                 </a>
-                <a href="/Favorites/Index" class="side-nav-link">
+                <a href="/Favorites/Index" class="side-nav-link" data-brand-phrase="Запомнил">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     Избранное
                 </a>
-                <a href="/Likes/Index" class="side-nav-link">
+                <a href="/Likes/Index" class="side-nav-link" data-brand-phrase="Интересно…">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
                     Лайки
                 </a>
@@ -855,7 +943,7 @@
                 <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #F0F0F0;">
                     <form method="post" action="/Identity/Account/Logout" id="logoutForm" style="display: contents;">
                         @Html.AntiForgeryToken()
-                        <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;" class="side-nav-link" style="color: #FF5858;">
+                        <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;" class="side-nav-link" style="color: #FF5858;" data-brand-phrase="Ты упускаешь шанс">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             Выйти из аккаунта
                         </a>
@@ -867,11 +955,11 @@
                 <!-- Для неавторизованных -->
                 <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #F0F0F0;">
                     <div class="side-nav-section">Аккаунт</div>
-                    <a href="/Identity/Account/Login" class="side-nav-link">
+                    <a href="/Identity/Account/Login" class="side-nav-link" data-brand-phrase="Я начинаю">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10,17 15,12 10,7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
                         Войти
                     </a>
-                    <a href="/Identity/Account/Register" class="side-nav-link" style="color: #FF5858;">
+                    <a href="/Identity/Account/Register" class="side-nav-link" style="color: #FF5858;" data-brand-phrase="Посмотрим, кто тебе подходит…">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
                         Регистрация
                     </a>
@@ -891,7 +979,7 @@
     <!-- ФУТЕР -->
     <footer>
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: #888888; font-size: 13px;">© 2026 DateBoard</span>
+            <span style="color: #888888; font-size: 13px;">© 2026 Свах Купидонов — Я же говорил 💘</span>
             <a href="/Privacy" style="color: #888888; font-size: 13px; text-decoration: none;">Политика конфиденциальности</a>
         </div>
     </footer>
@@ -902,6 +990,59 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     
     <script>
+        // ===== ФРАЗЫ БРЕНДА =====
+        const brandPhrases = {
+            registration: ["Посмотрим, кто тебе подходит…", "Я начинаю", "Не переживай. Я разберусь"],
+            feed: ["Смотри внимательно", "Я не просто так это показываю", "Есть потенциал"],
+            like: ["Интересно…", "Запомнил"],
+            match: ["Я вас познакомил", "Свах Купидонов одобрил ✔", "Это не случайно"],
+            chat: ["Не испорть всё", "Начни первым", "Она ждёт", "Он ждёт"],
+            noActivity: ["Я стараюсь, а ты?", "Ты упускаешь шанс"],
+            success: ["Я же говорил", "Готовьтесь к свадьбе", "Моя работа сделана"]
+        };
+        
+        // ===== ПОКАЗ ФРАЗ БРЕНДА =====
+        function showBrandPhrase(phrase, element) {
+            const tooltip = document.getElementById('brandTooltip');
+            if (!tooltip || !phrase) return;
+            
+            tooltip.textContent = phrase;
+            tooltip.classList.add('show');
+            
+            // Позиционирование
+            const rect = element.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            
+            let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+            let top = rect.top - tooltipRect.height - 12;
+            
+            // Границы экрана
+            if (left < 10) left = 10;
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipRect.width - 10;
+            }
+            if (top < 10) top = rect.bottom + 12;
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            
+            // Скрыть через 3 секунды
+            setTimeout(() => {
+                tooltip.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Обработчики для элементов с data-brand-phrase
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('[data-brand-phrase]');
+            elements.forEach(el => {
+                el.addEventListener('mouseenter', function() {
+                    const phrase = this.getAttribute('data-brand-phrase');
+                    if (phrase) showBrandPhrase(phrase, this);
+                });
+            });
+        });
+        
         // ===== БОКОВОЕ МЕНЮ =====
         function toggleSideNav() {
             const nav = document.querySelector('.side-nav');
@@ -1171,5 +1312,4 @@
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>
- 
+</html>'''
