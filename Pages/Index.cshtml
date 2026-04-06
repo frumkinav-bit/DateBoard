@@ -8,7 +8,7 @@
     var recentProfiles = Db.Profiles.OrderByDescending(p => p.CreatedAt).Take(3).ToList();
     var word = profileCount == 1 ? "анкета" : (profileCount < 5 ? "анкеты" : "анкет");
 }
-
+ 
 <style>
     @@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,88,88,0.5); } 70% { box-shadow: 0 0 0 8px rgba(255,88,88,0); } 100% { box-shadow: 0 0 0 0 rgba(255,88,88,0); } }
     @@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-14px); } }
@@ -65,44 +65,74 @@
     .step-content { position: relative; z-index: 1; }
     .recent-card { background: white; border-radius: 20px; padding: 24px 20px; text-align: center; box-shadow: 0 8px 24px rgba(255,88,166,0.08); border: 1px solid #EFEFEF; transition: all 0.3s ease; cursor: pointer; height: 100%; }
     .recent-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(255,88,88,0.15); border-color: #FFE0E0; }
+    
+    /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+    @@media (max-width: 991px) {
+        .hero-section { padding: 30px 0 60px !important; }
+        .hero-section h1 { font-size: 36px !important; line-height: 1.2 !important; }
+        .hero-section p { font-size: 15px !important; }
+        .hero-content { padding-right: 0 !important; }
+        .search-fields { flex-direction: column !important; }
+        .search-field-card { width: 100%; }
+        .floating-cards-container { display: none !important; }
+        .steps-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+        .step-card-custom { padding: 30px 24px; }
+        .step-bg-num { font-size: 80px; }
+        .quote-section h2 { font-size: 28px !important; }
+        .quote-section { padding: 60px 0 !important; }
+        .stats-cards { margin-top: 40px; }
+        .recent-cards-row { flex-direction: column; }
+        .recent-cards-row .col-md-4 { margin-top: 20px !important; width: 100%; }
+        .recent-card img { height: 180px !important; }
+    }
+    
+    @@media (max-width: 768px) {
+        .hero-section h1 { font-size: 32px !important; }
+        .search-box { padding: 16px !important; }
+        .stats-cards { flex-direction: column; }
+    }
+    
+    @@media (min-width: 992px) {
+        .floating-cards-container { display: block; }
+    }
 </style>
-
+ 
 <!-- Hero -->
-<div style="background: white; padding: 50px 0 100px; position: relative; overflow: hidden;">
+<div class="hero-section" style="background: white; padding: 50px 0 100px; position: relative; overflow: hidden;">
     <div style="position: absolute; top: -120px; left: -120px; width: 500px; height: 500px; border-radius: 50%; background: #FF5858; filter: blur(120px); opacity: 0.05; pointer-events: none;"></div>
     <div style="position: absolute; bottom: -120px; right: -120px; width: 500px; height: 500px; border-radius: 50%; background: #F857A6; filter: blur(120px); opacity: 0.05; pointer-events: none;"></div>
-
+ 
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6" style="padding-left: 0; padding-right: 60px; position: relative; z-index: 10;">
-
+            <div class="col-lg-6 hero-content" style="padding-left: 0; padding-right: 60px; position: relative; z-index: 10;">
+ 
                 <div class="hero-animate" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,88,88,0.06); border: 1px solid rgba(255,88,88,0.15); border-radius: 50px; padding: 8px 18px; margin-bottom: 28px;">
                     <div class="live-dot"></div>
                     <span style="font-size: 13px; color: #FF5858; font-weight: 600;"><span id="counter">0</span> @word уже с нами</span>
                 </div>
-
+ 
                 <h1 class="hero-animate-delay" style="font-size: 54px; font-weight: 700; color: #2D3436; line-height: 1.12; margin-bottom: 20px; letter-spacing: -1px;">
                     Найди своего
-
+ 
                     <span style="background: linear-gradient(135deg, #FF5858, #F857A6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">человека</span>
                 </h1>
-
+ 
                 <p class="hero-animate-delay2" style="color: #636E72; font-size: 16px; line-height: 1.8; margin-bottom: 36px;">
                     Тысячи реальных анкет рядом с тобой.
 Начни общение прямо сейчас.
                 </p>
-
+ 
                 <div class="hero-animate-delay2">
                     <form method="get" action="/Feed/Index">
-                        <div style="background: white; border-radius: 24px; border: 1px solid #F0F0F0; box-shadow: 0 12px 40px rgba(255,88,88,0.08); padding: 22px;">
+                        <div class="search-box" style="background: white; border-radius: 24px; border: 1px solid #F0F0F0; box-shadow: 0 12px 40px rgba(255,88,88,0.08); padding: 22px;">
                             <p style="margin: 0 0 14px; font-size: 14px; font-weight: 600; color: #2D3436;">Найди кого-то прямо сейчас</p>
-                            <div style="display: flex; gap: 10px; margin-bottom: 14px;">
-
+                            <div class="search-fields" style="display: flex; gap: 10px; margin-bottom: 14px;">
+ 
                                 <div class="search-field-card">
                                     <p>ГОРОД</p>
                                     <input type="text" name="city" placeholder="Москва, Питер..." />
                                 </div>
-
+ 
                                 <div class="search-field-card" id="goalWrapper">
                                     <p>ЦЕЛЬ</p>
                                     <input type="hidden" name="goal" id="goalValue" value="" />
@@ -122,7 +152,7 @@
                                     </div>
                                 </div>
                             </div>
-
+ 
                             <button type="submit" style="width:100%; background:linear-gradient(135deg,#FF5858,#F857A6); border:none; border-radius:50px; padding:16px; color:white; font-weight:600; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 8px 24px rgba(255,88,88,0.3); transition:all 0.3s ease; font-family:'Montserrat',sans-serif;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                 Найти людей рядом
@@ -131,12 +161,12 @@
                     </form>
                 </div>
             </div>
-
-            <div class="col-lg-6" style="position: relative; height: 580px;">
+ 
+            <div class="col-lg-6 floating-cards-container" style="position: relative; height: 580px;">
                 <div style="position:absolute; width:360px; height:360px; border-radius:50%; background:linear-gradient(135deg,rgba(255,88,88,0.07),rgba(248,87,166,0.1)); top:50%; left:50%; transform:translate(-42%,-50%); z-index:0;"></div>
                 <div style="position:absolute; width:160px; height:160px; border-radius:50%; background:rgba(255,88,88,0.04); top:5%; right:8%; z-index:0;"></div>
                 <div style="position:absolute; width:80px; height:80px; border-radius:50%; background:rgba(248,87,166,0.06); bottom:10%; left:8%; z-index:0;"></div>
-
+ 
                 <div class="float-card" style="position:absolute; background:white; border-radius:24px; padding:24px; width:195px; box-shadow:0 20px 60px rgba(255,88,88,0.18); z-index:3; top:36%; left:34%; transform:translate(-50%,-50%);">
                     <div style="width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin:0 auto 14px; display:flex; align-items:center; justify-content:center;">
                         <span style="color:white; font-size:24px; font-weight:700;">А</span>
@@ -145,14 +175,14 @@
                     <p style="font-size:12px; color:#636E72; margin:0 0 14px; text-align:center;">Москва · Отношения</p>
                     <div style="background:linear-gradient(135deg,#FF5858,#F857A6); border-radius:30px; padding:8px; font-size:12px; color:white; font-weight:600; text-align:center;">+ В избранное</div>
                 </div>
-
+ 
                 <div class="float-card-2" style="position:absolute; background:white; border-radius:20px; padding:16px; width:148px; box-shadow:0 12px 32px rgba(255,88,88,0.1); z-index:4; left:0%; top:6%;">
                     <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:16px; font-weight:700; color:white;">И</span>
                     </div><p style="font-size:13px; font-weight:700; color:#2D3436; margin:0 0 3px;">Игорь, 28</p>
                     <p style="font-size:11px; color:#636E72; margin:0;">Питер · Дружба</p>
                 </div>
-
+ 
                 <div class="float-card-4" style="position:absolute; background:white; border-radius:18px; padding:14px; width:138px; box-shadow:0 10px 28px rgba(248,87,166,0.1); z-index:4; right:8%; top:18%;">
                     <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,rgba(248,87,166,0.2),rgba(255,88,88,0.15)); margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:15px; font-weight:700; color:#F857A6;">Д</span>
@@ -160,7 +190,7 @@
                     <p style="font-size:13px; font-weight:700; color:#2D3436; margin:0 0 2px;">Дима, 31</p>
                     <p style="font-size:11px; color:#636E72; margin:0;">Москва · Брак</p>
                 </div>
-
+ 
                 <div class="float-card-5" style="position:absolute; background:linear-gradient(135deg,#FF5858,#F857A6); border-radius:50px; padding:10px 16px; box-shadow:0 8px 24px rgba(255,88,88,0.25); z-index:4; left:2%; bottom:20%; display:flex; align-items:center; gap:10px;">
                     <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:13px; font-weight:700; color:white;">К</span>
@@ -170,7 +200,7 @@
                         <p style="font-size:10px; color:rgba(255,255,255,0.8); margin:0;">Казань</p>
                     </div>
                 </div>
-
+ 
                 <div class="float-card-3" style="position:absolute; background:white; border-radius:14px; padding:10px 12px; width:118px; box-shadow:0 6px 20px rgba(0,0,0,0.07); z-index:2; right:12%; bottom:14%; filter:blur(1.5px); opacity:0.8;">
                     <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,88,88,0.1); margin-bottom:6px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:12px; font-weight:700; color:#F857A6;">М</span>
@@ -178,7 +208,7 @@
                     <p style="font-size:12px; font-weight:700; color:#2D3436; margin:0 0 1px;">Мария, 26</p>
                     <p style="font-size:10px; color:#636E72; margin:0;">Казань · Брак</p>
                 </div>
-
+ 
                 <div class="float-card-2" style="position:absolute; background:white; border-radius:16px; padding:12px 14px; width:130px; box-shadow:0 8px 24px rgba(255,88,88,0.08); z-index:3; right:-2%; top:48%;">
                     <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:14px; font-weight:700; color:white;">С</span>
@@ -186,17 +216,17 @@
                     <p style="font-size:13px; font-weight:700; color:#2D3436; margin:0 0 2px;">Саша, 25</p>
                     <p style="font-size:11px; color:#636E72; margin:0;">Сочи · Общение</p>
                 </div>
-
+ 
                 <div style="position:absolute; top:3%; right:0%; background:white; border-radius:50px; padding:8px 16px; box-shadow:0 4px 20px rgba(255,88,88,0.12); display:flex; align-items:center; gap:8px; z-index:5;">
                     <div class="live-dot"></div>
                     <span style="font-size:12px; font-weight:600; color:#2D3436;">@profileCount онлайн</span>
                 </div>
-
+ 
                 <div class="float-card-4" style="position:absolute; bottom:6%; left:26%; background:white; border-radius:50px; padding:8px 16px; box-shadow:0 4px 20px rgba(255,88,88,0.1); display:flex; align-items:center; gap:8px; z-index:5;">
                     <svg width="14" height="14"viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     <span style="font-size:12px; font-weight:600; color:#2D3436;">+12 сегодня</span>
                 </div>
-
+ 
                 <div class="float-card-3" style="position:absolute; top:38%; left:6%; background:white; border-radius:50px; padding:8px 14px; box-shadow:0 4px 16px rgba(248,87,166,0.12); display:flex; align-items:center; gap:8px; z-index:5;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F857A6" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                     <span style="font-size:12px; font-weight:600; color:#2D3436;">3 новых</span>
@@ -205,7 +235,7 @@
         </div>
     </div>
 </div>
-
+ 
 <!-- Три шага -->
 <div style="background: linear-gradient(180deg, #FFF5F6 0%, white 100%); padding: 100px 0;">
     <div class="container">
@@ -213,7 +243,7 @@
             <p style="font-size:12px; letter-spacing:2px; color:#F857A6; margin-bottom:10px; font-weight:600;">КАК ЭТО РАБОТАЕТ</p>
             <h2 style="font-size:40px; font-weight:700; color:#2D3436; margin:0;">Три простых шага</h2>
         </div>
-        <div style="display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap: 28px;">
+        <div class="steps-grid" style="display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap: 28px;">
             <div class="step-card-custom">
                 <div class="step-bg-num">01</div>
                 <div class="step-content">
@@ -247,7 +277,7 @@
         </div>
     </div>
 </div>
-
+ 
 <!-- Последние анкеты -->
 <div style="background: white; padding: 100px 0;">
     <div class="container">
@@ -255,7 +285,7 @@
             <p style="font-size:12px; letter-spacing:2px; color:#F857A6; margin-bottom:10px; font-weight:600;">НОВЫЕ УЧАСТНИКИ</p>
             <h2 style="font-size:40px; font-weight:700; color:#2D3436; margin:0;">Недавно зарегистрировались</h2>
         </div>
-        <div class="row g-4 justify-content-center align-items-end">
+        <div class="row g-4 justify-content-center align-items-end recent-cards-row">
             @{ int cardIndex = 0; }
             @foreach (var p in recentProfiles)
             {
@@ -287,12 +317,12 @@
         </div>
     </div>
 </div>
-
+ 
 <!-- Цитата -->
-<div style="background: linear-gradient(135deg, #FF5858 0%, #F857A6 100%); padding: 80px 0; position: relative; overflow: hidden;">
+<div class="quote-section" style="background: linear-gradient(135deg, #FF5858 0%, #F857A6 100%); padding: 80px 0; position: relative; overflow: hidden;">
     <div style="position:absolute; top:-80px; left:-80px; width:300px; height:300px; border-radius:50%; background:rgba(255,255,255,0.06);"></div>
     <div style="position:absolute; bottom:-60px; right:-60px; width:240px; height:240px; border-radius:50%; background:rgba(255,255,255,0.06);"></div>
-
+ 
     <div class="container" style="position:relative; z-index:1;">
         <div class="row align-items-center">
             <div class="col-md-7" style="padding-right: 60px;">
@@ -306,8 +336,8 @@
                 <p style="font-size:15px; color:rgba(255,255,255,0.8); font-weight:500; font-style:italic; margin:0;">
                     Антуан де Сент-Экзюпери</p>
             </div>
-
-            <div class="col-md-5">
+ 
+            <div class="col-md-5 stats-cards">
                 <div style="display:flex; flex-direction:column; gap:16px;">
                     <div style="background:rgba(255,255,255,0.12); border-radius:20px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
                         <div style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
@@ -341,7 +371,7 @@
         </div>
     </div>
 </div>
-
+ 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var target = @profileCount;
@@ -358,7 +388,7 @@
                 }, 50);
             }
         }
-
+ 
         document.addEventListener('click', function (e) {
             var menu = document.getElementById('goalMenu');
             var arrow = document.getElementById('goalArrow');
@@ -367,7 +397,7 @@
                 if (arrow) arrow.style.transform = 'rotate(0deg)';
             }
         });});
-
+ 
     function toggleGoal(e) {
         e.stopPropagation();
         var menu = document.getElementById('goalMenu');
@@ -376,7 +406,7 @@
         menu.style.display = isOpen ? 'none' : 'block';
         arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
     }
-
+ 
     function chooseGoal(value, label, el) {
         document.getElementById('goalValue').value = value;
         document.getElementById('goalLabel').textContent = label;
@@ -389,3 +419,4 @@
         el.classList.add('selected');
     }
 </script>
+ 
