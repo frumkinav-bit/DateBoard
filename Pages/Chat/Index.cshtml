@@ -152,20 +152,12 @@
             flex: 1;
         }
         
-        .chat-header-center {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255,88,88,0.06);
-            border: 1px solid rgba(255,88,88,0.15);
-            border-radius: 50px;
-            padding: 6px 14px;
-            margin: 0 10px;
-        }
+        /* УБРАН chat-header-center с Знакомьтесь! */
         
         .chat-header-right {
             display: flex;
             align-items: center;
+            gap: 8px;
         }
         
         /* Иконка чата в шапке справа */
@@ -203,11 +195,22 @@
             height: 20px;
         }
         
-        /* Секция быстрых фраз в сайдбаре — убрали заголовок */
+        /* Быстрые фразы в сайдбаре — показываем только верхний блок на мобильном */
         .quick-phrases-section {
             margin-top: auto;
             padding-top: 20px;
             border-top: 1px solid #EFEFEF;
+        }
+        
+        /* Верхний блок быстрых фраз для мобильного */
+        .quick-phrases-top-mobile {
+            display: block;
+            margin-bottom: 20px;
+        }
+        
+        /* Нижний блок быстрых фраз скрываем на мобильном */
+        .quick-phrases-section {
+            display: none;
         }
         
         .chat-messages {
@@ -262,7 +265,7 @@
     
     /* Десктоп — скрываем мобильные элементы */
     @@media (min-width: 769px) {
-        .swipe-hint, .menu-btn, .sidebar-overlay, .quick-phrases-btn, .header-chat-icon, .chat-header-left, .chat-header-center, .chat-header-right {
+        .swipe-hint, .menu-btn, .sidebar-overlay, .quick-phrases-btn, .header-chat-icon, .chat-header-left, .chat-header-right, .quick-phrases-top-mobile {
             display: none !important;
         }
     }
@@ -271,14 +274,6 @@
     @@media (max-width: 380px) {
         .msg-row {
             max-width: 90%;
-        }
-        
-        .chat-header-center {
-            padding: 4px 10px;
-        }
-        
-        .chat-header-center span {
-            font-size: 11px;
         }
         
         .chat-sidebar {
@@ -311,6 +306,18 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- БЫСТРЫЕ ФРАЗЫ — ВЕРХНИЙ БЛОК (для мобильного) -->
+            <div class="quick-phrases-top-mobile" style="margin-bottom:20px;">
+                <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">БЫСТРЫЕ ФРАЗЫ</p>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <button class="quick-btn" onclick="insertPhrase('Привет! Как дела?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>Привет! Как дела?</button>
+                    <button class="quick-btn" onclick="insertPhrase('Расскажи о себе')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Расскажи о себе</button>
+                    <button class="quick-btn" onclick="insertPhrase('Какие у тебя хобби?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Какие у тебя хобби?</button>
+                    <button class="quick-btn" onclick="insertPhrase('Из какого ты города?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Из какого ты города?</button>
+                </div>
+            </div>
+            
             <div style="margin-bottom:20px;">
                 <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">ПРАВИЛА ЧАТА</p>
                 <div style="background:#FFF5F5; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
@@ -329,7 +336,7 @@
                 </div>
             </div>
             
-            <!-- Быстрые фразы внизу сайдбара -->
+            <!-- Быстрые фразы внизу сайдбара (для десктопа) -->
             <div class="quick-phrases-section">
                 <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">БЫСТРЫЕ ФРАЗЫ</p>
                 <div style="display:flex; flex-direction:column; gap:6px;">
@@ -359,19 +366,13 @@
             </div>
         </div>
  
-        <!-- Мобильная шапка (переставленные элементы) -->
+        <!-- Мобильная шапка (убрана надпись Знакомьтесь!) -->
         <div class="chat-header mobile-header">
             <!-- Слева: кнопка меню -->
             <div class="chat-header-left">
                 <div class="menu-btn" onclick="toggleSidebar()" id="menuBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </div>
-            </div>
-            
-            <!-- По центру: Знакомьтесь -->
-            <div class="chat-header-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                <span style="font-size:12px; color:#FF5858; font-weight:600;">Знакомьтесь!</span>
             </div>
             
             <!-- Справа: иконка чата и кнопка быстрых фраз -->
@@ -664,4 +665,3 @@
     var box = document.getElementById("chatBox");
     if (box) box.scrollTop = box.scrollHeight;
 </script>
- 
