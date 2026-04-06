@@ -81,7 +81,7 @@
         .search-box { max-width: 400px; margin: 0 auto; position: relative; z-index: 100; }
         .floating-cards-container { display: none !important; }
         .mobile-cards-showcase { display: block !important; }
-        .steps-section { margin-top: 20px !important; }
+        .steps-section { margin-top: 0 !important; padding-top: 60px !important; }
         .steps-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
         .step-card-custom { padding: 30px 24px; }
         .step-bg-num { font-size: 80px; }
@@ -118,11 +118,12 @@
         max-width: 340px;
     }
     
-    /* Центральная карточка - позиционирована правее */
+    /* Центральная карточка Анна - по центру страницы */
     .mobile-main-card {
         position: absolute;
         top: 5%;
-        left: 20%;
+        left: 50%;
+        transform: translateX(-50%);
         background: white;
         border-radius: 24px;
         padding: 18px;
@@ -214,13 +215,14 @@
         gap: 6px;
     }
     
-    /* Позиции спутников - перераспределены относительно новой позиции карточки */
+    /* Позиции спутников */
     .satellite-1 { top: 0; right: 0; animation-delay: 0s; }
     .satellite-2 { top: 30%; right: -10%; animation-delay: 0.5s; }
     .satellite-3 { bottom: 20%; left: 0; animation-delay: 1s; }
     .satellite-4 { bottom: 5%; right: 5%; animation-delay: 1.5s; }
     .satellite-5 { top: 50%; left: 50%; animation-delay: 0.3s; z-index: 5; }
-    .satellite-6 { top: 65%; left: 5%; animation-delay: 0.8s; }
+    .satellite-6 { top: 10%; left: 0; animation-delay: 0.8s; }
+    .satellite-7 { top: 0; left: 5%; animation-delay: 1.2s; }
     
     /* Декоративные круги как в веб версии */
     .mobile-deco-circle {
@@ -298,8 +300,9 @@
                         </span>
                     </div>
                     
-                    <div class="mobile-satellite mobile-satellite-white mobile-satellite-blur-more satellite-3">
-                        <span>Игорь, 28</span>
+                    <!-- Дима - непрозрачный, слева -->
+                    <div class="mobile-satellite mobile-satellite-white satellite-3">
+                        <span>Дима, 31</span>
                     </div>
                     
                     <div class="mobile-satellite mobile-satellite-gradient satellite-4">
@@ -314,10 +317,18 @@
                     </div>
                     
                     <div class="mobile-satellite mobile-satellite-light satellite-6">
-                        <span>Дима, 31</span>
+                        <span>Игорь, 28</span>
                     </div>
                     
-                    <!-- Центральная карточка Анна - правее -->
+                    <!-- Новый элемент в левом верхнем углу -->
+                    <div class="mobile-satellite mobile-satellite-light mobile-satellite-blur-more satellite-7" style="padding: 6px 10px; font-size: 10px;">
+                        <span class="mobile-satellite-icon">
+                            <div class="live-dot" style="width: 6px; height: 6px;"></div>
+                            онлайн
+                        </span>
+                    </div>
+                    
+                    <!-- Центральная карточка Анна - по центру -->
                     <div class="mobile-main-card">
                         <div class="mobile-main-avatar">А</div>
                         <h4>Анна, 24</h4>
@@ -623,3 +634,4 @@
         el.classList.add('selected');
     }
 </script>
+ 
