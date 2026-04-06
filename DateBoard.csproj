@@ -31,6 +31,7 @@
 
 	<ItemGroup>
 		<Folder Include="wwwroot\lib\signalr\dist\browser\" />
+		<Folder Include="wwwroot\images\" />
 	</ItemGroup>
 
 	<ItemGroup>
