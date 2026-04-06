@@ -71,17 +71,17 @@
     
     /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
     @@media (max-width: 991px) {
-        .hero-section { padding: 30px 0 60px !important; }
+        .hero-section { padding: 30px 0 200px !important; position: relative; }
         .hero-section .container { padding-left: 20px; padding-right: 20px; }
         .hero-section h1 { font-size: 36px !important; line-height: 1.2 !important; }
         .hero-section p { font-size: 15px !important; }
         .hero-content { padding-right: 0 !important; }
         .search-fields { flex-direction: column !important; }
         .search-field-card { width: 100%; }
-        .search-box { max-width: 400px; margin: 0 auto; }
+        .search-box { max-width: 400px; margin: 0 auto; position: relative; z-index: 100; }
         .floating-cards-container { display: none !important; }
         .mobile-cards-showcase { display: block !important; }
-        .steps-section { margin-top: 60px !important; }
+        .steps-section { margin-top: 40px !important; }
         .steps-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
         .step-card-custom { padding: 30px 24px; }
         .step-bg-num { font-size: 80px; }
@@ -97,10 +97,11 @@
     }
     
     @@media (max-width: 768px) {
+        .hero-section { padding-bottom: 220px !important; }
         .hero-section h1 { font-size: 32px !important; }
         .search-box { padding: 16px !important; }
         .stats-cards { flex-direction: column; }
-        .mobile-main-card { transform: scale(0.95); }
+        .mobile-main-card { transform: scale(0.9); }
     }
     
     @@media (min-width: 992px) {
@@ -112,21 +113,20 @@
     .mobile-cards-showcase {
         display: none;
         position: relative;
-        height: 280px;
-        margin: 40px auto;
+        height: 200px;
+        margin: 20px auto 40px;
         max-width: 340px;
     }
     
-    /* Центральная карточка - как Анна в веб версии */
+    /* Центральная карточка - позиционирована выше и левее */
     .mobile-main-card {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        top: 5%;
+        left: 5%;
         background: white;
         border-radius: 24px;
-        padding: 20px;
-        width: 160px;
+        padding: 18px;
+        width: 150px;
         box-shadow: 0 20px 50px rgba(255,88,88,0.2);
         z-index: 10;
         animation: floatMobile 4s ease-in-out infinite;
@@ -134,38 +134,38 @@
     }
     
     .mobile-main-avatar {
-        width: 60px;
-        height: 60px;
+        width: 56px;
+        height: 56px;
         border-radius: 50%;
         background: linear-gradient(135deg,#FF5858,#F857A6);
-        margin: 0 auto 12px;
+        margin: 0 auto 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-weight: 700;
-        font-size: 24px;
+        font-size: 22px;
         box-shadow: 0 8px 20px rgba(255,88,88,0.3);
     }
     
     .mobile-main-card h4 {
-        margin: 0 0 4px;
-        font-size: 15px;
+        margin: 0 0 3px;
+        font-size: 14px;
         font-weight: 700;
         color: #2D3436;
     }
     
     .mobile-main-card p {
-        margin: 0 0 12px;
-        font-size: 11px;
+        margin: 0 0 10px;
+        font-size: 10px;
         color: #636E72;
     }
     
     .mobile-main-badge {
         background: linear-gradient(135deg,#FF5858,#F857A6);
         border-radius: 20px;
-        padding: 6px 12px;
-        font-size: 11px;
+        padding: 5px 10px;
+        font-size: 10px;
         color: white;
         font-weight: 600;
     }
@@ -214,13 +214,13 @@
         gap: 6px;
     }
     
-    /* Позиции спутников */
-    .satellite-1 { top: 10%; left: 0; animation-delay: 0s; }
-    .satellite-2 { top: 5%; right: 5%; animation-delay: 0.5s; }
-    .satellite-3 { bottom: 20%; left: 5%; animation-delay: 1s; }
-    .satellite-4 { bottom: 10%; right: 0; animation-delay: 1.5s; }
-    .satellite-5 { top: 35%; right: -5%; animation-delay: 0.3s; }
-    .satellite-6 { bottom: 35%; left: -5%; animation-delay: 0.8s; }
+    /* Позиции спутников - перераспределены относительно новой позиции карточки */
+    .satellite-1 { top: 0; right: 5%; animation-delay: 0s; }
+    .satellite-2 { top: 25%; right: -5%; animation-delay: 0.5s; }
+    .satellite-3 { bottom: 15%; left: 0; animation-delay: 1s; }
+    .satellite-4 { bottom: 5%; right: 10%; animation-delay: 1.5s; }
+    .satellite-5 { top: 45%; left: 45%; animation-delay: 0.3s; z-index: 5; }
+    .satellite-6 { top: 60%; left: -5%; animation-delay: 0.8s; }
     
     /* Декоративные круги как в веб версии */
     .mobile-deco-circle {
@@ -230,27 +230,27 @@
     }
     
     .mobile-deco-1 {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
         background: rgba(255,88,88,0.05);
-        top: 0;
-        right: 10%;
+        top: 10%;
+        right: 20%;
     }
     
     .mobile-deco-2 {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         background: rgba(248,87,166,0.06);
-        bottom: 10%;
-        left: 15%;
+        bottom: 20%;
+        left: 30%;
     }
     
     .mobile-deco-3 {
         width: 40px;
         height: 40px;
         background: rgba(255,88,88,0.08);
-        top: 20%;
-        left: 5%;
+        top: 40%;
+        left: 10%;
     }
 </style>
  
@@ -317,7 +317,7 @@
                         <span>Дима, 31</span>
                     </div>
                     
-                    <!-- Центральная карточка Анна -->
+                    <!-- Центральная карточка Анна - выше и левее -->
                     <div class="mobile-main-card">
                         <div class="mobile-main-avatar">А</div>
                         <h4>Анна, 24</h4>
