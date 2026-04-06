@@ -17,6 +17,9 @@
     @@keyframes float4 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
     @@keyframes float5 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-16px); } }
     @@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @@keyframes floatMobile { 0%, 100% { transform: translateY(0px) rotate(-3deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+    @@keyframes floatMobile2 { 0%, 100% { transform: translateY(0px) rotate(2deg); } 50% { transform: translateY(-6px) rotate(-2deg); } }
+    @@keyframes pulseScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
     .hero-animate { animation: fadeUp 0.8s ease forwards; }
     .hero-animate-delay { animation: fadeUp 0.8s ease 0.2s forwards; opacity: 0; }
     .hero-animate-delay2 { animation: fadeUp 0.8s ease 0.4s forwards; opacity: 0; }
@@ -69,31 +72,137 @@
     /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
     @@media (max-width: 991px) {
         .hero-section { padding: 30px 0 60px !important; }
+        .hero-section .container { padding-left: 20px; padding-right: 20px; }
         .hero-section h1 { font-size: 36px !important; line-height: 1.2 !important; }
         .hero-section p { font-size: 15px !important; }
         .hero-content { padding-right: 0 !important; }
         .search-fields { flex-direction: column !important; }
         .search-field-card { width: 100%; }
         .floating-cards-container { display: none !important; }
+        .mobile-cards-showcase { display: flex !important; }
         .steps-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
         .step-card-custom { padding: 30px 24px; }
         .step-bg-num { font-size: 80px; }
         .quote-section h2 { font-size: 28px !important; }
         .quote-section { padding: 60px 0 !important; }
+        .quote-section .container { padding-left: 20px; padding-right: 20px; }
         .stats-cards { margin-top: 40px; }
         .recent-cards-row { flex-direction: column; }
         .recent-cards-row .col-md-4 { margin-top: 20px !important; width: 100%; }
         .recent-card img { height: 180px !important; }
+        .recent-section .container { padding-left: 20px; padding-right: 20px; }
+        .steps-section .container { padding-left: 20px; padding-right: 20px; }
     }
     
     @@media (max-width: 768px) {
         .hero-section h1 { font-size: 32px !important; }
         .search-box { padding: 16px !important; }
         .stats-cards { flex-direction: column; }
+        .mobile-mini-card { transform: scale(0.9); }
     }
     
     @@media (min-width: 992px) {
         .floating-cards-container { display: block; }
+        .mobile-cards-showcase { display: none !important; }
+    }
+    
+    /* Мобильные дизайнерские элементы */
+    .mobile-cards-showcase {
+        display: none;
+        position: relative;
+        height: 200px;
+        margin: 30px 0;
+        overflow: visible;
+    }
+    
+    .mobile-float-card {
+        position: absolute;
+        background: white;
+        border-radius: 16px;
+        padding: 12px 16px;
+        box-shadow: 0 8px 24px rgba(255,88,88,0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: floatMobile 3s ease-in-out infinite;
+    }
+    
+    .mobile-float-card-2 {
+        animation: floatMobile2 3.5s ease-in-out 0.5s infinite;
+    }
+    
+    .mobile-float-card-3 {
+        animation: pulseScale 2s ease-in-out infinite;
+    }
+    
+    .mobile-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#FF5858,#F857A6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    
+    .mobile-avatar-small {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    .mobile-card-info h4 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: #2D3436;
+    }
+    
+    .mobile-card-info p {
+        margin: 2px 0 0;
+        font-size: 11px;
+        color: #636E72;
+    }
+    
+    .mobile-badge {
+        position: absolute;
+        background: linear-gradient(135deg,#FF5858,#F857A6);
+        color: white;
+        border-radius: 20px;
+        padding: 6px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(255,88,88,0.3);
+    }
+    
+    .mobile-like-badge {
+        background: white;
+        color: #FF5858;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .mobile-stats-pill {
+        position: absolute;
+        background: white;
+        border-radius: 50px;
+        padding: 8px 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 16px rgba(255,88,88,0.15);
+        font-size: 12px;
+        font-weight: 600;
+        color: #2D3436;
+    }
+    
+    .mobile-heart-icon {
+        color: #FF5858;
     }
 </style>
  
@@ -121,6 +230,53 @@
                     Тысячи реальных анкет рядом с тобой.
 Начни общение прямо сейчас.
                 </p>
+ 
+                <!-- Мобильные плавающие карточки -->
+                <div class="mobile-cards-showcase">
+                    <!-- Карточка 1 - Анна -->
+                    <div class="mobile-float-card" style="top: 10px; left: 0;">
+                        <div class="mobile-avatar">А</div>
+                        <div class="mobile-card-info">
+                            <h4>Анна, 24</h4>
+                            <p>Москва · Отношения</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Карточка 2 - Игорь -->
+                    <div class="mobile-float-card mobile-float-card-2" style="top: 0; right: 0;">
+                        <div class="mobile-avatar mobile-avatar-small" style="background: linear-gradient(135deg,#F857A6,#FF5858);">И</div>
+                        <div class="mobile-card-info">
+                            <h4>Игорь, 28</h4>
+                            <p>Питер · Дружба</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Карточка 3 - Дима -->
+                    <div class="mobile-float-card" style="bottom: 20px; left: 10%;">
+                        <div class="mobile-avatar mobile-avatar-small" style="background: rgba(248,87,166,0.2); color: #F857A6;">Д</div>
+                        <div class="mobile-card-info">
+                            <h4>Дима, 31</h4>
+                            <p>Москва · Брак</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Бейдж +12 сегодня -->
+                    <div class="mobile-stats-pill" style="bottom: 0; right: 0;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        <span>+12 сегодня</span>
+                    </div>
+                    
+                    <!-- Бейдж 3 новых -->
+                    <div class="mobile-stats-pill" style="top: 50%; right: 5px; transform: translateY(-50%);">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F857A6" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <span>3 новых</span>
+                    </div>
+                    
+                    <!-- Бейдж Катя -->
+                    <div class="mobile-float-card mobile-float-card-3" style="top: 40%; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg,#FF5858,#F857A6); color: white; border: none;">
+                        <div style="font-size: 12px; font-weight: 600;">Катя, 22 · Казань</div>
+                    </div>
+                </div>
  
                 <div class="hero-animate-delay2">
                     <form method="get" action="/Feed/Index">
@@ -237,7 +393,7 @@
 </div>
  
 <!-- Три шага -->
-<div style="background: linear-gradient(180deg, #FFF5F6 0%, white 100%); padding: 100px 0;">
+<div class="steps-section" style="background: linear-gradient(180deg, #FFF5F6 0%, white 100%); padding: 100px 0;">
     <div class="container">
         <div style="text-align: center; margin-bottom: 60px;">
             <p style="font-size:12px; letter-spacing:2px; color:#F857A6; margin-bottom:10px; font-weight:600;">КАК ЭТО РАБОТАЕТ</p>
@@ -279,7 +435,7 @@
 </div>
  
 <!-- Последние анкеты -->
-<div style="background: white; padding: 100px 0;">
+<div class="recent-section" style="background: white; padding: 100px 0;">
     <div class="container">
         <div style="text-align:center; margin-bottom:48px;">
             <p style="font-size:12px; letter-spacing:2px; color:#F857A6; margin-bottom:10px; font-weight:600;">НОВЫЕ УЧАСТНИКИ</p>
