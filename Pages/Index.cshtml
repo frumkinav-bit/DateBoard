@@ -81,7 +81,7 @@
         .search-box { max-width: 400px; margin: 0 auto; position: relative; z-index: 100; }
         .floating-cards-container { display: none !important; }
         .mobile-cards-showcase { display: block !important; }
-        .steps-section { margin-top: 40px !important; }
+        .steps-section { margin-top: 20px !important; }
         .steps-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
         .step-card-custom { padding: 30px 24px; }
         .step-bg-num { font-size: 80px; }
@@ -118,11 +118,11 @@
         max-width: 340px;
     }
     
-    /* Центральная карточка - позиционирована выше и левее */
+    /* Центральная карточка - позиционирована правее */
     .mobile-main-card {
         position: absolute;
         top: 5%;
-        left: 5%;
+        left: 20%;
         background: white;
         border-radius: 24px;
         padding: 18px;
@@ -215,12 +215,12 @@
     }
     
     /* Позиции спутников - перераспределены относительно новой позиции карточки */
-    .satellite-1 { top: 0; right: 5%; animation-delay: 0s; }
-    .satellite-2 { top: 25%; right: -5%; animation-delay: 0.5s; }
-    .satellite-3 { bottom: 15%; left: 0; animation-delay: 1s; }
-    .satellite-4 { bottom: 5%; right: 10%; animation-delay: 1.5s; }
-    .satellite-5 { top: 45%; left: 45%; animation-delay: 0.3s; z-index: 5; }
-    .satellite-6 { top: 60%; left: -5%; animation-delay: 0.8s; }
+    .satellite-1 { top: 0; right: 0; animation-delay: 0s; }
+    .satellite-2 { top: 30%; right: -10%; animation-delay: 0.5s; }
+    .satellite-3 { bottom: 20%; left: 0; animation-delay: 1s; }
+    .satellite-4 { bottom: 5%; right: 5%; animation-delay: 1.5s; }
+    .satellite-5 { top: 50%; left: 50%; animation-delay: 0.3s; z-index: 5; }
+    .satellite-6 { top: 65%; left: 5%; animation-delay: 0.8s; }
     
     /* Декоративные круги как в веб версии */
     .mobile-deco-circle {
@@ -317,7 +317,7 @@
                         <span>Дима, 31</span>
                     </div>
                     
-                    <!-- Центральная карточка Анна - выше и левее -->
+                    <!-- Центральная карточка Анна - правее -->
                     <div class="mobile-main-card">
                         <div class="mobile-main-avatar">А</div>
                         <h4>Анна, 24</h4>
