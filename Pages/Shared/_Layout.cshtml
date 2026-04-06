@@ -455,7 +455,11 @@
                 width: 420px;
             }
         }
-        
+         @@media (min-width: 992px) {
+            .nav-menu-center .nav-link-locked::after {
+                display: none;
+            }
+        }
         /* ===== Toast и остальные стили ===== */
         .toast-container {
             position: fixed;
@@ -813,7 +817,7 @@
                 <a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="side-nav-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     Лента анкет
-                    <span style="margin-left: auto; font-size: 11px; color: #FF5858; background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;"></span>
+                    <span style="margin-left: auto; font-size: 11px; color: #FF5858; background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;">🔒</span>
                 </a>
             }
             
