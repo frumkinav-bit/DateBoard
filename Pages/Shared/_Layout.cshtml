@@ -46,7 +46,7 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ (Главная, Лента, Чат) ===== */
+        /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ ===== */
         .nav-menu-center {
             list-style: none;
             margin: 0;
@@ -83,6 +83,18 @@
             color: #FF5858 !important;
             background: rgba(255,88,88,0.08);
             font-weight: 600;
+        }
+        
+        /* Стиль для заблокированной ленты */
+        .nav-link-locked {
+            position: relative;
+        }
+        
+        .nav-link-locked::after {
+            content: "🔒";
+            font-size: 10px;
+            margin-left: 4px;
+            opacity: 0.6;
         }
         
         /* ===== КНОПКА МЕНЮ ===== */
@@ -682,10 +694,20 @@
                 <span>Date</span><span>Board</span>
             </a>
             
-            <!-- ЦЕНТР: Главная, Лента, Общий чат -->
+            <!-- ЦЕНТР: Главная, Лента (с проверкой), Общий чат -->
             <ul class="nav-menu-center">
                 <li><a href="/" class="nav-link-custom nav-link-active">Главная</a></li>
-                <li><a href="/Feed/Index" class="nav-link-custom">Лента</a></li>
+                
+                <!-- Лента: перенаправление на вход для неавторизованных -->
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a href="/Feed/Index" class="nav-link-custom">Лента</a></li>
+                }
+                else
+                {
+                    <li><a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="nav-link-custom nav-link-locked">Лента</a></li>
+                }
+                
                 <li><a href="/Chat/Index" class="nav-link-custom">Общий чат</a></li>
             </ul>
             
@@ -956,3 +978,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+ 
