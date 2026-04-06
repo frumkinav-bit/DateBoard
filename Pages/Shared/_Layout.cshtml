@@ -46,7 +46,7 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ ===== */
+        /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ (только Главная и Чат) ===== */
         .nav-menu-center {
             list-style: none;
             margin: 0;
@@ -408,15 +408,18 @@
                 overflow: hidden;
             }
             
-            /* Мобильные действия - кнопки ближе, но "Войти" правее */
+            /* Мобильные действия */
             .nav-actions {
                 gap: 4px;
             }
             
-            /* Кнопка "Войти" правее - увеличиваем отступ слева */
+            /* Кнопка "Войти" максимально право */
             .nav-actions .btn:first-child,
-            .nav-actions a.btn:first-child {
-                margin-left: 8px !important;
+            .nav-actions a.btn:first-child,
+            .nav-actions form:first-child .btn,
+            .nav-actions form:first-child a.btn {
+                margin-left: 16px !important;
+                margin-right: 4px !important;
             }
             
             .nav-notification {
@@ -434,10 +437,12 @@
                 font-size: 20px;
             }
             
-            /* На очень маленьких экранах ещё больше отступ */
+            /* Ещё больше отступ для кнопки Войти */
             .nav-actions .btn:first-child,
-            .nav-actions a.btn:first-child {
-                margin-left: 12px !important;
+            .nav-actions a.btn:first-child,
+            .nav-actions form:first-child .btn,
+            .nav-actions form:first-child a.btn {
+                margin-left: 20px !important;
             }
         }
         
@@ -681,10 +686,9 @@
                 <span>Date</span><span>Board</span>
             </a>
             
-            <!-- ЦЕНТР: Только главные разделы -->
+            <!-- ЦЕНТР: Только Главная и Общий чат (Лента убрана в меню) -->
             <ul class="nav-menu-center">
                 <li><a href="/" class="nav-link-custom nav-link-active">Главная</a></li>
-                <li><a href="/Feed/Index" class="nav-link-custom">Лента</a></li>
                 <li><a href="/Chat/Index" class="nav-link-custom">Общий чат</a></li>
             </ul>
             
@@ -721,7 +725,7 @@
                         </div>
                     </div>
                     
-                    <!-- Иконка аккаунта с именем - ведёт в редактирование профиля -->
+                    <!-- Иконка аккаунта с именем -->
                     <a href="/Profile/Edit" class="nav-user" title="Мой профиль">
                         <div class="nav-avatar">
                             @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "U")
@@ -777,10 +781,24 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 Главная
             </a>
-            <a href="/Feed/Index" class="side-nav-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                Лента анкет
-            </a>
+            
+            <!-- Лента с проверкой авторизации -->
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="/Feed/Index" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Лента анкет
+                </a>
+            }
+            else
+            {
+                <a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Лента анкет
+                    <span style="margin-left: auto; font-size: 11px; color: #FF5858; background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;">🔒</span>
+                </a>
+            }
+            
             <a href="/Chat/Index" class="side-nav-link">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 Общий чат
@@ -788,16 +806,16 @@
             
             <!-- Дополнительные разделы -->
             <div class="side-nav-section">Разделы</div>
-            <a href="/Messages/Index" class="side-nav-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                Личные сообщения
-            </a>
             
             @if (User.Identity.IsAuthenticated)
             {
-                <!-- Профиль (объединено) -->
+                <a href="/Messages/Index" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    Личные сообщения
+                </a>
+                
+                <!-- Профиль -->
                 <div class="side-nav-section">Мой профиль</div>
-                <!-- Переименовано: Редактировать анкету → Мой профиль -->
                 <a href="/Profile/Edit" class="side-nav-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     Мой профиль
@@ -941,3 +959,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+ 
