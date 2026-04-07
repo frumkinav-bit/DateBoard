@@ -4,739 +4,624 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>@ViewData["Title"] - Свах Купидонов</title>
+    
+    <!-- Закруглённый favicon — SVG с градиентом -->
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon.svg" />
     <link rel="icon" type="image/png" href="~/images/logo_64.png" />
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DateBoard.styles.css" asp-append-version="true" />
     
     <style>
-            * {
-                font-family: 'Montserrat', sans-serif;
-                -webkit-tap-highlight-color: transparent;
-            }
-        
-            /* ===== ШАПКА ===== */
-            .navbar-main {
-                background: white;
-                border-bottom: 1px solid #EFEFEF;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-                position: sticky;
-                top: 0;
-                z-index: 1000;
-            }
-        
-                .navbar-main .container {
-                    height: 70px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                }
-        
-            /* ===== ЛОГОТИП СВАХ КУПИДОНОВ ===== */
-            .nav-brand {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                text-decoration: none;
-                flex-shrink: 0;
-            }
-        
-            .nav-brand-logo {
-                width: 70px;
-                height: 70px;
-                object-fit: cover;
-            }
-        
-            .nav-brand-text {
-                display: flex;
-                flex-direction: column;
-            }
-        
-            .nav-brand-title {
-                font-weight: 800;
-                font-size: 30px;
-                line-height: 1.2;
-            }
-        
-                .nav-brand-title .svah {
-                    color: #F857A6;
-                }
-        
-                .nav-brand-title .kupidonov {
-                    color: #636E72;
-                }
-        
-            .nav-brand-subtitle {
-                font-size: 16px;
-                color: #B2BEC3;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-            }
-        
-            /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ ===== */
-            .nav-menu-center {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                align-items: center;
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-        
-                .nav-menu-center li {
-                    margin: 0 4px;
-                }
-        
-            .nav-link-custom {
-                color: #636E72;
-                font-size: 14px;
-                font-weight: 500;
-                padding: 10px 20px;
-                text-decoration: none;
-                border-radius: 20px;
-                display: block;
-                transition: all 0.2s;
-                white-space: nowrap;
-            }
-        
-                .nav-link-custom:hover {
-                    color: #FF5858;
-                    background: rgba(255,88,88,0.07);
-                }
-        
-            .nav-link-active {
-                color: #FF5858 !important;
-                background: rgba(255,88,88,0.08);
-                font-weight: 600;
-            }
-        
-            /* Стиль для заблокированной ленты */
-            .nav-link-locked::after {
-                content: "";
-                display: inline-block;
-                width: 12px;
-                height: 12px;
-                margin-left: 6px;
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23FF5858' stroke-width='2'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'%3E%3C/path%3E%3C/svg%3E");
-                background-size: contain;
-                opacity: 0.6;
-            }
-        
-            /* ===== КНОПКА МЕНЮ ===== */
-            .menu-btn {
-                background: rgba(255,88,88,0.08);
-                border: none;
-                padding: 10px 24px;
-                border-radius: 50px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #FF5858;
-                font-weight: 600;
-                font-size: 14px;
-                transition: all 0.2s;
-                font-family: 'Montserrat', sans-serif;
-            }
-        
-                .menu-btn:hover {
-                    background: rgba(255,88,88,0.15);
-                }
-        
-                .menu-btn svg {
-                    width: 18px;
-                    height: 18px;
-                }
-        
-            /* ===== МОБИЛЬНАЯ КНОПКА МЕНЮ ===== */
-            .mobile-menu-btn {
-                display: none;
-                background: none;
-                border: none;
-                padding: 8px;
-                cursor: pointer;
-                flex-direction: column;
-                gap: 5px;
-                width: 40px;
-                height: 40px;
-                align-items: center;
-                justify-content: center;
-                border-radius: 12px;
-                transition: background 0.2s;
-            }
-        
-                .mobile-menu-btn:active {
-                    background: rgba(255,88,88,0.1);
-                }
-        
-            .hamburger-line {
-                display: block;
-                width: 22px;
-                height: 2px;
-                background: #FF5858;
-                border-radius: 2px;
-                transition: all 0.3s ease;
-            }
-        
-            .mobile-menu-btn.active .hamburger-line:nth-child(1) {
-                transform: rotate(45deg) translate(5px, 5px);
-            }
-        
-            .mobile-menu-btn.active .hamburger-line:nth-child(2) {
-                opacity: 0;
-            }
-        
-            .mobile-menu-btn.active .hamburger-line:nth-child(3) {
-                transform: rotate(-45deg) translate(5px, -5px);
-            }
-        
-            /* ===== БОКОВОЕ МЕНЮ ===== */
-            .nav-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 998;
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s;
-                backdrop-filter: blur(4px);
-            }
-        
-                .nav-overlay.active {
-                    opacity: 1;
-                    visibility: visible;
-                }
-        
-            .side-nav {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 380px;
-                max-width: 90vw;
-                height: 100vh;
-                background: white;
-                z-index: 999;
-                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                overflow-y: auto;
-                display: flex;
-                flex-direction: column;
-            }
-        
-                .side-nav.active {
-                    right: 0;
-                }
-        
-            .side-nav-header {
-                padding: 24px;
-                border-bottom: 1px solid #F0F0F0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background: linear-gradient(135deg, #FFF5F7 0%, white 100%);
-                position: sticky;
-                top: 0;
-                z-index: 10;
-            }
-        
-            .side-nav-close {
-                background: rgba(255,88,88,0.1);
-                border: none;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                color: #FF5858;
-            }
-        
-            .side-nav-content {
-                flex: 1;
-                padding: 20px 24px;
-            }
-        
-            .side-nav-section {
-                font-size: 11px;
-                color: #B2BEC3;
-                text-transform: uppercase;
-                letter-spacing: 1.2px;
-                margin: 24px 0 12px 4px;
-                font-weight: 700;
-            }
-        
-                .side-nav-section:first-child {
-                    margin-top: 0;
-                }
-        
-            .side-nav-link {
-                display: flex;
-                align-items: center;
-                gap: 14px;
-                padding: 14px 16px;
-                color: #2D3436;
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 15px;
-                border-radius: 16px;
-                margin-bottom: 4px;
-                transition: all 0.2s;
-            }
-        
-                .side-nav-link:hover,
-                .side-nav-link:active {
-                    background: rgba(255,88,88,0.06);
-                    color: #FF5858;
-                }
-        
-                .side-nav-link svg {
-                    width: 22px;
-                    height: 22px;
-                    stroke: #FF5858;
-                    flex-shrink: 0;
-                }
-        
-            /* ===== УВЕДОМЛЕНИЯ ===== */
-            .nav-notification {
-                position: relative;
-                margin-right: 8px;
-            }
-        
-            .notification-btn {
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 10px;
-                position: relative;
-                color: #636E72;
-                transition: all 0.2s ease;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        
-                .notification-btn:hover {
-                    color: #FF5858;
-                    background: rgba(255, 88, 88, 0.08);
-                }
-        
-            .notification-badge {
-                position: absolute;
-                top: 4px;
-                right: 4px;
-                background: linear-gradient(135deg, #FF5858, #F857A6);
-                color: white;
-                font-size: 11px;
-                font-weight: 700;
-                min-width: 18px;
-                height: 18px;
-                border-radius: 9px;
-                display: none;
-                align-items: center;
-                justify-content: center;
-                padding: 0 5px;
-                box-shadow: 0 2px 8px rgba(255, 88, 88, 0.4);
-            }
-        
+        * {
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ===== CSS ПЕРЕМЕННЫЕ ===== */
+        :root {
+            --pink: #F857A6;
+            --red: #FF5858;
+            --gradient: linear-gradient(135deg, #FF5858, #F857A6);
+            --gray-dark: #2D3436;
+            --gray-mid: #636E72;
+            --gray-light: #B2BEC3;
+            --border: #EFEFEF;
+            --bg-hover: rgba(255,88,88,0.07);
+        }
+
+        /* ===== ШАПКА ===== */
+        .navbar-main {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-main .container {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ===== ЛОГОТИП ===== */
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        /* Улучшенный логотип — круглый с градиентной обводкой */
+        .nav-brand-logo-wrap {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: var(--gradient);
+            padding: 2px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(248,87,166,0.35);
+        }
+
+        .nav-brand-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            background: white;
+            display: block;
+        }
+
+        .nav-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-brand-title {
+            font-weight: 800;
+            font-size: 22px;
+            line-height: 1.2;
+        }
+
+        .nav-brand-title .svah { color: var(--pink); }
+        .nav-brand-title .kupidonov { color: var(--gray-mid); }
+
+        .nav-brand-subtitle {
+            font-size: 11px;
+            color: var(--gray-light);
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ ===== */
+        .nav-menu-center {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-menu-center li { margin: 0 4px; }
+
+        .nav-link-custom {
+            color: var(--gray-mid);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 20px;
+            display: block;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link-custom:hover {
+            color: var(--red);
+            background: var(--bg-hover);
+        }
+
+        .nav-link-active {
+            color: var(--red) !important;
+            background: rgba(255,88,88,0.08);
+            font-weight: 600;
+        }
+
+        .nav-link-locked::after {
+            content: "";
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 6px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23FF5858' stroke-width='2'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'%3E%3C/path%3E%3C/svg%3E");
+            background-size: contain;
+            opacity: 0.6;
+        }
+
+        /* ===== КНОПКА МЕНЮ ===== */
+        .menu-btn {
+            background: rgba(255,88,88,0.08);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--red);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .menu-btn:hover { background: rgba(255,88,88,0.15); }
+        .menu-btn svg { width: 18px; height: 18px; }
+
+        /* ===== МОБИЛЬНАЯ КНОПКА ===== */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-btn:active { background: rgba(255,88,88,0.1); }
+
+        .hamburger-line {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--red);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .mobile-menu-btn.active .hamburger-line:nth-child(2) { opacity: 0; }
+        .mobile-menu-btn.active .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* ===== БОКОВОЕ МЕНЮ ===== */
+        .nav-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .nav-overlay.active { opacity: 1; visibility: visible; }
+
+        .side-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 380px;
+            max-width: 90vw;
+            height: 100vh;
+            background: white;
+            z-index: 999;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-nav.active { right: 0; }
+
+        .side-nav-header {
+            padding: 24px;
+            border-bottom: 1px solid #F0F0F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #FFF5F7 0%, white 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .side-nav-close {
+            background: rgba(255,88,88,0.1);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--red);
+        }
+
+        .side-nav-content { flex: 1; padding: 20px 24px; }
+
+        .side-nav-section {
+            font-size: 11px;
+            color: var(--gray-light);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin: 24px 0 12px 4px;
+            font-weight: 700;
+        }
+
+        .side-nav-section:first-child { margin-top: 0; }
+
+        .side-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            color: var(--gray-dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 16px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+        }
+
+        .side-nav-link:hover, .side-nav-link:active {
+            background: rgba(255,88,88,0.06);
+            color: var(--red);
+        }
+
+        .side-nav-link svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--red);
+            flex-shrink: 0;
+        }
+
+        /* ===== УВЕДОМЛЕНИЯ ===== */
+        .nav-notification { position: relative; margin-right: 8px; }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            position: relative;
+            color: var(--gray-mid);
+            transition: all 0.2s ease;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover { color: var(--red); background: var(--bg-hover); }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--gradient);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            box-shadow: 0 2px 8px rgba(255,88,88,0.4);
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: -10px;
+            width: 380px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        /* ===== ДЕЙСТВИЯ ===== */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-right: 8px;
+            padding: 6px 12px 6px 6px;
+            border-radius: 50px;
+            transition: all 0.2s;
+        }
+
+        .nav-user:hover { background: rgba(255,88,88,0.06); }
+
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .nav-username {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-dark);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ===== УВЕДОМЛЕНИЯ — тексты сваха ===== */
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #F0F0F0;
+            background: linear-gradient(135deg, #FFF5F7 0%, white 100%);
+        }
+
+        .notification-header span {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--gray-dark);
+        }
+
+        .notification-header button {
+            background: none;
+            border: none;
+            color: var(--red);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
+        .notification-header button:hover { background: rgba(255,88,88,0.1); }
+
+        .notification-list { max-height: 420px; overflow-y: auto; }
+
+        .notification-list::-webkit-scrollbar { width: 6px; }
+        .notification-list::-webkit-scrollbar-track { background: #F8F9FA; }
+        .notification-list::-webkit-scrollbar-thumb { background: #E0E0E0; border-radius: 3px; }
+
+        .notification-item {
+            display: flex;
+            gap: 14px;
+            padding: 16px 24px;
+            border-bottom: 1px solid #F8F9FA;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .notification-item:hover { background: #F8F9FA; }
+
+        .notification-item.unread {
+            background: linear-gradient(90deg, #FFF5F7 0%, white 100%);
+            border-left: 3px solid var(--red);
+        }
+
+        .notification-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .notification-avatar-placeholder {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .notification-content { flex: 1; min-width: 0; }
+
+        .notification-text {
+            font-size: 14px;
+            color: var(--gray-dark);
+            margin-bottom: 6px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .notification-text strong { color: var(--red); font-weight: 700; }
+
+        .notification-time { font-size: 12px; color: var(--gray-mid); font-weight: 500; }
+
+        .notification-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-mid);
+            font-size: 14px;
+        }
+
+        .notification-empty-icon {
+            width: 64px; height: 64px;
+            margin: 0 auto 16px;
+            background: #F8F9FA;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #CCC;
+        }
+
+        /* ===== ФУТЕР ===== */
+        footer {
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 20px 0;
+            margin-top: auto;
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 320px;
+            max-width: 400px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-left: 4px solid var(--red);
+        }
+
+        .toast.show { transform: translateX(0); }
+
+        .toast-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .toast-content { flex: 1; }
+
+        .toast-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-dark);
+            margin-bottom: 4px;
+        }
+
+        .toast-message { font-size: 13px; color: var(--gray-mid); }
+
+        /* Метка «Свах одобрил» в тосте */
+        .toast-svah-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--red);
+            background: rgba(255,88,88,0.08);
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #CCC;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .toast-close:hover { color: var(--red); }
+
+        /* ===== АДАПТИВ ===== */
+        @@media (max-width: 991px) {
+            .navbar-main .container { height: 60px; }
+            .nav-menu-center { display: none; }
+            .nav-username { display: none; }
+            .nav-brand-subtitle { display: none; }
+            .nav-brand-logo-wrap { width: 38px; height: 38px; border-radius: 11px; }
+            .nav-brand-title { font-size: 18px; }
+            .menu-btn { display: none; }
+            .mobile-menu-btn { display: flex; }
             .notification-dropdown {
-                position: absolute;
-                top: calc(100% + 10px);
-                right: -10px;
-                width: 380px;
-                background: white;
-                border-radius: 20px;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-10px) scale(0.95);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 1000;
-                overflow: hidden;
-            }
-        
-                .notification-dropdown.active {
-                    opacity: 1;
-                    visibility: visible;
-                    transform: translateY(0) scale(1);
-                }
-        
-            /* ===== ДЕЙСТВИЯ СПРАВА ===== */
-            .nav-actions {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-        
-            /* Иконка аккаунта с именем */
-            .nav-user {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                text-decoration: none;
-                margin-right: 8px;
-                padding: 6px 12px 6px 6px;
-                border-radius: 50px;
-                transition: all 0.2s;
-            }
-        
-                .nav-user:hover {
-                    background: rgba(255,88,88,0.06);
-                }
-        
-            .nav-avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #FF5858, #F857A6);
-                color: white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 700;
-                font-size: 14px;
-                flex-shrink: 0;
-            }
-        
-            .nav-username {
-                font-size: 14px;
-                font-weight: 600;
-                color: #2D3436;
-                max-width: 120px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-        
-            /* ===== АДАПТИВНОСТЬ ===== */
-            @@media (max-width: 991px) {
-                .navbar-main .container {
-                    height: 60px;
-                }
-            
-                .nav-menu-center {
-                    display: none;
-                }
-            
-                .nav-username {
-                    display: none;
-                }
-            
-                .nav-brand-subtitle {
-                    display: none;
-                }
-            
-                .nav-brand-logo {
-                    width: 42px;
-                    height: 42px;
-                }
-            
-                .nav-brand-title {
-                    font-size: 18px;
-                }
-            
-                .menu-btn {
-                    display: none;
-                }
-            
-                .mobile-menu-btn {
-                    display: flex;
-                }
-            
-                .notification-dropdown {
-                    position: fixed;
-                    top: 70px;
-                    left: 16px;
-                    right: 16px;
-                    width: auto;
-                }
-            
-                body.menu-open {
-                    overflow: hidden;
-                }
-            
-                .nav-actions {
-                    gap: 2px;
-                }
-            
-                    .nav-actions .btn,
-                    .nav-actions a.btn {
-                        margin-left: 0 !important;
-                        margin-right: 2px !important;
-                    }
-            
-                        .nav-actions .btn:last-child,
-                        .nav-actions a.btn:last-child {
-                            margin-right: 4px !important;
-                        }
-            
-                .nav-notification {
-                    margin-right: 2px;
-                }
-            
-                .nav-user {
-                    margin-right: 2px;
-                    padding: 6px;
-                }
-            }
-        
-            @@media (max-width: 480px) {
-                .nav-brand-title {
-                    font-size: 16px;
-                }
-            
-                .nav-brand-logo {
-                    width: 55px;
-                    height: 55px;
-                }
-            }
-        
-            @@media (min-width: 992px) {
-                .side-nav {
-                    width: 420px;
-                }
-            
-                .nav-menu-center .nav-link-locked::after {
-                    display: none;
-                }
-            }
-        
-            /* ===== Toast и остальные стили ===== */
-            .toast-container {
                 position: fixed;
-                top: 90px;
-                right: 20px;
-                z-index: 9999;
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
+                top: 70px;
+                left: 16px;
+                right: 16px;
+                width: auto;
             }
-        
-            @@media (max-width: 991px) {
-                .toast-container {
-                    top: 80px;
-                    left: 16px;
-                    right: 16px;
-                }
-            }
-        
-            .toast {
-                background: white;
-                border-radius: 16px;
-                padding: 16px 20px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-                display: flex;
-                align-items: center;
-                gap: 14px;
-                min-width: 320px;
-                max-width: 400px;
-                transform: translateX(120%);
-                transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-                border-left: 4px solid #FF5858;
-            }
-        
-            @@media (max-width: 991px) {
-                .toast {
-                    min-width: auto;
-                    max-width: none;
-                }
-            }
-        
-            .toast.show {
-                transform: translateX(0);
-            }
-        
-            .toast-avatar {
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
-                object-fit: cover;
-            }
-        
-            .toast-content {
-                flex: 1;
-            }
-        
-            .toast-title {
-                font-size: 14px;
-                font-weight: 700;
-                color: #2D3436;
-                margin-bottom: 4px;
-            }
-        
-            .toast-message {
-                font-size: 13px;
-                color: #636E72;
-            }
-        
-            .toast-close {
-                background: none;
-                border: none;
-                color: #CCC;
-                cursor: pointer;
-                padding: 4px;
-                font-size: 20px;
-            }
-        
-                .toast-close:hover {
-                    color: #FF5858;
-                }
-        
-            /* Уведомления */
-            .notification-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 20px 24px;
-                border-bottom: 1px solid #F0F0F0;
-                background: linear-gradient(135deg, #FFF5F7 0%, white 100%);
-            }
-        
-                .notification-header span {
-                    font-weight: 700;
-                    font-size: 16px;
-                    color: #2D3436;
-                }
-        
-                .notification-header button {
-                    background: none;
-                    border: none;
-                    color: #FF5858;
-                    font-size: 13px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    padding: 6px 12px;
-                    border-radius: 12px;
-                }
-        
-                    .notification-header button:hover {
-                        background: rgba(255, 88, 88, 0.1);
-                    }
-        
-            .notification-list {
-                max-height: 420px;
-                overflow-y: auto;
-            }
-        
-                .notification-list::-webkit-scrollbar {
-                    width: 6px;
-                }
-        
-                .notification-list::-webkit-scrollbar-track {
-                    background: #F8F9FA;
-                }
-        
-                .notification-list::-webkit-scrollbar-thumb {
-                    background: #E0E0E0;
-                    border-radius: 3px;
-                }
-        
-            .notification-item {
-                display: flex;
-                gap: 14px;
-                padding: 16px 24px;
-                border-bottom: 1px solid #F8F9FA;
-                cursor: pointer;
-                transition: all 0.2s;
-                text-decoration: none;
-            }
-        
-                .notification-item:hover {
-                    background: #F8F9FA;
-                }
-        
-                .notification-item.unread {
-                    background: linear-gradient(90deg, #FFF5F7 0%, white 100%);
-                    border-left: 3px solid #FF5858;
-                }
-        
-            .notification-avatar {
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                object-fit: cover;
-                flex-shrink: 0;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
-        
-            .notification-avatar-placeholder {
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #FF5858, #F857A6);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-weight: 700;
-                font-size: 20px;
-                flex-shrink: 0;
-            }
-        
-            .notification-content {
-                flex: 1;
-                min-width: 0;
-            }
-        
-            .notification-text {
-                font-size: 14px;
-                color: #2D3436;
-                margin-bottom: 6px;
-                line-height: 1.4;
-                font-weight: 500;
-            }
-        
-                .notification-text strong {
-                    color: #FF5858;
-                    font-weight: 700;
-                }
-        
-            .notification-time {
-                font-size: 12px;
-                color: #636E72;
-                font-weight: 500;
-            }
-        
-            .notification-empty {
-                text-align: center;
-                padding: 60px 20px;
-                color: #636E72;
-                font-size: 14px;
-            }
-        
-            .notification-empty-icon {
-                width: 64px;
-                height: 64px;
-                margin: 0 auto 16px;
-                background: #F8F9FA;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #CCC;
-            }
-        
-            /* Футер */
-            footer {
-                background: white;
-                border-top: 1px solid #EFEFEF;
-                padding: 20px 0;
-                margin-top: auto;
-            }
-        
-            @@media (max-width: 768px) {
-                footer .container {
-                    flex-direction: column;
-                    gap: 12px;
-                    text-align: center;
-                }
-            }
+            body.menu-open { overflow: hidden; }
+            .nav-actions { gap: 2px; }
+            .nav-actions .btn,
+            .nav-actions a.btn { margin-left: 0 !important; margin-right: 2px !important; }
+            .nav-actions .btn:last-child,
+            .nav-actions a.btn:last-child { margin-right: 4px !important; }
+            .nav-notification { margin-right: 2px; }
+            .nav-user { margin-right: 2px; padding: 6px; }
+            .toast-container { top: 80px; left: 16px; right: 16px; }
+            .toast { min-width: auto; max-width: none; }
+        }
+
+        @@media (max-width: 480px) {
+            .nav-brand-title { font-size: 16px; }
+            .nav-brand-logo-wrap { width: 34px; height: 34px; border-radius: 10px; }
+        }
+
+        @@media (min-width: 992px) {
+            .side-nav { width: 420px; }
+            .nav-menu-center .nav-link-locked::after { display: none; }
+        }
+
+        @@media (max-width: 768px) {
+            footer .container { flex-direction: column; gap: 12px; text-align: center; }
+        }
     </style>
     
     @await RenderSectionAsync("Styles", required: false)
@@ -745,9 +630,11 @@
     <!-- ШАПКА -->
     <header class="navbar-main">
         <div class="container">
-            <!-- Логотип Свах Купидонов -->
+            <!-- Логотип -->
             <a href="/" class="nav-brand" id="brandLogo">
-                <img src="~/images/logo_64.png" alt="Свах Купидонов" class="nav-brand-logo" />
+                <div class="nav-brand-logo-wrap">
+                    <img src="~/images/logo_64.png" alt="Свах Купидонов" class="nav-brand-logo" />
+                </div>
                 <div class="nav-brand-text">
                     <span class="nav-brand-title">
                         <span class="svah">Свах</span> <span class="kupidonov">Купидонов</span>
@@ -756,11 +643,10 @@
                 </div>
             </a>
             
-            <!-- ЦЕНТР: Главная, Лента (с проверкой), Общий чат -->
+            <!-- ЦЕНТР: навигация -->
             <ul class="nav-menu-center">
                 <li><a href="/" class="nav-link-custom nav-link-active">Главная</a></li>
                 
-                <!-- Лента: перенаправление на вход для неавторизованных -->
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li><a href="/Feed/Index" class="nav-link-custom">Лента</a></li>
@@ -773,7 +659,7 @@
                 <li><a href="/Chat/Index" class="nav-link-custom">Общий чат</a></li>
             </ul>
             
-            <!-- СПРАВА: Колокольчик + Аккаунт (с именем) + Меню -->
+            <!-- СПРАВА -->
             <div class="nav-actions">
                 @if (User.Identity.IsAuthenticated)
                 {
@@ -789,7 +675,7 @@
                         
                         <div class="notification-dropdown" id="notificationDropdown">
                             <div class="notification-header">
-                                <span>Уведомления</span>
+                                <span>От Сваха Купидонова</span>
                                 <button onclick="markAllAsRead()">Прочитать все</button>
                             </div>
                             <div class="notification-list" id="notificationList">
@@ -800,13 +686,13 @@
                                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                                         </svg>
                                     </div>
-                                    Нет новых уведомлений
+                                    Свах ещё подбирает для тебя
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Иконка аккаунта с именем -->
+                    <!-- Аккаунт -->
                     <a href="/Profile/Edit" class="nav-user" title="Мой профиль">
                         <div class="nav-avatar">
                             @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "U")
@@ -816,11 +702,10 @@
                 }
                 else
                 {
-                    <!-- Для неавторизованных: кнопки как в _LoginPartial (рядом) -->
                     <partial name="_LoginPartial" />
                 }
                 
-                <!-- Кнопка Меню -->
+                <!-- Кнопка Меню (десктоп) -->
                 <button class="menu-btn" onclick="toggleSideNav()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -830,7 +715,7 @@
                     Меню
                 </button>
                 
-                <!-- Мобильная кнопка меню -->
+                <!-- Мобильная кнопка -->
                 <button class="mobile-menu-btn" onclick="toggleSideNav()" aria-label="Меню">
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
@@ -845,7 +730,9 @@
     <nav class="side-nav">
         <div class="side-nav-header">
             <a href="/" class="nav-brand">
-                <img src="~/images/logo_64.png" alt="Свах Купидонов" class="nav-brand-logo" />
+                <div class="nav-brand-logo-wrap">
+                    <img src="~/images/logo_64.png" alt="Свах Купидонов" class="nav-brand-logo" />
+                </div>
                 <div class="nav-brand-text">
                     <span class="nav-brand-title">
                         <span class="svah">Свах</span> <span class="kupidonov">Купидонов</span>
@@ -862,14 +749,12 @@
         </div>
         
         <div class="side-nav-content">
-            <!-- Главные разделы -->
             <div class="side-nav-section">Главное</div>
             <a href="/" class="side-nav-link">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 Главная
             </a>
             
-            <!-- Лента с проверкой авторизации -->
             @if (User.Identity.IsAuthenticated)
             {
                 <a href="/Feed/Index" class="side-nav-link">
@@ -882,7 +767,7 @@
                 <a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="side-nav-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     Лента анкет
-                    <span style="margin-left: auto; font-size: 11px; color: #FF5858; background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;">
+                    <span style="margin-left: auto; font-size: 11px; color: var(--red); background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 2px;">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -896,7 +781,6 @@
                 Общий чат
             </a>
             
-            <!-- Дополнительные разделы -->
             <div class="side-nav-section">Разделы</div>
             
             @if (User.Identity.IsAuthenticated)
@@ -906,7 +790,6 @@
                     Личные сообщения
                 </a>
                 
-                <!-- Профиль -->
                 <div class="side-nav-section">Мой профиль</div>
                 <a href="/Profile/Edit" class="side-nav-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -921,11 +804,10 @@
                     Лайки
                 </a>
                 
-                <!-- Выход -->
                 <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #F0F0F0;">
                     <form method="post" action="/Identity/Account/Logout" id="logoutForm" style="display: contents;">
                         @Html.AntiForgeryToken()
-                        <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;" class="side-nav-link" style="color: #FF5858;">
+                        <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;" class="side-nav-link" style="color: var(--red);">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             Выйти из аккаунта
                         </a>
@@ -934,14 +816,13 @@
             }
             else
             {
-                <!-- Для неавторизованных -->
                 <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #F0F0F0;">
                     <div class="side-nav-section">Аккаунт</div>
                     <a href="/Identity/Account/Login" class="side-nav-link">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10,17 15,12 10,7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
                         Войти
                     </a>
-                    <a href="/Identity/Account/Register" class="side-nav-link" style="color: #FF5858;">
+                    <a href="/Identity/Account/Register" class="side-nav-link" style="color: var(--red);">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
                         Регистрация
                     </a>
@@ -950,7 +831,7 @@
         </div>
     </nav>
     
-    <!-- Toast контейнер -->
+    <!-- Toast -->
     <div class="toast-container" id="toastContainer"></div>
     
     <!-- ОСНОВНОЙ КОНТЕНТ -->
@@ -972,262 +853,244 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     
     <script>
-            // ===== БОКОВОЕ МЕНЮ =====
-            function toggleSideNav() {
-                const nav = document.querySelector('.side-nav');
-                const overlay = document.querySelector('.nav-overlay');
-                const mobileBtn = document.querySelector('.mobile-menu-btn');
-            
-                const isOpen = nav.classList.toggle('active');
-                overlay.classList.toggle('active');
-            
-                if (mobileBtn) mobileBtn.classList.toggle('active', isOpen);
-            
-                document.body.classList.toggle('menu-open', isOpen);
+        // ===== БОКОВОЕ МЕНЮ =====
+        function toggleSideNav() {
+            const nav = document.querySelector('.side-nav');
+            const overlay = document.querySelector('.nav-overlay');
+            const mobileBtn = document.querySelector('.mobile-menu-btn');
+            const isOpen = nav.classList.toggle('active');
+            overlay.classList.toggle('active');
+            if (mobileBtn) mobileBtn.classList.toggle('active', isOpen);
+            document.body.classList.toggle('menu-open', isOpen);
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 992) {
+                document.querySelector('.side-nav')?.classList.remove('active');
+                document.querySelector('.nav-overlay')?.classList.remove('active');
+                document.querySelector('.mobile-menu-btn')?.classList.remove('active');
+                document.body.classList.remove('menu-open');
             }
-        
-            // Закрытие при ресайзе
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 992) {
-                    document.querySelector('.side-nav')?.classList.remove('active');
-                    document.querySelector('.nav-overlay')?.classList.remove('active');
-                    document.querySelector('.mobile-menu-btn')?.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                }
-            });
-        
-            // ===== УВЕДОМЛЕНИЯ =====
-            function toggleNotifications() {
-                const dropdown = document.getElementById('notificationDropdown');
-                const isActive = dropdown.classList.toggle('active');
-            
-                if (isActive) {
-                    loadNotifications();
-                    setTimeout(() => {
-                        document.addEventListener('click', closeNotificationOutside);
-                    }, 100);
-                }
+        });
+
+        // ===== УВЕДОМЛЕНИЯ =====
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const isActive = dropdown.classList.toggle('active');
+            if (isActive) {
+                loadNotifications();
+                setTimeout(() => {
+                    document.addEventListener('click', closeNotificationOutside);
+                }, 100);
             }
-        
-            function closeNotificationOutside(e) {
-                const dropdown = document.getElementById('notificationDropdown');
-                const btn = document.querySelector('.notification-btn');
-            
-                if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
-                    dropdown.classList.remove('active');
-                    document.removeEventListener('click', closeNotificationOutside);
-                }
+        }
+
+        function closeNotificationOutside(e) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const btn = document.querySelector('.notification-btn');
+            if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.remove('active');
+                document.removeEventListener('click', closeNotificationOutside);
             }
-        
-            function updateBadge(count) {
-                const badge = document.getElementById('notificationCount');
-                if (badge) {
-                    if (count > 0) {
-                        badge.textContent = count > 99 ? '99+' : count;
-                        badge.style.display = 'flex';
-                    } else {
-                        badge.style.display = 'none';
-                    }
+        }
+
+        function updateBadge(count) {
+            const badge = document.getElementById('notificationCount');
+            if (badge) {
+                if (count > 0) {
+                    badge.textContent = count > 99 ? '99+' : count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
                 }
             }
-        
-            function loadNotifications() {
-                // Заглушка - реальная функция в SignalR секции ниже
-            }
-        
-            function markAllAsRead() {
-                // Заглушка - реальная функция в SignalR секции ниже
-            }
+        }
+
+        function loadNotifications() { /* заглушка */ }
+        function markAllAsRead() { /* заглушка */ }
     </script>
     
     @if (User.Identity.IsAuthenticated)
     {
         <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
         <script>
-                let notificationConnection = null;
-                let currentUserId = '@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value';
- 
-                async function initNotifications() {
-                    if (!currentUserId) return;
- 
-                    notificationConnection = new signalR.HubConnectionBuilder()
-                        .withUrl("/notificationHub")
-                        .withAutomaticReconnect([0, 2000, 5000, 10000])
-                        .build();
- 
-                    // Получение уведомления в реальном времени
-                    notificationConnection.on("ReceiveNotification", function(type, message, fromUserId, fromName, fromPhoto) {
-                        showToast(type, message, fromName, fromPhoto);
-                        updateNotificationCount();
-                
-                        // Если дропдаун открыт - обновить список
-                        if (document.getElementById('notificationDropdown').classList.contains('active')) {
-                            loadNotifications();
-                        }
-                    });
- 
-                    // Обновление счётчика
-                    notificationConnection.on("UpdateCount", function(count) {
-                        updateBadge(count);
-                    });
- 
-                    try {
-                        await notificationConnection.start();
-                        await notificationConnection.invoke("JoinGroup", currentUserId);
-                        console.log("SignalR Notifications connected");
-                
-                        // Загрузить начальное количество
-                        updateNotificationCount();
-                    } catch (err) {
-                        console.error("SignalR Connection Error:", err);
-                    }
-                }
- 
-                async function updateNotificationCount() {
-                    try {
-                        const response = await fetch('/api/notifications/count');
-                        const count = await response.json();
-                        updateBadge(count);
-                    } catch (err) {
-                        console.error("Error fetching count:", err);
-                    }
-                }
- 
-                async function loadNotifications() {
-                    try {
-                        const response = await fetch('/api/notifications');
-                        const notifications = await response.json();
-                        renderNotifications(notifications);
-                    } catch (err) {
-                        console.error("Error loading notifications:", err);
-                    }
-                }
- 
-                function renderNotifications(notifications) {
-                    const list = document.getElementById('notificationList');
-            
-                    if (notifications.length === 0) {
-                        list.innerHTML = `
-                            <div class="notification-empty">
-                                <div class="notification-empty-icon">
-                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                                    </svg>
-                                </div>
-                                Нет новых уведомлений
-                            </div>`;
-                        return;
-                    }
- 
-                    list.innerHTML = notifications.map(n => {
-                        const avatar = n.fromProfile?.photoPath
-                            ? `<img src="${n.fromProfile.photoPath}" class="notification-avatar" alt="" />`
-                            : `<div class="notification-avatar-placeholder">${n.fromProfile?.name?.[0] || '?'}</div>`;
-                
-                        const link = getNotificationLink(n);
-                
-                        return `
-                            <a href="${link}" class="notification-item ${n.isRead ? '' : 'unread'}" onclick="handleNotificationClick(${n.id}, event)">
-                                ${avatar}
-                                <div class="notification-content">
-                                    <div class="notification-text">${escapeHtml(n.message)}</div>
-                                    <div class="notification-time">${timeAgo(n.createdAt)}</div>
-                                </div>
-                            </a>
-                        `;
-                    }).join('');
-                }
- 
-                function getNotificationLink(notification) {
-                    switch(notification.type) {
-                        case 0: // Like
-                        case 4: // SuperLike
-                        case 3: // ProfileView
-                            return `/Profile/View/${notification.fromProfile?.id || ''}`;
-                        case 1: // MutualLike
-                            return `/Messages/Dialog/${notification.fromUserId}`;
-                        case 2: // Message
-                            return `/Messages/Dialog/${notification.fromUserId}`;
-                        default:
-                            return '#';
-                    }
-                }
- 
-                async function handleNotificationClick(id, event) {
-                    if (event.currentTarget.getAttribute('href') === '#') {
-                        event.preventDefault();
-                    }
-            
-                    try {
-                        await fetch(`/api/notifications/mark-read/${id}`, { method: 'POST' });
-                        updateNotificationCount();
-                        event.currentTarget.classList.remove('unread');
-                    } catch (err) {
-                        console.error("Error marking as read:", err);
-                    }
-                }
- 
-                async function markAllAsRead() {
-                    try {
-                        await fetch('/api/notifications/mark-all-read', { method: 'POST' });
-                        updateBadge(0);
+            let notificationConnection = null;
+            let currentUserId = '@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value';
+
+            // Тексты от лица Сваха
+            const svakhMessages = {
+                0: 'Я нашёл тебе пару',           // Like
+                1: 'Я соединил вас — взаимно',    // MutualLike
+                2: 'Я одобрил это сообщение',     // Message
+                3: 'Посмотри, кого я выбрал',     // ProfileView
+                4: 'Не упусти шанс — суперлайк'   // SuperLike
+            };
+
+            async function initNotifications() {
+                if (!currentUserId) return;
+
+                notificationConnection = new signalR.HubConnectionBuilder()
+                    .withUrl("/notificationHub")
+                    .withAutomaticReconnect([0, 2000, 5000, 10000])
+                    .build();
+
+                notificationConnection.on("ReceiveNotification", function(type, message, fromUserId, fromName, fromPhoto) {
+                    showToast(type, message, fromName, fromPhoto);
+                    updateNotificationCount();
+                    if (document.getElementById('notificationDropdown').classList.contains('active')) {
                         loadNotifications();
-                    } catch (err) {
-                        console.error("Error marking all as read:", err);
-                    }
-                }
- 
-                function showToast(type, message, fromName, fromPhoto) {
-                    const container = document.getElementById('toastContainer');
-                    const toast = document.createElement('div');
-                    toast.className = 'toast';
-            
-                    const icon = type === 1 ? 'Взаимно' : type === 4 ? 'Супер' : 'Нравится';
-            
-                    toast.innerHTML = `
-                        <img src="${fromPhoto || '/images/default-avatar.png'}" class="toast-avatar" onerror="this.src='/images/default-avatar.png'" />
-                        <div class="toast-content">
-                            <div class="toast-title">${icon}: ${escapeHtml(fromName || 'Кто-то')}</div>
-                            <div class="toast-message">${escapeHtml(message)}</div>
-                        </div>
-                        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-                    `;
-            
-                    container.appendChild(toast);
-                    setTimeout(() => toast.classList.add('show'), 10);
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                        setTimeout(() => toast.remove(), 400);
-                    }, 5000);
-                }
- 
-                function timeAgo(date) {
-                    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-                    if (seconds < 60) return 'только что';
-                    const minutes = Math.floor(seconds / 60);
-                    if (minutes < 60) return `${minutes} мин. назад`;
-                    const hours = Math.floor(minutes / 60);
-                    if (hours < 24) return `${hours} ч. назад`;
-                    const days = Math.floor(hours / 24);
-                    if (days < 7) return `${days} д. назад`;
-                    return new Date(date).toLocaleDateString('ru-RU');
-                }
- 
-                function escapeHtml(text) {
-                    if (!text) return '';
-                    const div = document.createElement('div');
-                    div.textContent = text;
-                    return div.innerHTML;
-                }
- 
-                document.addEventListener('DOMContentLoaded', initNotifications);
- 
-                window.addEventListener('beforeunload', async function() {
-                    if (notificationConnection && currentUserId) {
-                        await notificationConnection.invoke("LeaveGroup", currentUserId);
                     }
                 });
+
+                notificationConnection.on("UpdateCount", function(count) {
+                    updateBadge(count);
+                });
+
+                try {
+                    await notificationConnection.start();
+                    await notificationConnection.invoke("JoinGroup", currentUserId);
+                    updateNotificationCount();
+                } catch (err) {
+                    console.error("SignalR Connection Error:", err);
+                }
+            }
+
+            async function updateNotificationCount() {
+                try {
+                    const response = await fetch('/api/notifications/count');
+                    const count = await response.json();
+                    updateBadge(count);
+                } catch (err) {
+                    console.error("Error fetching count:", err);
+                }
+            }
+
+            async function loadNotifications() {
+                try {
+                    const response = await fetch('/api/notifications');
+                    const notifications = await response.json();
+                    renderNotifications(notifications);
+                } catch (err) {
+                    console.error("Error loading notifications:", err);
+                }
+            }
+
+            function renderNotifications(notifications) {
+                const list = document.getElementById('notificationList');
+
+                if (notifications.length === 0) {
+                    list.innerHTML = `
+                        <div class="notification-empty">
+                            <div class="notification-empty-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                            </div>
+                            Свах ещё подбирает для тебя
+                        </div>`;
+                    return;
+                }
+
+                list.innerHTML = notifications.map(n => {
+                    const avatar = n.fromProfile?.photoPath
+                        ? `<img src="${n.fromProfile.photoPath}" class="notification-avatar" alt="" />`
+                        : `<div class="notification-avatar-placeholder">${n.fromProfile?.name?.[0] || '?'}</div>`;
+                    const link = getNotificationLink(n);
+                    const svakhLabel = svakhMessages[n.type] || 'Свах одобрил';
+
+                    return `
+                        <a href="${link}" class="notification-item ${n.isRead ? '' : 'unread'}" onclick="handleNotificationClick(${n.id}, event)">
+                            ${avatar}
+                            <div class="notification-content">
+                                <div style="font-size:11px;color:#FF5858;font-weight:700;margin-bottom:3px;">${escapeHtml(svakhLabel)}</div>
+                                <div class="notification-text">${escapeHtml(n.message)}</div>
+                                <div class="notification-time">${timeAgo(n.createdAt)}</div>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+            }
+
+            function getNotificationLink(notification) {
+                switch(notification.type) {
+                    case 0: case 4: case 3: return `/Profile/View/${notification.fromProfile?.id || ''}`;
+                    case 1: case 2: return `/Messages/Dialog/${notification.fromUserId}`;
+                    default: return '#';
+                }
+            }
+
+            async function handleNotificationClick(id, event) {
+                if (event.currentTarget.getAttribute('href') === '#') event.preventDefault();
+                try {
+                    await fetch(`/api/notifications/mark-read/${id}`, { method: 'POST' });
+                    updateNotificationCount();
+                    event.currentTarget.classList.remove('unread');
+                } catch (err) {
+                    console.error("Error marking as read:", err);
+                }
+            }
+
+            async function markAllAsRead() {
+                try {
+                    await fetch('/api/notifications/mark-all-read', { method: 'POST' });
+                    updateBadge(0);
+                    loadNotifications();
+                } catch (err) {
+                    console.error("Error marking all as read:", err);
+                }
+            }
+
+            function showToast(type, message, fromName, fromPhoto) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                const svakhLabel = svakhMessages[type] || 'Свах одобрил';
+
+                toast.innerHTML = `
+                    <img src="${fromPhoto || '/images/default-avatar.png'}" class="toast-avatar" onerror="this.src='/images/default-avatar.png'" />
+                    <div class="toast-content">
+                        <div class="toast-svah-badge">${escapeHtml(svakhLabel)}</div>
+                        <div class="toast-title">${escapeHtml(fromName || 'Кто-то')}</div>
+                        <div class="toast-message">${escapeHtml(message)}</div>
+                    </div>
+                    <button class="toast-close" onclick="this.parentElement.remove()">&#215;</button>
+                `;
+
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 10);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 400);
+                }, 5000);
+            }
+
+            function timeAgo(date) {
+                const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+                if (seconds < 60) return 'только что';
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `${minutes} мин. назад`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours} ч. назад`;
+                const days = Math.floor(hours / 24);
+                if (days < 7) return `${days} д. назад`;
+                return new Date(date).toLocaleDateString('ru-RU');
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            document.addEventListener('DOMContentLoaded', initNotifications);
+
+            window.addEventListener('beforeunload', async function() {
+                if (notificationConnection && currentUserId) {
+                    await notificationConnection.invoke("LeaveGroup", currentUserId);
+                }
+            });
         </script>
     }
     

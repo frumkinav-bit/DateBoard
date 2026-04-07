@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5858"/>
+      <stop offset="100%" stop-color="#F857A6"/>
+    </linearGradient>
+    <clipPath id="round">
+      <rect width="64" height="64" rx="16" ry="16"/>
+    </clipPath>
+  </defs>
+  <!-- Закруглённый фон с градиентом -->
+  <rect width="64" height="64" rx="16" ry="16" fill="url(#g)"/>
+  <!-- Логотип поверх (белый силуэт купидона — стрела-сердце) -->
+  <g clip-path="url(#round)" fill="white" opacity="0.95">
+    <!-- Стрела -->
+    <rect x="12" y="30" width="40" height="4" rx="2"/>
+    <!-- Наконечник-сердце справа -->
+    <path d="M44 22 C44 22 52 22 52 30 C52 38 44 38 44 38 L44 34 C44 34 48 34 48 30 C48 26 44 26 44 26 Z"/>
+    <!-- Оперение слева -->
+    <path d="M20 26 L12 22 L12 38 L20 34 Z"/>
+    <!-- Тело стрелы усиление -->
+  </g>
+</svg>
