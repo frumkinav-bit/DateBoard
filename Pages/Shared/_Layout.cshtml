@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>@ViewData["Title"] - Свах Купидонов</title>
     
-    <!-- Закруглённый favicon — SVG с градиентом -->
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="~/images/favicon.svg" />
     <link rel="icon" type="image/png" href="~/images/logo_64.png" />
     
@@ -58,23 +58,17 @@
             flex-shrink: 0;
         }
 
-        /* Улучшенный логотип — круглый с градиентной обводкой */
+        /* Логотип без обводки и тени */
         .nav-brand-logo-wrap {
             width: 46px;
             height: 46px;
-            border-radius: 14px;
-            background: var(--gradient);
-            padding: 2px;
             flex-shrink: 0;
-            box-shadow: 0 4px 14px rgba(248,87,166,0.35);
         }
 
         .nav-brand-logo {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
-            background: white;
+            object-fit: contain;
             display: block;
         }
 
@@ -586,7 +580,7 @@
             .nav-menu-center { display: none; }
             .nav-username { display: none; }
             .nav-brand-subtitle { display: none; }
-            .nav-brand-logo-wrap { width: 38px; height: 38px; border-radius: 11px; }
+            .nav-brand-logo-wrap { width: 38px; height: 38px; }
             .nav-brand-title { font-size: 18px; }
             .menu-btn { display: none; }
             .mobile-menu-btn { display: flex; }
@@ -611,7 +605,7 @@
 
         @@media (max-width: 480px) {
             .nav-brand-title { font-size: 16px; }
-            .nav-brand-logo-wrap { width: 34px; height: 34px; border-radius: 10px; }
+            .nav-brand-logo-wrap { width: 34px; height: 34px; }
         }
 
         @@media (min-width: 992px) {
