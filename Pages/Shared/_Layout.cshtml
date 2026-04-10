@@ -20,17 +20,16 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ===== CSS ПЕРЕМЕННЫЕ ===== */
+        /* ===== РОЗОВАЯ ТЕМА (по умолчанию) ===== */
         :root {
-            --pink: #F857A6;
-            --red: #FF5858;
+            --primary: #FF5858;
+            --primary2: #F857A6;
             --gradient: linear-gradient(135deg, #FF5858, #F857A6);
             --gray-dark: #2D3436;
             --gray-mid: #636E72;
             --gray-light: #B2BEC3;
             --border: #EFEFEF;
             --bg-hover: rgba(255,88,88,0.07);
-            /* Основная светлая тема — чистый белый */
             --bg-color: #F8F9FA;
             --text-color: #2D3436;
             --card-bg: #FFFFFF;
@@ -42,23 +41,18 @@
             --footer-bg: #FFFFFF;
         }
 
-        /* ===== КРЕМОВАЯ ТЕМА — вторая светлая версия ===== */
-        [data-theme="cream"] {
-            --gray-dark: #4A403A;      /* Тёплый кофейный текст */
-            --gray-mid: #8B7D72;       /* Капучино */
-            --gray-light: #B8A99A;     /* Латте */
-            --border: #E8DED4;         /* Кремовый бордер */
-            --bg-hover: rgba(255,88,88,0.08);
-            
-            --bg-color: #F5F0EB;       /* Кремовый фон */
-            --text-color: #4A403A;     
-            --card-bg: #FFFBF7;        /* Молочный */
-            --header-bg: #FFFBF7;      /* Шапка */
-            --side-nav-bg: #FFFBF7;    /* Боковое меню */
-            --overlay-bg: rgba(74,64,58,0.4);
-            --notification-bg: #FFFBF7;
-            --toast-bg: #FFFBF7;
-            --footer-bg: #FFFBF7;
+        /* ===== ИЗУМРУДНО-ГОЛУБАЯ ТЕМА (акцентная) ===== */
+        [data-theme="teal"] {
+            --primary: #00BFA6;        /* Изумрудный */
+            --primary2: #00A8E8;       /* Голубой */
+            --gradient: linear-gradient(135deg, #00BFA6, #00A8E8);
+            --bg-hover: rgba(0,191,166,0.08);
+            /* Фон остаётся светлым! */
+            --bg-color: #F0F9F7;       /* Слегка зеленоватый оттенок */
+            --card-bg: #FFFFFF;
+            --header-bg: #FFFFFF;
+            --side-nav-bg: #FFFFFF;
+            --border: #E0F2F0;
         }
 
         body {
@@ -81,14 +75,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(255,88,88,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             z-index: 10000;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .theme-toggle:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255,88,88,0.5);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
 
         .theme-toggle svg {
@@ -97,10 +91,10 @@
             color: white;
         }
 
-        /* Иконки для переключения */
-        .theme-toggle .coffee { display: none; }
-        [data-theme="cream"] .theme-toggle .sun { display: none; }
-        [data-theme="cream"] .theme-toggle .coffee { display: block; }
+        /* Иконки переключения */
+        .theme-toggle .teal-icon { display: none; }
+        [data-theme="teal"] .theme-toggle .pink-icon { display: none; }
+        [data-theme="teal"] .theme-toggle .teal-icon { display: block; }
 
         /* ===== ШАПКА ===== */
         .navbar-main {
@@ -153,7 +147,7 @@
             line-height: 1.2;
         }
 
-        .nav-brand-title .svah { color: var(--pink); }
+        .nav-brand-title .svah { color: var(--primary); }
         .nav-brand-title .kupidonov { color: var(--gray-mid); }
 
         .nav-brand-subtitle {
@@ -191,18 +185,18 @@
         }
 
         .nav-link-custom:hover {
-            color: var(--red);
+            color: var(--primary);
             background: var(--bg-hover);
         }
 
         .nav-link-active {
-            color: var(--red) !important;
+            color: var(--primary) !important;
             background: rgba(255,88,88,0.08);
             font-weight: 600;
         }
 
-        [data-theme="cream"] .nav-link-active {
-            background: rgba(255,88,88,0.12);
+        [data-theme="teal"] .nav-link-active {
+            background: rgba(0,191,166,0.1);
         }
 
         .nav-link-locked::after {
@@ -216,6 +210,10 @@
             opacity: 0.6;
         }
 
+        [data-theme="teal"] .nav-link-locked::after {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2300BFA6' stroke-width='2'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'%3E%3C/path%3E%3C/svg%3E");
+        }
+
         /* ===== КНОПКА МЕНЮ ===== */
         .menu-btn {
             background: rgba(255,88,88,0.08);
@@ -226,19 +224,20 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--red);
+            color: var(--primary);
             font-weight: 600;
             font-size: 14px;
             transition: all 0.2s;
             font-family: 'Montserrat', sans-serif;
         }
 
-        [data-theme="cream"] .menu-btn {
-            background: rgba(255,88,88,0.1);
+        [data-theme="teal"] .menu-btn {
+            background: rgba(0,191,166,0.1);
+            color: var(--primary);
         }
 
         .menu-btn:hover { background: rgba(255,88,88,0.15); }
-        [data-theme="cream"] .menu-btn:hover { background: rgba(255,88,88,0.18); }
+        [data-theme="teal"] .menu-btn:hover { background: rgba(0,191,166,0.15); }
 
         .menu-btn svg { width: 18px; height: 18px; }
 
@@ -260,12 +259,13 @@
         }
 
         .mobile-menu-btn:active { background: rgba(255,88,88,0.1); }
+        [data-theme="teal"] .mobile-menu-btn:active { background: rgba(0,191,166,0.1); }
 
         .hamburger-line {
             display: block;
             width: 22px;
             height: 2px;
-            background: var(--red);
+            background: var(--primary);
             border-radius: 2px;
             transition: all 0.3s ease;
         }
@@ -318,8 +318,8 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
 
-        [data-theme="cream"] .side-nav-header {
-            background: linear-gradient(135deg, rgba(255,88,88,0.06) 0%, var(--side-nav-bg) 100%);
+        [data-theme="teal"] .side-nav-header {
+            background: linear-gradient(135deg, rgba(0,191,166,0.05) 0%, var(--side-nav-bg) 100%);
         }
 
         .side-nav-close {
@@ -332,12 +332,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: var(--red);
+            color: var(--primary);
             transition: background-color 0.2s;
         }
 
-        [data-theme="cream"] .side-nav-close {
-            background: rgba(255,88,88,0.12);
+        [data-theme="teal"] .side-nav-close {
+            background: rgba(0,191,166,0.12);
+            color: var(--primary);
         }
 
         .side-nav-content { flex: 1; padding: 20px 24px; }
@@ -369,13 +370,13 @@
 
         .side-nav-link:hover, .side-nav-link:active {
             background: var(--bg-hover);
-            color: var(--red);
+            color: var(--primary);
         }
 
         .side-nav-link svg {
             width: 22px;
             height: 22px;
-            stroke: var(--red);
+            stroke: var(--primary);
             flex-shrink: 0;
         }
 
@@ -396,7 +397,7 @@
             justify-content: center;
         }
 
-        .notification-btn:hover { color: var(--red); background: var(--bg-hover); }
+        .notification-btn:hover { color: var(--primary); background: var(--bg-hover); }
 
         .notification-badge {
             position: absolute;
@@ -413,7 +414,7 @@
             align-items: center;
             justify-content: center;
             padding: 0 5px;
-            box-shadow: 0 2px 8px rgba(255,88,88,0.4);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .notification-dropdown {
@@ -431,10 +432,6 @@
             z-index: 1000;
             overflow: hidden;
             border: 1px solid var(--border);
-        }
-
-        [data-theme="cream"] .notification-dropdown {
-            box-shadow: 0 20px 60px rgba(74,64,58,0.15);
         }
 
         .notification-dropdown.active {
@@ -498,8 +495,8 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
 
-        [data-theme="cream"] .notification-header {
-            background: linear-gradient(135deg, rgba(255,88,88,0.06) 0%, var(--notification-bg) 100%);
+        [data-theme="teal"] .notification-header {
+            background: linear-gradient(135deg, rgba(0,191,166,0.05) 0%, var(--notification-bg) 100%);
         }
 
         .notification-header span {
@@ -511,7 +508,7 @@
         .notification-header button {
             background: none;
             border: none;
-            color: var(--red);
+            color: var(--primary);
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
@@ -521,7 +518,7 @@
         }
 
         .notification-header button:hover { background: rgba(255,88,88,0.1); }
-        [data-theme="cream"] .notification-header button:hover { background: rgba(255,88,88,0.12); }
+        [data-theme="teal"] .notification-header button:hover { background: rgba(0,191,166,0.1); }
 
         .notification-list { 
             max-height: 420px; 
@@ -546,11 +543,12 @@
 
         .notification-item.unread {
             background: linear-gradient(90deg, rgba(255,88,88,0.05) 0%, transparent 100%);
-            border-left: 3px solid var(--red);
+            border-left: 3px solid var(--primary);
         }
 
-        [data-theme="cream"] .notification-item.unread {
-            background: linear-gradient(90deg, rgba(255,88,88,0.08) 0%, transparent 100%);
+        [data-theme="teal"] .notification-item.unread {
+            background: linear-gradient(90deg, rgba(0,191,166,0.05) 0%, transparent 100%);
+            border-left: 3px solid var(--primary);
         }
 
         .notification-avatar {
@@ -584,7 +582,7 @@
             font-weight: 500;
         }
 
-        .notification-text strong { color: var(--red); font-weight: 700; }
+        .notification-text strong { color: var(--primary); font-weight: 700; }
 
         .notification-time { font-size: 12px; color: var(--gray-mid); font-weight: 500; }
 
@@ -638,11 +636,7 @@
             max-width: 400px;
             transform: translateX(120%);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s;
-            border-left: 4px solid var(--red);
-        }
-
-        [data-theme="cream"] .toast {
-            box-shadow: 0 10px 40px rgba(74,64,58,0.12);
+            border-left: 4px solid var(--primary);
         }
 
         .toast.show { transform: translateX(0); }
@@ -667,7 +661,7 @@
         .toast-svah-badge {
             font-size: 11px;
             font-weight: 700;
-            color: var(--red);
+            color: var(--primary);
             background: rgba(255,88,88,0.08);
             padding: 2px 8px;
             border-radius: 20px;
@@ -675,8 +669,9 @@
             display: inline-block;
         }
 
-        [data-theme="cream"] .toast-svah-badge {
-            background: rgba(255,88,88,0.1);
+        [data-theme="teal"] .toast-svah-badge {
+            background: rgba(0,191,166,0.1);
+            color: var(--primary);
         }
 
         .toast-close {
@@ -690,7 +685,7 @@
             transition: color 0.2s;
         }
 
-        .toast-close:hover { color: var(--red); }
+        .toast-close:hover { color: var(--primary); }
 
         /* ===== АДАПТИВ ===== */
         @@media (max-width: 991px) {
@@ -889,7 +884,7 @@
                 <a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="side-nav-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     Лента анкет
-                    <span style="margin-left: auto; font-size: 11px; color: var(--red); background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;">
+                    <span style="margin-left: auto; font-size: 11px; color: var(--primary); background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 2px;">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -929,7 +924,7 @@
                 <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
                     <form method="post" action="/Identity/Account/Logout" id="logoutForm" style="display: contents;">
                         @Html.AntiForgeryToken()
-                        <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;" class="side-nav-link" style="color: var(--red);">
+                        <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;" class="side-nav-link" style="color: var(--primary);">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             Выйти из аккаунта
                         </a>
@@ -944,7 +939,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10,17 15,12 10,7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
                         Войти
                     </a>
-                    <a href="/Identity/Account/Register" class="side-nav-link" style="color: var(--red);">
+                    <a href="/Identity/Account/Register" class="side-nav-link" style="color: var(--primary);">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
                         Регистрация
                     </a>
@@ -970,26 +965,14 @@
     </footer>
     
     <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ -->
-    <button class="theme-toggle" onclick="toggleTheme()" title="Сменить тему">
-        <!-- Солнце для стандартной светлой темы -->
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Сменить цветовую схему">
+        <!-- Розовое сердце -->
+        <svg class="pink-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
         </svg>
-        <!-- Кофе для кремовой темы -->
-        <svg class="coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-            <line x1="6" y1="1" x2="6" y2="4"></line>
-            <line x1="10" y1="1" x2="10" y2="4"></line>
-            <line x1="14" y1="1" x2="14" y2="4"></line>
+        <!-- Изумрудная волна -->
+        <svg class="teal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
         </svg>
     </button>
     
@@ -1007,8 +990,8 @@
 
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
-            // Цикл: light -> cream -> light
-            const newTheme = currentTheme === 'light' ? 'cream' : 'light';
+            // Цикл: light (розовый) -> teal (изумрудный) -> light
+            const newTheme = currentTheme === 'light' ? 'teal' : 'light';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         }
@@ -1165,7 +1148,7 @@
                         <a href="${link}" class="notification-item ${n.isRead ? '' : 'unread'}" onclick="handleNotificationClick(${n.id}, event)">
                             ${avatar}
                             <div class="notification-content">
-                                <div style="font-size:11px;color:#FF5858;font-weight:700;margin-bottom:3px;">${escapeHtml(svakhLabel)}</div>
+                                <div style="font-size:11px;color:var(--primary);font-weight:700;margin-bottom:3px;">${escapeHtml(svakhLabel)}</div>
                                 <div class="notification-text">${escapeHtml(n.message)}</div>
                                 <div class="notification-time">${timeAgo(n.createdAt)}</div>
                             </div>
