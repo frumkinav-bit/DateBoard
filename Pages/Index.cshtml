@@ -20,6 +20,7 @@
     @@keyframes floatMobile { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
     @@keyframes floatMobileSlow { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-6px) rotate(2deg); } }
     @@keyframes pulseScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+    
     .hero-animate { animation: fadeUp 0.8s ease forwards; }
     .hero-animate-delay { animation: fadeUp 0.8s ease 0.2s forwards; opacity: 0; }
     .hero-animate-delay2 { animation: fadeUp 0.8s ease 0.4s forwards; opacity: 0; }
@@ -28,46 +29,184 @@
     .float-card-3 { animation: float3 3.5s ease-in-out 1s infinite; }
     .float-card-4 { animation: float4 4.5s ease-in-out 0.8s infinite; }
     .float-card-5 { animation: float5 3.8s ease-in-out 1.5s infinite; }
-    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #FF5858; animation: pulse 2s infinite; display: inline-block; flex-shrink: 0; }
-    .search-field-card { flex: 1; background: #F8F9FA; border-radius: 14px; padding: 14px 18px; cursor: pointer; transition: background 0.2s; }
-    .search-field-card:hover { background: #F0F0F0; }
-    .search-field-card p { margin: 0 0 4px; font-size: 10px; font-weight: 700; color: #FF5858; letter-spacing: 0.8px; }
-    .search-field-card input { border: none !important; background: transparent !important; font-size: 14px !important; font-weight: 500 !important; color: #636E72 !important; padding: 0 !important; height: auto !important; width: 100% !important; outline: none !important; box-shadow: none !important; font-family: 'Montserrat', sans-serif !important; }
-    .search-field-card input::placeholder { color: #B2BEC3; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red, #FF5858); animation: pulse 2s infinite; display: inline-block; flex-shrink: 0; }
+    
+    .search-field-card { 
+        flex: 1; 
+        background: var(--bg-color, #F8F9FA); 
+        border-radius: 14px; 
+        padding: 14px 18px; 
+        cursor: pointer; 
+        transition: background 0.2s; 
+    }
+    
+    [data-theme="dark"] .search-field-card {
+        background: var(--card-bg, #16213E);
+        border: 1px solid var(--border, #2D2D44);
+    }
+    
+    .search-field-card:hover { 
+        background: var(--bg-hover, rgba(255,88,88,0.07)); 
+    }
+    
+    [data-theme="dark"] .search-field-card:hover {
+        background: rgba(255,88,88,0.15);
+    }
+    
+    .search-field-card p { 
+        margin: 0 0 4px; 
+        font-size: 10px; 
+        font-weight: 700; 
+        color: var(--red, #FF5858); 
+        letter-spacing: 0.8px; 
+    }
+    
+    .search-field-card input { 
+        border: none !important; 
+        background: transparent !important; 
+        font-size: 14px !important; 
+        font-weight: 500 !important; 
+        color: var(--gray-mid, #636E72) !important; 
+        padding: 0 !important; 
+        height: auto !important; 
+        width: 100% !important; 
+        outline: none !important; 
+        box-shadow: none !important; 
+        font-family: 'Montserrat', sans-serif !important; 
+    }
+    
+    .search-field-card input::placeholder { 
+        color: var(--gray-light, #B2BEC3); 
+    }
+    
     .custom-dropdown { position: relative; }
+    
     .custom-dropdown-menu {
         display: none;
         position: absolute;
         top: calc(100% + 8px);
         left: -18px;
         right: -18px;
-        background: white;
+        background: var(--card-bg, white);
         border-radius: 16px;
         box-shadow: 0 16px 48px rgba(255,88,88,0.15);
         z-index: 9999;
         overflow: hidden;
-        border: 1px solid #FFE8E8;
+        border: 1px solid var(--border, #FFE8E8);
     }
+    
+    [data-theme="dark"] .custom-dropdown-menu {
+        box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+        border-color: var(--border, #2D2D44);
+    }
+    
     .custom-dropdown-item {
         padding: 12px 18px;
         font-size: 14px;
         font-weight: 500;
-        color: #636E72;
+        color: var(--gray-mid, #636E72);
         cursor: pointer;
         transition: all 0.15s;
         font-family: 'Montserrat', sans-serif;
-        border-bottom: 1px solid #FFF5F5;
+        border-bottom: 1px solid var(--border, #FFF5F5);
     }
+    
+    [data-theme="dark"] .custom-dropdown-item {
+        border-bottom-color: var(--border, #2D2D44);
+    }
+    
     .custom-dropdown-item:last-child { border-bottom: none; }
-    .custom-dropdown-item:hover { background: rgba(255,88,88,0.05); color: #FF5858; }
-    .custom-dropdown-item.selected { color: #FF5858; font-weight: 600; background: rgba(255,88,88,0.04); }
-    .step-card-custom { padding: 40px 32px; border-radius: 24px; background: white; border: 1px solid #FFE8E8; box-shadow: 0 10px 30px rgba(255,88,88,0.06); transition: all 0.3s ease; text-align: center; position: relative; overflow: hidden; }
-    .step-card-custom:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(255,88,88,0.14); border-color: #FF5858; }
-    .step-card-active { border: 1.5px solid #FF5858 !important; box-shadow: 0 16px 40px rgba(255,88,88,0.14) !important; transform: translateY(-8px)!important; }
-    .step-bg-num { position: absolute; font-size: 120px; font-weight: 700; color: rgba(255,88,88,0.1); bottom: -20px; right: -5px; line-height: 1; z-index: 0; pointer-events: none; }
+    
+    .custom-dropdown-item:hover { 
+        background: var(--bg-hover, rgba(255,88,88,0.05)); 
+        color: var(--red, #FF5858); 
+    }
+    
+    .custom-dropdown-item.selected { 
+        color: var(--red, #FF5858); 
+        font-weight: 600; 
+        background: var(--bg-hover, rgba(255,88,88,0.04)); 
+    }
+    
+    .step-card-custom { 
+        padding: 40px 32px; 
+        border-radius: 24px; 
+        background: var(--card-bg, white); 
+        border: 1px solid var(--border, #FFE8E8); 
+        box-shadow: 0 10px 30px rgba(255,88,88,0.06); 
+        transition: all 0.3s ease; 
+        text-align: center; 
+        position: relative; 
+        overflow: hidden; 
+    }
+    
+    [data-theme="dark"] .step-card-custom {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .step-card-custom:hover { 
+        transform: translateY(-8px); 
+        box-shadow: 0 20px 50px rgba(255,88,88,0.14); 
+        border-color: var(--red, #FF5858); 
+    }
+    
+    [data-theme="dark"] .step-card-custom:hover {
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+    
+    .step-card-active { 
+        border: 1.5px solid var(--red, #FF5858) !important; 
+        box-shadow: 0 16px 40px rgba(255,88,88,0.14) !important; 
+        transform: translateY(-8px)!important; 
+    }
+    
+    [data-theme="dark"] .step-card-active {
+        box-shadow: 0 16px 40px rgba(255,88,88,0.25) !important;
+    }
+    
+    .step-bg-num { 
+        position: absolute; 
+        font-size: 120px; 
+        font-weight: 700; 
+        color: rgba(255,88,88,0.1); 
+        bottom: -20px; 
+        right: -5px; 
+        line-height: 1; 
+        z-index: 0; 
+        pointer-events: none; 
+    }
+    
+    [data-theme="dark"] .step-bg-num {
+        color: rgba(255,88,88,0.15);
+    }
+    
     .step-content { position: relative; z-index: 1; }
-    .recent-card { background: white; border-radius: 20px; padding: 24px 20px; text-align: center; box-shadow: 0 8px 24px rgba(255,88,166,0.08); border: 1px solid #EFEFEF; transition: all 0.3s ease; cursor: pointer; height: 100%; }
-    .recent-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(255,88,88,0.15); border-color: #FFE0E0; }
+    
+    .recent-card { 
+        background: var(--card-bg, white); 
+        border-radius: 20px; 
+        padding: 24px 20px; 
+        text-align: center; 
+        box-shadow: 0 8px 24px rgba(255,88,166,0.08); 
+        border: 1px solid var(--border, #EFEFEF); 
+        transition: all 0.3s ease; 
+        cursor: pointer; 
+        height: 100%; 
+    }
+    
+    [data-theme="dark"] .recent-card {
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    
+    .recent-card:hover { 
+        transform: translateY(-6px); 
+        box-shadow: 0 16px 40px rgba(255,88,88,0.15); 
+        border-color: var(--border, #FFE0E0); 
+    }
+    
+    [data-theme="dark"] .recent-card:hover {
+        box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    }
     
     /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
     @@media (max-width: 991px) {
@@ -78,7 +217,17 @@
         .hero-content { padding-right: 0 !important; }
         .search-fields { flex-direction: column !important; gap: 12px !important; }
         .search-field-card { width: 100%; padding: 16px 18px; min-height: 60px; }
-        .search-box { max-width: 400px; margin: 0 auto; position: relative; z-index: 100; padding: 20px !important; }
+        .search-box { 
+            max-width: 400px; 
+            margin: 0 auto; 
+            position: relative; 
+            z-index: 100; 
+            padding: 20px !important; 
+            background: var(--card-bg, white) !important;
+        }
+        [data-theme="dark"] .search-box {
+            border-color: var(--border, #2D2D44) !important;
+        }
         .floating-cards-container { display: none !important; }
         .mobile-cards-showcase { display: block !important; }
         .steps-section { margin-top: 0 !important; padding-top: 60px !important; }
@@ -94,7 +243,6 @@
         .recent-card img { height: 180px !important; }
         .recent-section .container { padding-left: 20px; padding-right: 20px; }
         .steps-section .container { padding-left: 20px; padding-right: 20px; }
-        /* Увеличенный отступ для мобильного меню */
         .hero-section { margin-bottom: 80px !important; }
     }
     
@@ -121,13 +269,12 @@
         max-width: 340px;
     }
     
-    /* Центральная карточка Анна - увеличенная и повыше */
     .mobile-main-card {
         position: absolute;
         top: -4%;
         left: 28%;
         transform: translateX(-50%);
-        background: white;
+        background: var(--card-bg, white);
         border-radius: 24px;
         padding: 16px;
         width: 150px;
@@ -135,6 +282,10 @@
         z-index: 10;
         animation: floatMobile 4s ease-in-out infinite;
         text-align: center;
+    }
+    
+    [data-theme="dark"] .mobile-main-card {
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
     }
     
     .mobile-main-avatar {
@@ -156,33 +307,36 @@
         margin: 0 0 3px;
         font-size: 15px;
         font-weight: 700;
-        color: #2D3436;
+        color: var(--gray-dark, #2D3436);
     }
     
     .mobile-main-card p {
         margin: 0 0 6px;
         font-size: 10px;
-        color: #636E72;
+        color: var(--gray-mid, #636E72);
     }
     
-    /* Метка Сваха в мобильной версии */
     .mobile-svah-badge {
         display: inline-flex;
         align-items: center;
         gap: 4px;
         font-size: 9px;
         font-weight: 600;
-        color: #FF5858;
+        color: var(--red, #FF5858);
         background: rgba(255,88,88,0.08);
         padding: 2px 6px;
         border-radius: 12px;
         margin-bottom: 4px;
     }
     
+    [data-theme="dark"] .mobile-svah-badge {
+        background: rgba(255,88,88,0.15);
+    }
+    
     .mobile-match-percent {
         font-size: 11px;
         font-weight: 700;
-        color: #F857A6;
+        color: var(--pink, #F857A6);
         margin-bottom: 8px;
     }
     
@@ -195,7 +349,6 @@
         font-weight: 600;
     }
     
-    /* Спутники вокруг центральной карточки */
     .mobile-satellite {
         position: absolute;
         border-radius: 50px;
@@ -205,6 +358,10 @@
         box-shadow: 0 4px 16px rgba(255,88,88,0.15);
         animation: floatMobileSlow 3s ease-in-out infinite;
         white-space: nowrap;
+    }
+    
+    [data-theme="dark"] .mobile-satellite {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
     }
     
     .mobile-satellite-blur {
@@ -218,9 +375,9 @@
     }
     
     .mobile-satellite-white {
-        background: white;
-        color: #2D3436;
-        border: 1px solid rgba(255,88,88,0.1);
+        background: var(--card-bg, white);
+        color: var(--gray-dark, #2D3436);
+        border: 1px solid var(--border, rgba(255,88,88,0.1));
     }
     
     .mobile-satellite-gradient {
@@ -230,7 +387,11 @@
     
     .mobile-satellite-light {
         background: rgba(255,88,88,0.08);
-        color: #FF5858;
+        color: var(--red, #FF5858);
+    }
+    
+    [data-theme="dark"] .mobile-satellite-light {
+        background: rgba(255,88,88,0.15);
     }
     
     .mobile-satellite-icon {
@@ -239,7 +400,6 @@
         gap: 6px;
     }
     
-    /* Позиции спутников - скорректированы для увеличенной карточки */
     .satellite-1 { top: 5%; right: 0; animation-delay: 0s; }
     .satellite-2 { top: 35%; right: -5%; animation-delay: 0.5s; }
     .satellite-3 { bottom: 15%; left: 0; animation-delay: 1s; }
@@ -248,7 +408,6 @@
     .satellite-6 { top: 15%; left: 0; animation-delay: 0.8s; }
     .satellite-7 { top: 0%; left: 5%; animation-delay: 1.2s; }
     
-    /* Декоративные круги как в веб версии */
     .mobile-deco-circle {
         position: absolute;
         border-radius: 50%;
@@ -279,29 +438,30 @@
         left: 10%;
     }
     
-    /* Метка выбора сваха */
     .svah-badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         font-size: 11px;
         font-weight: 600;
-        color: #FF5858;
+        color: var(--red, #FF5858);
         background: rgba(255,88,88,0.08);
         padding: 4px 12px;
         border-radius: 20px;
         margin-bottom: 8px;
     }
     
-    /* Совпадение процент */
+    [data-theme="dark"] .svah-badge {
+        background: rgba(255,88,88,0.15);
+    }
+    
     .match-percent {
         font-size: 13px;
         font-weight: 700;
-        color: #F857A6;
+        color: var(--pink, #F857A6);
         margin-top: 8px;
     }
     
-    /* Одобрено */
     .approved-badge {
         display: inline-flex;
         align-items: center;
@@ -319,7 +479,6 @@
         height: 14px;
     }
 
-    /* Мобильная иконка свах одобрил */
     .mobile-approved-badge {
         display: inline-flex;
         align-items: center;
@@ -340,7 +499,7 @@
 </style>
 
 <!-- Hero -->
-<div class="hero-section" style="background: white; padding: 50px 0 100px; position: relative; overflow: hidden;">
+<div class="hero-section" style="background: var(--bg-color, white); padding: 50px 0 100px; position: relative; overflow: hidden; transition: background-color 0.3s;">
     <div style="position: absolute; top: -120px; left: -120px; width: 500px; height: 500px; border-radius: 50%; background: #FF5858; filter: blur(120px); opacity: 0.05; pointer-events: none;"></div>
     <div style="position: absolute; bottom: -120px; right: -120px; width: 500px; height: 500px; border-radius: 50%; background: #F857A6; filter: blur(120px); opacity: 0.05; pointer-events: none;"></div>
 
@@ -350,26 +509,24 @@
 
                 <div class="hero-animate" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,88,88,0.06); border: 1px solid rgba(255,88,88,0.15); border-radius: 50px; padding: 8px 18px; margin-bottom: 28px; margin-left: 20px;">
                     <div class="live-dot"></div>
-                    <span style="font-size: 13px; color: #FF5858; font-weight: 600;"><span id="counter">0</span> @word</span>
+                    <span style="font-size: 13px; color: var(--red, #FF5858); font-weight: 600;"><span id="counter">0</span> @word</span>
                 </div>
 
-                <h1 class="hero-animate-delay" style="font-size: 48px; font-weight: 700; color: #2D3436; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; padding-left: 20px;">
+                <h1 class="hero-animate-delay" style="font-size: 48px; font-weight: 700; color: var(--gray-dark, #2D3436); line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; padding-left: 20px;">
                     Свах Купидонов уже подобрал тебе 
                     <span style="background: linear-gradient(135deg, #FF5858, #F857A6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">пару</span>
                 </h1>
 
-                <p class="hero-animate-delay2" style="color: #636E72; font-size: 17px; line-height: 1.8; margin-bottom: 36px; padding-left: 20px;">
+                <p class="hero-animate-delay2" style="color: var(--gray-mid, #636E72); font-size: 17px; line-height: 1.8; margin-bottom: 36px; padding-left: 20px;">
                     Это не случайность. Свах не ошибается.
                 </p>
 
                 <!-- Мобильная композиция: центральная карточка + спутники -->
                 <div class="mobile-cards-showcase">
-                    <!-- Декоративные круги -->
                     <div class="mobile-deco-circle mobile-deco-1"></div>
                     <div class="mobile-deco-circle mobile-deco-2"></div>
                     <div class="mobile-deco-circle mobile-deco-3"></div>
                     
-                    <!-- Спутники - размытые и полупрозрачные -->
                     <div class="mobile-satellite mobile-satellite-white mobile-satellite-blur satellite-1">
                         <span>+12 сегодня</span>
                     </div>
@@ -381,7 +538,6 @@
                         </span>
                     </div>
                     
-                    <!-- Дима - непрозрачный, слева -->
                     <div class="mobile-satellite mobile-satellite-white satellite-3">
                         <span>Дима, 31</span>
                     </div>
@@ -401,7 +557,6 @@
                         <span>Игорь, 28</span>
                     </div>
                     
-                    <!-- Новый элемент в левом верхнем углу -->
                     <div class="mobile-satellite mobile-satellite-light mobile-satellite-blur-more satellite-7" style="padding: 6px 10px; font-size: 10px;">
                         <span class="mobile-satellite-icon">
                             <div class="live-dot" style="width: 6px; height: 6px;"></div>
@@ -409,17 +564,14 @@
                         </span>
                     </div>
                     
-                    <!-- Центральная карточка Анна - увеличенная -->
                     <div class="mobile-main-card">
                         <div class="mobile-main-avatar">А</div>
                         
-                        <!-- Метка Сваха -->
                         <div class="mobile-svah-badge">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                             Выбор Сваха
                         </div>
 
-                        <!-- Метка Свах одобрил -->
                         <div class="mobile-approved-badge">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                             Свах одобрил
@@ -428,7 +580,6 @@
                         <h4>Анна, 24</h4>
                         <p>Москва · Отношения</p>
                         
-                        <!-- Совпадение -->
                         <div class="mobile-match-percent">Совпадение: 94%</div>
                         
                         <div class="mobile-main-badge">Интересно…</div>
@@ -437,8 +588,8 @@
 
                 <div class="hero-animate-delay2">
                     <form method="get" action="/Feed/Index">
-                        <div class="search-box" style="background: white; border-radius: 24px; border: 1px solid #F0F0F0; box-shadow: 0 12px 40px rgba(255,88,88,0.08); padding: 22px;">
-                            <p style="margin: 0 0 14px; font-size: 14px; font-weight: 600; color: #2D3436;">Найди людей рядом</p>
+                        <div class="search-box" style="background: var(--card-bg, white); border-radius: 24px; border: 1px solid var(--border, #F0F0F0); box-shadow: 0 12px 40px rgba(255,88,88,0.08); padding: 22px; transition: all 0.3s;">
+                            <p style="margin: 0 0 14px; font-size: 14px; font-weight: 600; color: var(--gray-dark, #2D3436);">Найди людей рядом</p>
                             <div class="search-fields" style="display: flex; gap: 10px; margin-bottom: 14px;">
 
                                 <div class="search-field-card">
@@ -451,7 +602,7 @@
                                     <input type="hidden" name="goal" id="goalValue" value="" />
                                     <div class="custom-dropdown" id="goalDropdown">
                                         <div onclick="toggleGoal(event)" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; height:22px;">
-                                            <span id="goalLabel" style="font-size:14px; font-weight:500; color:#B2BEC3;">Любая</span>
+                                            <span id="goalLabel" style="font-size:14px; font-weight:500; color:var(--gray-light, #B2BEC3);">Любая</span>
                                             <svg id="goalArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2.5" style="flex-shrink:0; transition:transform 0.2s;">
                                                 <polyline points="6 9 12 15 18 9"></polyline></svg>
                                         </div>
@@ -481,22 +632,20 @@
                 <div style="position:absolute; width:160px; height:160px; border-radius:50%; background:rgba(255,88,88,0.04); top:5%; right:8%; z-index:0;"></div>
                 <div style="position:absolute; width:80px; height:80px; border-radius:50%; background:rgba(248,87,166,0.06); bottom:10%; left:8%; z-index:0;"></div>
 
-                <!-- Главная карточка Анна - увеличенная и повыше -->
-                <div class="float-card" style="position:absolute; background:white; border-radius:24px; padding:28px; width:220px; box-shadow:0 20px 60px rgba(255,88,88,0.18); z-index:3; top:22%; left:35%; transform:translate(-50%,-50%);">
+                <!-- Главная карточка Анна -->
+                <div class="float-card" style="position:absolute; background:var(--card-bg, white); border-radius:24px; padding:28px; width:220px; box-shadow:0 20px 60px rgba(255,88,88,0.18); z-index:3; top:22%; left:35%; transform:translate(-50%,-50%); transition: background-color 0.3s;">
                     <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
                         <span style="color:white; font-size:28px; font-weight:700;">А</span>
                     </div>
                     
-                    <!-- Метка Сваха -->
                     <div class="svah-badge" style="display:flex; justify-content:center; margin-bottom:8px;">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                         Выбор Сваха
                     </div>
                     
-                    <p style="font-size:18px; font-weight:700; color:#2D3436; margin:0 0 4px; text-align:center;">Анна, 24</p>
-                    <p style="font-size:13px; color:#636E72; margin:0 0 12px; text-align:center;">Москва · Отношения</p>
+                    <p style="font-size:18px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 4px; text-align:center;">Анна, 24</p>
+                    <p style="font-size:13px; color:var(--gray-mid, #636E72); margin:0 0 12px; text-align:center;">Москва · Отношения</p>
                     
-                    <!-- Совпадение -->
                     <div class="match-percent" style="text-align:center; font-size:13px; margin-bottom:12px;">
                         Совпадение: 94%
                     </div>
@@ -505,24 +654,24 @@
                 </div>
 
                 <!-- Карточка Игорь -->
-                <div class="float-card-2" style="position:absolute; background:white; border-radius:20px; padding:16px; width:148px; box-shadow:0 12px 32px rgba(255,88,88,0.1); z-index:4; left:0%; top:6%;">
+                <div class="float-card-2" style="position:absolute; background:var(--card-bg, white); border-radius:20px; padding:16px; width:148px; box-shadow:0 12px 32px rgba(255,88,88,0.1); z-index:4; left:0%; top:6%; transition: background-color 0.3s;">
                     <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:16px; font-weight:700; color:white;">И</span>
                     </div>
-                    <p style="font-size:13px; font-weight:700; color:#2D3436; margin:0 0 3px;">Игорь, 28</p>
-                    <p style="font-size:11px; color:#636E72; margin:0;">Питер · Дружба</p>
+                    <p style="font-size:13px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 3px;">Игорь, 28</p>
+                    <p style="font-size:11px; color:var(--gray-mid, #636E72); margin:0;">Питер · Дружба</p>
                 </div>
 
                 <!-- Карточка Дима -->
-                <div class="float-card-4" style="position:absolute; background:white; border-radius:18px; padding:14px; width:138px; box-shadow:0 10px 28px rgba(248,87,166,0.1); z-index:4; right:8%; top:18%;">
+                <div class="float-card-4" style="position:absolute; background:var(--card-bg, white); border-radius:18px; padding:14px; width:138px; box-shadow:0 10px 28px rgba(248,87,166,0.1); z-index:4; right:8%; top:18%; transition: background-color 0.3s;">
                     <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,rgba(248,87,166,0.2),rgba(255,88,88,0.15)); margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:15px; font-weight:700; color:#F857A6;">Д</span>
                     </div>
-                    <p style="font-size:13px; font-weight:700; color:#2D3436; margin:0 0 2px;">Дима, 31</p>
-                    <p style="font-size:11px; color:#636E72; margin:0;">Москва · Брак</p>
+                    <p style="font-size:13px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 2px;">Дима, 31</p>
+                    <p style="font-size:11px; color:var(--gray-mid, #636E72); margin:0;">Москва · Брак</p>
                 </div>
 
-                <!-- Карточка Катя - с одобрением -->
+                <!-- Карточка Катя -->
                 <div class="float-card-5" style="position:absolute; background:linear-gradient(135deg,#FF5858,#F857A6); border-radius:50px; padding:10px 16px; box-shadow:0 8px 24px rgba(255,88,88,0.25); z-index:4; left:2%; bottom:20%; display:flex; align-items:center; gap:10px;">
                     <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:13px; font-weight:700; color:white;">К</span>
@@ -534,25 +683,25 @@
                 </div>
 
                 <!-- Карточка Мария - размытая -->
-                <div class="float-card-3" style="position:absolute; background:white; border-radius:14px; padding:10px 12px; width:118px; box-shadow:0 6px 20px rgba(0,0,0,0.07); z-index:2; right:12%; bottom:14%; filter:blur(1.5px); opacity:0.8;">
+                <div class="float-card-3" style="position:absolute; background:var(--card-bg, white); border-radius:14px; padding:10px 12px; width:118px; box-shadow:0 6px 20px rgba(0,0,0,0.07); z-index:2; right:12%; bottom:14%; filter:blur(1.5px); opacity:0.8; transition: background-color 0.3s;">
                     <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,88,88,0.1); margin-bottom:6px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:12px; font-weight:700; color:#F857A6;">М</span>
                     </div>
-                    <p style="font-size:12px; font-weight:700; color:#2D3436; margin:0 0 1px;">Мария, 26</p>
-                    <p style="font-size:10px; color:#636E72; margin:0;">Казань · Брак</p>
+                    <p style="font-size:12px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 1px;">Мария, 26</p>
+                    <p style="font-size:10px; color:var(--gray-mid, #636E72); margin:0;">Казань · Брак</p>
                 </div>
 
                 <!-- Карточка Саша -->
-                <div class="float-card-2" style="position:absolute; background:white; border-radius:16px; padding:12px 14px; width:130px; box-shadow:0 8px 24px rgba(255,88,88,0.08); z-index:3; right:-2%; top:48%;">
+                <div class="float-card-2" style="position:absolute; background:var(--card-bg, white); border-radius:16px; padding:12px 14px; width:130px; box-shadow:0 8px 24px rgba(255,88,88,0.08); z-index:3; right:-2%; top:48%; transition: background-color 0.3s;">
                     <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:14px; font-weight:700; color:white;">С</span>
                     </div>
-                    <p style="font-size:13px; font-weight:700; color:#2D3436; margin:0 0 2px;">Саша, 25</p>
-                    <p style="font-size:11px; color:#636E72; margin:0;">Сочи · Общение</p>
+                    <p style="font-size:13px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 2px;">Саша, 25</p>
+                    <p style="font-size:11px; color:var(--gray-mid, #636E72); margin:0;">Сочи · Общение</p>
                 </div>
 
-                <!-- Метка одобрения Сваха - ближе к центру -->
-                <div class="float-card-3" style="position:absolute; top:8%; right:35%; background:white; border-radius:50px; padding:8px 16px; box-shadow:0 4px 20px rgba(255,88,88,0.12); display:flex; align-items:center; gap:8px; z-index:5;">
+                <!-- Метка одобрения Сваха -->
+                <div class="float-card-3" style="position:absolute; top:8%; right:35%; background:var(--card-bg, white); border-radius:50px; padding:8px 16px; box-shadow:0 4px 20px rgba(255,88,88,0.12); display:flex; align-items:center; gap:8px; z-index:5; transition: background-color 0.3s;">
                     <div class="approved-badge" style="margin:0;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         Свах одобрил
@@ -566,7 +715,7 @@
                 </div>
 
                 <!-- Метка совпадения -->
-                <div class="float-card-3" style="position:absolute; top:38%; left:6%; background:white; border-radius:50px; padding:8px 14px; box-shadow:0 4px 16px rgba(248,87,166,0.12); display:flex; align-items:center; gap:8px; z-index:5;">
+                <div class="float-card-3" style="position:absolute; top:38%; left:6%; background:var(--card-bg, white); border-radius:50px; padding:8px 14px; box-shadow:0 4px 16px rgba(248,87,166,0.12); display:flex; align-items:center; gap:8px; z-index:5; transition: background-color 0.3s;">
                     <div class="svah-badge" style="margin:0;">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                         Совпадение: 87%
@@ -578,11 +727,11 @@
 </div>
 
 <!-- Три шага -->
-<div class="steps-section" style="background: linear-gradient(180deg, #FFF5F6 0%, white 100%); padding: 100px 0;">
+<div class="steps-section" style="background: linear-gradient(180deg, rgba(255,88,88,0.05) 0%, var(--bg-color, white) 100%); padding: 100px 0; transition: background 0.3s;">
     <div class="container">
         <div style="text-align: center; margin-bottom: 60px;">
-            <p style="font-size:12px; letter-spacing:2px; color:#F857A6; margin-bottom:10px; font-weight:600;">КАК ЭТО РАБОТАЕТ</p>
-            <h2 style="font-size:40px; font-weight:700; color:#2D3436; margin:0;">Три простых шага</h2>
+            <p style="font-size:12px; letter-spacing:2px; color:var(--pink, #F857A6); margin-bottom:10px; font-weight:600;">КАК ЭТО РАБОТАЕТ</p>
+            <h2 style="font-size:40px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0;">Три простых шага</h2>
         </div>
         <div class="steps-grid" style="display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap: 28px;">
             <div class="step-card-custom">
@@ -591,8 +740,8 @@
                     <div style="width:72px; height:72px; border-radius:50%; background:rgba(255,88,88,0.08); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; box-shadow:0 4px 16px rgba(255,88,88,0.1);">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     </div>
-                    <p style="font-size:17px; font-weight:700; color:#2D3436; margin-bottom:14px;">Я узнаю тебя</p>
-                    <p style="font-size:14px; color:#636E72; line-height:1.9; margin:0;">Расскажи о себе, и я пойму, кто тебе нужен. Чем больше знаю — тем точнее выбор.</p>
+                    <p style="font-size:17px; font-weight:700; color:var(--gray-dark, #2D3436); margin-bottom:14px;">Я узнаю тебя</p>
+                    <p style="font-size:14px; color:var(--gray-mid, #636E72); line-height:1.9; margin:0;">Расскажи о себе, и я пойму, кто тебе нужен. Чем больше знаю — тем точнее выбор.</p>
                 </div>
             </div>
             <div class="step-card-custom step-card-active">
@@ -601,8 +750,8 @@
                     <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; box-shadow:0 8px 24px rgba(255,88,88,0.35);">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     </div>
-                    <p style="font-size:17px; font-weight:700; color:#2D3436; margin-bottom:14px;">Я подбираю</p>
-                    <p style="font-size:14px; color:#636E72; line-height:1.9; margin:0;">Анализирую совместимость и выбираю одного человека — того, на которого стоит обратить внимание...</p>
+                    <p style="font-size:17px; font-weight:700; color:var(--gray-dark, #2D3436); margin-bottom:14px;">Я подбираю</p>
+                    <p style="font-size:14px; color:var(--gray-mid, #636E72); line-height:1.9; margin:0;">Анализирую совместимость и выбираю одного человека — того, на которого стоит обратить внимание...</p>
                 </div>
             </div>
             <div class="step-card-custom">
@@ -611,20 +760,20 @@
                     <div style="width:72px; height:72px; border-radius:50%; background:rgba(255,88,88,0.08); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; box-shadow:0 4px 16px rgba(255,88,88,0.1);">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                     </div>
-                    <p style="font-size:17px; font-weight:700; color:#2D3436;margin-bottom:14px;">Я соединяю</p>
-                    <p style="font-size:14px; color:#636E72; line-height:1.9; margin:0;">Чат открыт. А дальше — ваша история, не подведите!</p>
+                    <p style="font-size:17px; font-weight:700; color:var(--gray-dark, #2D3436);margin-bottom:14px;">Я соединяю</p>
+                    <p style="font-size:14px; color:var(--gray-mid, #636E72); line-height:1.9; margin:0;">Чат открыт. А дальше — ваша история, не подведите!</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Последние анкеты - как было раньше -->
-<div class="recent-section" style="background: white; padding: 100px 0;">
+<!-- Последние анкеты -->
+<div class="recent-section" style="background: var(--bg-color, white); padding: 100px 0; transition: background-color 0.3s;">
     <div class="container">
         <div style="text-align:center; margin-bottom:48px;">
-            <p style="font-size:12px; letter-spacing:2px; color:#F857A6; margin-bottom:10px; font-weight:600;">НОВЫЕ УЧАСТНИКИ</p>
-            <h2 style="font-size:35px; font-weight:700; color:#2D3436; margin:0;">Недавно зарегистрировались</h2>
+            <p style="font-size:12px; letter-spacing:2px; color:var(--pink, #F857A6); margin-bottom:10px; font-weight:600;">НОВЫЕ УЧАСТНИКИ</p>
+            <h2 style="font-size:35px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0;">Недавно зарегистрировались</h2>
         </div>
         <div class="row g-4 justify-content-center align-items-end recent-cards-row">
             @{ int cardIndex = 0; }
@@ -644,9 +793,9 @@
                                 <span style="color:white; font-size:28px; font-weight:700;">@(p.Name != null && p.Name.Length > 0 ? p.Name.Substring(0,1) : "?")</span>
                             </div>
                         }
-                        <h5 style="font-size:17px; font-weight:700; color:#2D3436; margin-bottom:6px;">@p.Name, @p.Age</h5>
-                        <p style="font-size:13px; color:#636E72; margin-bottom:10px;">@p.City</p>
-                        <span style="display:inline-block; background:rgba(255,88,88,0.07); border-radius:20px; padding:5px 16px; font-size:12px; color:#FF5858; font-weight:600;">@p.Goal</span>
+                        <h5 style="font-size:17px; font-weight:700; color:var(--gray-dark, #2D3436); margin-bottom:6px;">@p.Name, @p.Age</h5>
+                        <p style="font-size:13px; color:var(--gray-mid, #636E72); margin-bottom:10px;">@p.City</p>
+                        <span style="display:inline-block; background:rgba(255,88,88,0.07); border-radius:20px; padding:5px 16px; font-size:12px; color:var(--red, #FF5858); font-weight:600;">@p.Goal</span>
                     </div>
                 </div>
             }
@@ -752,7 +901,7 @@
     function chooseGoal(value, label, el) {
         document.getElementById('goalValue').value = value;
         document.getElementById('goalLabel').textContent = label;
-        document.getElementById('goalLabel').style.color = value ? '#636E72' : '#B2BEC3';
+        document.getElementById('goalLabel').style.color = value ? 'var(--gray-mid, #636E72)' : 'var(--gray-light, #B2BEC3)';
         document.getElementById('goalMenu').style.display = 'none';
         document.getElementById('goalArrow').style.transform = 'rotate(0deg)';
         document.querySelectorAll('.custom-dropdown-item').forEach(function (i) {
