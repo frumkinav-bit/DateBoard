@@ -6,21 +6,21 @@
  
 <style>
     .profile-field {
-        background: white;
+        background: var(--card-bg);
         border-radius: 16px;
         padding: 20px 24px;
-        border: 1.5px solid #F0F0F0;
+        border: 1.5px solid var(--border);
         transition: all 0.2s;
         margin-bottom: 16px;
     }
     .profile-field:focus-within {
-        border-color: #FF5858;
-        box-shadow: 0 4px 16px rgba(255,88,88,0.08);
+        border-color: var(--accent);
+        box-shadow: 0 4px 16px var(--shadow-hover);
     }
     .profile-field label {
         font-size: 10px !important;
         font-weight: 700 !important;
-        color: #FF5858 !important;
+        color: var(--accent) !important;
         letter-spacing: 0.8px !important;
         margin-bottom: 6px !important;
         display: block;
@@ -32,7 +32,7 @@
         background: transparent !important;
         font-size: 15px !important;
         font-weight: 500 !important;
-        color: #2D3436 !important;
+        color: var(--text-main) !important;
         padding: 0 !important;
         height: auto !important;
         width: 100% !important;
@@ -44,12 +44,12 @@
         resize: none;
     }
     .profile-field input::placeholder,
-    .profile-field textarea::placeholder { color: #B2BEC3; font-weight: 400; }
+    .profile-field textarea::placeholder { color: var(--text-muted); opacity: 0.6; font-weight: 400; }
     .checkbox-card {
-        background: white;
+        background: var(--card-bg);
         border-radius: 16px;
         padding: 16px 24px;
-        border: 1.5px solid #F0F0F0;
+        border: 1.5px solid var(--border);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -57,77 +57,79 @@
         transition: all 0.2s;
         margin-bottom: 16px;
     }
-    .checkbox-card:hover { border-color: #FFE0E0; }
-    .checkbox-card.checked { border-color: #FF5858; background: rgba(255,88,88,0.02); }
+    .checkbox-card:hover { border-color: var(--accent); opacity: 0.7; }
+    .checkbox-card.checked { border-color: var(--accent); background: var(--hover-bg); }
     .toggle {
         width: 44px; height: 24px; border-radius: 12px;
-        background: #EFEFEF; position: relative;
+        background: var(--border); position: relative;
         transition: background 0.2s; flex-shrink: 0;
     }
-    .toggle.on { background: linear-gradient(135deg, #FF5858, #F857A6); }
+    .toggle.on { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
     .toggle-knob {
         width: 18px; height: 18px; border-radius: 50%;
-        background: white; position: absolute;
+        background: var(--card-bg); position: absolute;
         top: 3px; left: 3px;
         transition: left 0.2s;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        box-shadow: 0 2px 4px var(--shadow-hover);
     }
     .toggle.on .toggle-knob { left: 23px; }
     .goal-option {
-        flex: 1; background: white; border: 1.5px solid #F0F0F0;
+        flex: 1; background: var(--card-bg); border: 1.5px solid var(--border);
         border-radius: 12px; padding: 10px 8px;
         text-align: center; cursor: pointer;
-        font-size: 13px; font-weight: 500; color: #636E72;
+        font-size: 13px; font-weight: 500; color: var(--text-muted);
         transition: all 0.2s; font-family: 'Montserrat', sans-serif;
     }
-    .goal-option:hover { border-color: #FFE0E0; color: #FF5858; }
-    .goal-option.active { background: linear-gradient(135deg, #FF5858, #F857A6); color: white; border-color: transparent; font-weight: 600; }
+    .goal-option:hover { border-color: var(--accent); color: var(--accent); }
+    .goal-option.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; border-color: transparent; font-weight: 600; }
     .save-btn {
         width: 100%;
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         border: none; border-radius: 50px;
         padding: 18px; color: white;
         font-weight: 600; font-size: 16px;
         cursor: pointer; font-family: 'Montserrat', sans-serif;
-        box-shadow: 0 8px 24px rgba(255,88,88,0.3);
+        box-shadow: 0 8px 24px var(--shadow-hover);
         transition: all 0.3s;
     }
-    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,88,88,0.4); }
+    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px var(--shadow-hover); }
     .section-title {
-        font-size: 11px; color: #B2BEC3; font-weight: 600;
+        font-size: 11px; color: var(--text-muted); font-weight: 600;
         letter-spacing: 1.5px; margin-bottom: 12px; margin-top: 8px;
+        opacity: 0.8;
     }
     .photo-circle {
         width: 100px; height: 100px; border-radius: 50%;
         cursor: pointer; flex-shrink: 0; position: relative;
-        overflow: hidden; border: 3px solid #FFE0E0;
+        overflow: hidden; border: 3px solid var(--border);
         transition: border-color 0.2s;
     }
-    .photo-circle:hover { border-color: #FF5858; }
+    .photo-circle:hover { border-color: var(--accent); }
     .photo-overlay {
         position: absolute; top: 0; left: 0;
         width: 100%; height: 100%; border-radius: 50%;
-        background: rgba(255,88,88,0.2);
+        background: var(--accent);
+        opacity: 0.2;
         opacity: 0; transition: opacity 0.2s;
         display: flex; align-items: center; justify-content: center;
     }
-    .photo-circle:hover .photo-overlay { opacity: 1; }
+    .photo-circle:hover .photo-overlay { opacity: 0.3; }
 </style>
  
-<div style="background: #F8F9FA; min-height: 100vh; padding: 40px 0;">
+<div style="background: var(--bg); min-height: 100vh; padding: 40px 0;">
     <div class="container" style="max-width: 600px;">
  
         <!-- Шапка -->
         <div style="margin-bottom: 32px;">
-            <p style="font-size:12px; letter-spacing:2px; color:#F857A6; font-weight:600; margin-bottom:6px;">ПРОФИЛЬ</p>
-            <h1 style="font-size:32px; font-weight:700; color:#2D3436; margin:0;">Моя анкета</h1>
+            <p style="font-size:12px; letter-spacing:2px; color:var(--accent2); font-weight:600; margin-bottom:6px;">ПРОФИЛЬ</p>
+            <h1 style="font-size:32px; font-weight:700; color:var(--text-main); margin:0;">Моя анкета</h1>
         </div>
  
         <form method="post" enctype="multipart/form-data">
  
             <!-- Фото -->
             <p class="section-title">ФОТО ПРОФИЛЯ</p>
-            <div style="display:flex; align-items:center; gap:20px; margin-bottom:24px; background:white; border-radius:20px; padding:20px 24px; border:1.5px solid #F0F0F0;">
+            <div style="display:flex; align-items:center; gap:20px; margin-bottom:24px; background:var(--card-bg); border-radius:20px; padding:20px 24px; border:1.5px solid var(--border);">
  
                 <div class="photo-circle" onclick="document.getElementById('photoFileInput').click()">
                     @if (!string.IsNullOrEmpty(Model.ProfileModel?.PhotoPath))
@@ -137,8 +139,8 @@
                     }
                     else
                     {
-                        <div id="photoPreviewWrap" style="width:100%; height:100%; background:linear-gradient(135deg,rgba(255,88,88,0.08),rgba(248,87,166,0.08)); display:flex; align-items:center; justify-content:center;">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <div id="photoPreviewWrap" style="width:100%; height:100%; background:var(--hover-bg); display:flex; align-items:center; justify-content:center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                         </div>
                         <img id="photoPreview" style="display:none; width:100%; height:100%; object-fit:cover;" />
                     }
@@ -148,12 +150,12 @@
                 </div>
  
                 <div>
-                    <p style="font-size:15px; font-weight:600; color:#2D3436; margin:0 0 4px;">Фото профиля</p>
-                    <p style="font-size:13px; color:#B2BEC3; margin:0 0 12px; line-height:1.5;">Нажми на круг чтобы загрузить<br>или изменить фото</p>
+                    <p style="font-size:15px; font-weight:600; color:var(--text-main); margin:0 0 4px;">Фото профиля</p>
+                    <p style="font-size:13px; color:var(--text-muted); margin:0 0 12px; line-height:1.5; opacity:0.8;">Нажми на круг чтобы загрузить<br>или изменить фото</p>
                     <button type="button" onclick="document.getElementById('photoFileInput').click()"
-                            style="background:rgba(255,88,88,0.07); border:none; border-radius:20px; padding:8px 16px; font-size:12px; color:#FF5858; font-weight:600; cursor:pointer; font-family:'Montserrat',sans-serif; transition:all 0.2s;"
-                            onmouseover="this.style.background='rgba(255,88,88,0.12)'"
-                            onmouseout="this.style.background='rgba(255,88,88,0.07)'">
+                            style="background:var(--hover-bg); border:none; border-radius:20px; padding:8px 16px; font-size:12px; color:var(--accent); font-weight:600; cursor:pointer; font-family:'Montserrat',sans-serif; transition:all 0.2s;"
+                            onmouseover="this.style.background='var(--hover-bg)'; this.style.opacity='0.8'"
+                            onmouseout="this.style.opacity='1'">
                         Выбрать фото
                     </button>
                 </div>
@@ -167,17 +169,17 @@
             <div class="profile-field">
                 <label>ИМЯ</label>
                 <input asp-for="ProfileModel.Name" placeholder="Как тебя зовут?" />
-                <span asp-validation-for="ProfileModel.Name" style="font-size:11px; color:#FF5858;"></span>
+                <span asp-validation-for="ProfileModel.Name" style="font-size:11px; color:var(--accent);"></span>
             </div>
  
             <div class="profile-field">
                 <label>ГОРОД</label>
                 <input asp-for="ProfileModel.City" placeholder="Например, Москва" />
-                <span asp-validation-for="ProfileModel.City" style="font-size:11px; color:#FF5858;"></span>
+                <span asp-validation-for="ProfileModel.City" style="font-size:11px; color:var(--accent);"></span>
             </div>
  
             <div class="profile-field">
-                <label>ВОЗРАСТ <span style="color:#B2BEC3; font-size:9px; font-weight:400;">(НЕОБЯЗАТЕЛЬНО)</span></label>
+                <label>ВОЗРАСТ <span style="color:var(--text-muted); font-size:9px; font-weight:400; opacity:0.7;">(НЕОБЯЗАТЕЛЬНО)</span></label>
                 <input asp-for="ProfileModel.Age" type="number" placeholder="Сколько тебе лет?" min="16" max="99" />
             </div>
  
@@ -210,8 +212,8 @@
             <div class="checkbox-card @(Model.ProfileModel?.HasChildren == true ? "checked" : "")"
                  id="childrenCard" onclick="toggleChildren()">
                 <div>
-                    <p style="font-size:15px; font-weight:600; color:#2D3436; margin:0 0 2px;">Есть дети</p>
-                    <p style="font-size:12px; color:#B2BEC3; margin:0;">Укажи если у тебя есть дети</p>
+                    <p style="font-size:15px; font-weight:600; color:var(--text-main); margin:0 0 2px;">Есть дети</p>
+                    <p style="font-size:12px; color:var(--text-muted); margin:0; opacity:0.7;">Укажи если у тебя есть дети</p>
                 </div>
                 <div class="toggle @(Model.ProfileModel?.HasChildren == true ? "on" : "")" id="childrenToggle">
                     <div class="toggle-knob"></div>
