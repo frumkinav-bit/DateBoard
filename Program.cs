@@ -8,8 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ===== ВРЕМЕННО: Включить Development режим для диагностики =====
-// Удалите эту строку после исправления ошибки!
+// ===== ПРИНУДИТЕЛЬНО ВКЛЮЧАЕМ DEVELOPMENT ДЛЯ ДИАГНОСТИКИ =====
+// Удалите после исправления ошибки!
+builder.Environment.EnvironmentName = "Development";
 Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
 
 // ===== НАСТРОЙКА ПОРТА ДЛЯ RAILWAY =====
@@ -47,14 +48,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// ===== Razor Pages с детальными ошибками =====
-builder.Services.AddRazorPages()
-    .AddRazorPagesOptions(options =>
-    {
-        options.Conventions.ConfigureFilter(new Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute());
-    });
+// ===== Razor Pages =====
+builder.Services.AddRazorPages();
 
-// Добавляем логирование для диагностики
+// Логирование
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
@@ -69,26 +66,16 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync();
 }
 
-// ===== MIDDLEWARE ПАЙПЛАЙН (ИСПРАВЛЕННЫЙ ПОРЯДОК!) =====
-
-// В Development показываем детальные ошибки
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage(); // ← ПОКАЗЫВАЕТ ДЕТАЛИ ОШИБКИ
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-}
+// ===== MIDDLEWARE ПАЙПЛАЙН =====
+// ВСЕГДА показываем детальные ошибки (временно!)
+app.UseDeveloperExceptionPage();
 
 app.UseStaticFiles();
 app.UseRouting();
 
-// Аутентификация и авторизация
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Middleware онлайн статуса (ДО MapRazorPages!)
 app.UseMiddleware<OnlineStatusMiddleware>();
 
 // ===== HUBS =====
@@ -99,7 +86,6 @@ app.MapHub<NotificationHub>("/notificationHub");
 // ===== Razor Pages =====
 app.MapRazorPages();
 
-// ===== ЗАПУСК =====
 app.Run();
 
 // ===== МЕТОД ДЛЯ RAILWAY CONNECTION STRING =====
