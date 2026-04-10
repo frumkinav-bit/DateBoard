@@ -30,7 +30,7 @@
             --gray-light: #B2BEC3;
             --border: #EFEFEF;
             --bg-hover: rgba(255,88,88,0.07);
-            /* Основные фоны светлой темы */
+            /* Основная светлая тема — чистый белый */
             --bg-color: #F8F9FA;
             --text-color: #2D3436;
             --card-bg: #FFFFFF;
@@ -42,23 +42,23 @@
             --footer-bg: #FFFFFF;
         }
 
-        /* ===== ТЁМНАЯ ТЕМА — ИЗУМРУДНЫЙ/ТЁМНО-ЗЕЛЁНЫЙ ===== */
-        [data-theme="dark"] {
-            --gray-dark: #F0FFF5;      /* Мятный белый текст */
-            --gray-mid: #A8D4B5;       /* Мятный приглушённый */
-            --gray-light: #5C8B6F;     /* Тёмная мята */
-            --border: #2A5D3A;         /* Изумрудный бордер */
-            --bg-hover: rgba(255,88,88,0.12);
-            /* Основные фоны тёмной темы — изумрудные */
-            --bg-color: #0F2D1A;       /* Тёмный лес */
-            --text-color: #F0FFF5;     /* Мятный белый */
-            --card-bg: #183D28;        /* Мягкий изумруд */
-            --header-bg: #183D28;       /* Шапка */
-            --side-nav-bg: #183D28;    /* Боковое меню */
-            --overlay-bg: rgba(0,0,0,0.7);
-            --notification-bg: #183D28;
-            --toast-bg: #183D28;
-            --footer-bg: #183D28;
+        /* ===== КРЕМОВАЯ ТЕМА — вторая светлая версия ===== */
+        [data-theme="cream"] {
+            --gray-dark: #4A403A;      /* Тёплый кофейный текст */
+            --gray-mid: #8B7D72;       /* Капучино */
+            --gray-light: #B8A99A;     /* Латте */
+            --border: #E8DED4;         /* Кремовый бордер */
+            --bg-hover: rgba(255,88,88,0.08);
+            
+            --bg-color: #F5F0EB;       /* Кремовый фон */
+            --text-color: #4A403A;     
+            --card-bg: #FFFBF7;        /* Молочный */
+            --header-bg: #FFFBF7;      /* Шапка */
+            --side-nav-bg: #FFFBF7;    /* Боковое меню */
+            --overlay-bg: rgba(74,64,58,0.4);
+            --notification-bg: #FFFBF7;
+            --toast-bg: #FFFBF7;
+            --footer-bg: #FFFBF7;
         }
 
         body {
@@ -97,9 +97,10 @@
             color: white;
         }
 
-        .theme-toggle .moon { display: none; }
-        [data-theme="dark"] .theme-toggle .sun { display: none; }
-        [data-theme="dark"] .theme-toggle .moon { display: block; }
+        /* Иконки для переключения */
+        .theme-toggle .coffee { display: none; }
+        [data-theme="cream"] .theme-toggle .sun { display: none; }
+        [data-theme="cream"] .theme-toggle .coffee { display: block; }
 
         /* ===== ШАПКА ===== */
         .navbar-main {
@@ -200,8 +201,8 @@
             font-weight: 600;
         }
 
-        [data-theme="dark"] .nav-link-active {
-            background: rgba(255,88,88,0.15);
+        [data-theme="cream"] .nav-link-active {
+            background: rgba(255,88,88,0.12);
         }
 
         .nav-link-locked::after {
@@ -232,12 +233,12 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        [data-theme="dark"] .menu-btn {
-            background: rgba(255,88,88,0.15);
+        [data-theme="cream"] .menu-btn {
+            background: rgba(255,88,88,0.1);
         }
 
         .menu-btn:hover { background: rgba(255,88,88,0.15); }
-        [data-theme="dark"] .menu-btn:hover { background: rgba(255,88,88,0.25); }
+        [data-theme="cream"] .menu-btn:hover { background: rgba(255,88,88,0.18); }
 
         .menu-btn svg { width: 18px; height: 18px; }
 
@@ -317,8 +318,8 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
 
-        [data-theme="dark"] .side-nav-header {
-            background: linear-gradient(135deg, rgba(255,88,88,0.1) 0%, var(--side-nav-bg) 100%);
+        [data-theme="cream"] .side-nav-header {
+            background: linear-gradient(135deg, rgba(255,88,88,0.06) 0%, var(--side-nav-bg) 100%);
         }
 
         .side-nav-close {
@@ -335,8 +336,8 @@
             transition: background-color 0.2s;
         }
 
-        [data-theme="dark"] .side-nav-close {
-            background: rgba(255,88,88,0.2);
+        [data-theme="cream"] .side-nav-close {
+            background: rgba(255,88,88,0.12);
         }
 
         .side-nav-content { flex: 1; padding: 20px 24px; }
@@ -432,8 +433,8 @@
             border: 1px solid var(--border);
         }
 
-        [data-theme="dark"] .notification-dropdown {
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        [data-theme="cream"] .notification-dropdown {
+            box-shadow: 0 20px 60px rgba(74,64,58,0.15);
         }
 
         .notification-dropdown.active {
@@ -497,8 +498,8 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
 
-        [data-theme="dark"] .notification-header {
-            background: linear-gradient(135deg, rgba(255,88,88,0.1) 0%, var(--notification-bg) 100%);
+        [data-theme="cream"] .notification-header {
+            background: linear-gradient(135deg, rgba(255,88,88,0.06) 0%, var(--notification-bg) 100%);
         }
 
         .notification-header span {
@@ -520,7 +521,7 @@
         }
 
         .notification-header button:hover { background: rgba(255,88,88,0.1); }
-        [data-theme="dark"] .notification-header button:hover { background: rgba(255,88,88,0.2); }
+        [data-theme="cream"] .notification-header button:hover { background: rgba(255,88,88,0.12); }
 
         .notification-list { 
             max-height: 420px; 
@@ -548,8 +549,8 @@
             border-left: 3px solid var(--red);
         }
 
-        [data-theme="dark"] .notification-item.unread {
-            background: linear-gradient(90deg, rgba(255,88,88,0.1) 0%, transparent 100%);
+        [data-theme="cream"] .notification-item.unread {
+            background: linear-gradient(90deg, rgba(255,88,88,0.08) 0%, transparent 100%);
         }
 
         .notification-avatar {
@@ -558,10 +559,6 @@
             object-fit: cover;
             flex-shrink: 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        [data-theme="dark"] .notification-avatar {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .notification-avatar-placeholder {
@@ -644,8 +641,8 @@
             border-left: 4px solid var(--red);
         }
 
-        [data-theme="dark"] .toast {
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        [data-theme="cream"] .toast {
+            box-shadow: 0 10px 40px rgba(74,64,58,0.12);
         }
 
         .toast.show { transform: translateX(0); }
@@ -678,8 +675,8 @@
             display: inline-block;
         }
 
-        [data-theme="dark"] .toast-svah-badge {
-            background: rgba(255,88,88,0.15);
+        [data-theme="cream"] .toast-svah-badge {
+            background: rgba(255,88,88,0.1);
         }
 
         .toast-close {
@@ -974,6 +971,7 @@
     
     <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ -->
     <button class="theme-toggle" onclick="toggleTheme()" title="Сменить тему">
+        <!-- Солнце для стандартной светлой темы -->
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -985,8 +983,13 @@
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
-        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        <!-- Кофе для кремовой темы -->
+        <svg class="coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
         </svg>
     </button>
     
@@ -1004,7 +1007,8 @@
 
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            // Цикл: light -> cream -> light
+            const newTheme = currentTheme === 'light' ? 'cream' : 'light';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         }
