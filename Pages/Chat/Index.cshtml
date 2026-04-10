@@ -12,46 +12,52 @@
 }
  
 <style>
-    .chat-wrap { display: flex; height: calc(100vh - 64px); background: #F8F9FA; }
-    .chat-sidebar { width: 280px; background: white; border-right: 1px solid #EFEFEF; display: flex; flex-direction: column; flex-shrink: 0; }
-    .chat-sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid #EFEFEF; }
+    .chat-wrap { display: flex; height: calc(100vh - 64px); background: var(--bg); }
+    .chat-sidebar { width: 280px; background: var(--card-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+    .chat-sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid var(--border); }
     .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .chat-header { background: white; border-bottom: 1px solid #EFEFEF; padding: 16px 28px; display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+    .chat-header { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 16px 28px; display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 28px; display: flex; flex-direction: column; gap: 16px; }
     .chat-messages::-webkit-scrollbar { width: 4px; }
     .chat-messages::-webkit-scrollbar-track { background: transparent; }
-    .chat-messages::-webkit-scrollbar-thumb { background: #FFE0E0; border-radius: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--accent); opacity: 0.3; border-radius: 4px; }
     .msg-row { display: flex; gap: 10px; align-items: flex-end; max-width: 70%; animation: fadeIn 0.3s ease; }
     .msg-row.mine { align-self: flex-end; flex-direction: row-reverse; }
     .msg-row.theirs { align-self: flex-start; }
-    .msg-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #FF5858, #F857A6); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+    .msg-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
     .msg-bubble-wrap { display: flex; flex-direction: column; gap: 4px; }
     .msg-bubble-wrap.mine { align-items: flex-end; }
-    .msg-name { font-size: 11px; color: #B2BEC3; font-weight: 600; padding: 0 4px; }
+    .msg-name { font-size: 11px; color: var(--text-muted); font-weight: 600; padding: 0 4px; opacity: 0.7; }
     .msg-bubble { padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.6; word-break: break-word; position: relative; }
-    .msg-bubble.mine { background: linear-gradient(135deg, #FF5858, #F857A6); color: white; border-bottom-right-radius: 4px; }
-    .msg-bubble.theirs { background: white; color: #2D3436; border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .msg-time { font-size: 10px; color: #B2BEC3; padding: 0 4px; }
-    .msg-actions { display: none; position: absolute; top: -32px; right: 0; background: white; border-radius: 20px; padding: 4px 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10; }
+    .msg-bubble.mine { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; border-bottom-right-radius: 4px; }
+    .msg-bubble.theirs { background: var(--card-bg); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
+    .msg-time { font-size: 10px; color: var(--text-muted); padding: 0 4px; opacity: 0.7; }
+    .msg-actions { display: none; position: absolute; top: -32px; right: 0; background: var(--card-bg); border-radius: 20px; padding: 4px 8px; box-shadow: 0 4px 12px var(--shadow-hover); z-index: 10; }
     .msg-bubble:hover .msg-actions { display: flex; gap: 4px; }
-    .msg-action-btn { background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 8px; color: #636E72; font-size: 11px; font-family: 'Montserrat', sans-serif; transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
-    .msg-action-btn:hover { background: #FFF5F5; color: #FF5858; }
-    .chat-input-area { background: white; border-top: 1px solid #EFEFEF; padding: 16px 28px; display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
-    .chat-input { flex: 1; background: #F8F9FA; border: 1.5px solid #F0F0F0; border-radius: 50px; padding: 12px 56px 12px 20px; font-size: 14px; font-weight: 500; color: #2D3436; outline: none; font-family: 'Montserrat', sans-serif; transition: all 0.2s; height: 48px; width: 100%; }
-    .chat-input:focus { border-color: #FF5858; background: white; box-shadow: 0 4px 16px rgba(255,88,88,0.08); }
-    .chat-input::placeholder { color: #B2BEC3; }
-    .send-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #FF5858, #F857A6); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(255,88,88,0.3); transition: all 0.2s; flex-shrink: 0; }
-    .send-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(255,88,88,0.4); }
-    .photo-btn { width: 48px; height: 48px; border-radius: 50%; background: white; border: 1.5px solid #F0F0F0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-    .photo-btn:hover { border-color: #FF5858; background: rgba(255,88,88,0.04); }
+    .msg-action-btn { background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 8px; color: var(--text-muted); font-size: 11px; font-family: 'Montserrat', sans-serif; transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
+    .msg-action-btn:hover { background: var(--hover-bg); color: var(--accent); }
+    .chat-input-area { background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px 28px; display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+    .chat-input { flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: 50px; padding: 12px 56px 12px 20px; font-size: 14px; font-weight: 500; color: var(--text-main); outline: none; font-family: 'Montserrat', sans-serif; transition: all 0.2s; height: 48px; width: 100%; }
+    .chat-input:focus { border-color: var(--accent); background: var(--card-bg); box-shadow: 0 4px 16px var(--shadow-hover); }
+    .chat-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+    .send-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px var(--shadow-hover); transition: all 0.2s; flex-shrink: 0; }
+    .send-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px var(--shadow-hover); }
+    .photo-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--card-bg); border: 1.5px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+    .photo-btn:hover { border-color: var(--accent); background: var(--hover-bg); }
+    .photo-btn svg { stroke: var(--accent); }
     .online-dot { width: 8px; height: 8px; border-radius: 50%; background: #00C48C; display: inline-block; flex-shrink: 0; }
-    .sidebar-stat { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 14px; background: #F8F9FA; margin-bottom: 8px; }
-    .quick-btn { background: white; border: 1px solid #EFEFEF; border-radius: 20px; padding: 8px 14px; font-size: 12px; color: #636E72; cursor: pointer; text-align: left; font-family: 'Montserrat', sans-serif; transition: all 0.15s; width: 100%; display: flex; align-items: center; gap: 8px; }
-    .quick-btn:hover { border-color: #FF5858; color: #FF5858; background: rgba(255,88,88,0.03); }
-    .rule-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,88,88,0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sidebar-stat { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 14px; background: var(--bg); margin-bottom: 8px; }
+    .quick-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 8px 14px; font-size: 12px; color: var(--text-muted); cursor: pointer; text-align: left; font-family: 'Montserrat', sans-serif; transition: all 0.15s; width: 100%; display: flex; align-items: center; gap: 8px; }
+    .quick-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--hover-bg); }
+    .quick-btn svg { stroke: var(--accent); }
+    .rule-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--hover-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rule-icon svg { stroke: var(--accent); }
     .msg-photo { max-width: 200px; border-radius: 12px; cursor: pointer; transition: transform 0.2s; display: block; }
     .msg-photo:hover { transform: scale(1.02); }
-    .edit-mode-bar { display: none; background: rgba(255,88,88,0.06); border-top: 1px solid rgba(255,88,88,0.15); padding: 8px 28px; align-items: center; gap: 10px; flex-shrink: 0; }
+    .edit-mode-bar { display: none; background: var(--hover-bg); border-top: 1px solid var(--border); padding: 8px 28px; align-items: center; gap: 10px; flex-shrink: 0; }
+    .edit-mode-bar svg { stroke: var(--accent); }
+    .edit-mode-bar span { color: var(--accent); }
+    .edit-mode-bar button { color: var(--text-muted); }
     
     @@keyframes typingAnim { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
     @@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -77,7 +83,7 @@
             z-index: 1000;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
-            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+            box-shadow: 4px 0 24px var(--shadow-hover);
         }
         
         .chat-sidebar.open {
@@ -112,7 +118,7 @@
             transform: translateY(-50%);
             width: 4px;
             height: 60px;
-            background: linear-gradient(180deg, #FF5858, #F857A6);
+            background: linear-gradient(180deg, var(--accent), var(--accent2));
             border-radius: 0 4px 4px 0;
             z-index: 998;
             opacity: 0.6;
@@ -131,7 +137,7 @@
             cursor: pointer;
             margin-right: 8px;
             flex-shrink: 0;
-            color: #FF5858;
+            color: var(--accent);
         }
         
         .menu-btn svg {
@@ -165,7 +171,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg,#FF5858,#F857A6);
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -182,7 +188,7 @@
             background: transparent;
             border: none;
             cursor: pointer;
-            color: #FF5858;
+            color: var(--accent);
             transition: transform 0.2s;
         }
         
@@ -199,7 +205,7 @@
         .quick-phrases-section {
             margin-top: auto;
             padding-top: 20px;
-            border-top: 1px solid #EFEFEF;
+            border-top: 1px solid var(--border);
         }
         
         /* Верхний блок быстрых фраз для мобильного */
@@ -292,58 +298,58 @@
     <!-- Сайдбар -->
     <div class="chat-sidebar" id="chatSidebar">
         <div class="chat-sidebar-header">
-            <p style="font-size:11px; letter-spacing:1.5px; color:#F857A6; font-weight:600; margin-bottom:6px;">ОБЩЕНИЕ</p>
-            <h2 style="font-size:18px; font-weight:700; color:#2D3436; margin:0;">Общий чат</h2>
+            <p style="font-size:11px; letter-spacing:1.5px; color:var(--accent2); font-weight:600; margin-bottom:6px;">ОБЩЕНИЕ</p>
+            <h2 style="font-size:18px; font-weight:700; color:var(--text-main); margin:0;">Общий чат</h2>
         </div>
         <div style="padding:16px; flex:1; overflow-y:auto; display:flex; flex-direction:column;">
             <div style="margin-bottom:20px;">
-                <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">СТАТУС</p>
+                <p style="font-size:11px; color:var(--text-muted); font-weight:600; letter-spacing:1px; margin-bottom:10px; opacity:0.7;">СТАТУС</p>
                 <div class="sidebar-stat">
                     <div class="online-dot"></div>
                     <div>
-                        <p style="font-size:13px; font-weight:600; color:#2D3436; margin:0;">Вы онлайн</p>
-                        <p style="font-size:11px; color:#B2BEC3; margin:0;">@displayName</p>
+                        <p style="font-size:13px; font-weight:600; color:var(--text-main); margin:0;">Вы онлайн</p>
+                        <p style="font-size:11px; color:var(--text-muted); margin:0; opacity:0.7;">@displayName</p>
                     </div>
                 </div>
             </div>
             
             <!-- БЫСТРЫЕ ФРАЗЫ — ВЕРХНИЙ БЛОК (для мобильного) -->
             <div class="quick-phrases-top-mobile" style="margin-bottom:20px;">
-                <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">БЫСТРЫЕ ФРАЗЫ</p>
+                <p style="font-size:11px; color:var(--text-muted); font-weight:600; letter-spacing:1px; margin-bottom:10px; opacity:0.7;">БЫСТРЫЕ ФРАЗЫ</p>
                 <div style="display:flex; flex-direction:column; gap:6px;">
-                    <button class="quick-btn" onclick="insertPhrase('Привет! Как дела?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>Привет! Как дела?</button>
-                    <button class="quick-btn" onclick="insertPhrase('Расскажи о себе')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Расскажи о себе</button>
-                    <button class="quick-btn" onclick="insertPhrase('Какие у тебя хобби?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Какие у тебя хобби?</button>
-                    <button class="quick-btn" onclick="insertPhrase('Из какого ты города?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Из какого ты города?</button>
+                    <button class="quick-btn" onclick="insertPhrase('Привет! Как дела?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>Привет! Как дела?</button>
+                    <button class="quick-btn" onclick="insertPhrase('Расскажи о себе')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Расскажи о себе</button>
+                    <button class="quick-btn" onclick="insertPhrase('Какие у тебя хобби?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Какие у тебя хобби?</button>
+                    <button class="quick-btn" onclick="insertPhrase('Из какого ты города?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Из какого ты города?</button>
                 </div>
             </div>
             
             <div style="margin-bottom:20px;">
-                <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">ПРАВИЛА ЧАТА</p>
-                <div style="background:#FFF5F5; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                <p style="font-size:11px; color:var(--text-muted); font-weight:600; letter-spacing:1px; margin-bottom:10px; opacity:0.7;">ПРАВИЛА ЧАТА</p>
+                <div style="background:var(--hover-bg); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <div class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div>
-                        <p style="font-size:12px; color:#636E72; margin:0;">Будьте вежливы</p>
+                        <div class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div>
+                        <p style="font-size:12px; color:var(--text-muted); margin:0;">Будьте вежливы</p>
                     </div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <div class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg></div>
-                        <p style="font-size:12px; color:#636E72; margin:0;">Без спама и рекламы</p>
+                        <div class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg></div>
+                        <p style="font-size:12px; color:var(--text-muted); margin:0;">Без спама и рекламы</p>
                     </div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <div class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
-                        <p style="font-size:12px; color:#636E72; margin:0;">Уважайте друг друга</p>
+                        <div class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+                        <p style="font-size:12px; color:var(--text-muted); margin:0;">Уважайте друг друга</p>
                     </div>
                 </div>
             </div>
             
             <!-- Быстрые фразы внизу сайдбара (для десктопа) -->
             <div class="quick-phrases-section">
-                <p style="font-size:11px; color:#B2BEC3; font-weight:600; letter-spacing:1px; margin-bottom:10px;">БЫСТРЫЕ ФРАЗЫ</p>
+                <p style="font-size:11px; color:var(--text-muted); font-weight:600; letter-spacing:1px; margin-bottom:10px; opacity:0.7;">БЫСТРЫЕ ФРАЗЫ</p>
                 <div style="display:flex; flex-direction:column; gap:6px;">
-                    <button class="quick-btn" onclick="insertPhrase('Привет! Как дела?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>Привет! Как дела?</button>
-                    <button class="quick-btn" onclick="insertPhrase('Расскажи о себе')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Расскажи о себе</button>
-                    <button class="quick-btn" onclick="insertPhrase('Какие у тебя хобби?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Какие у тебя хобби?</button>
-                    <button class="quick-btn" onclick="insertPhrase('Из какого ты города?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Из какого ты города?</button>
+                    <button class="quick-btn" onclick="insertPhrase('Привет! Как дела?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>Привет! Как дела?</button>
+                    <button class="quick-btn" onclick="insertPhrase('Расскажи о себе')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Расскажи о себе</button>
+                    <button class="quick-btn" onclick="insertPhrase('Какие у тебя хобби?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Какие у тебя хобби?</button>
+                    <button class="quick-btn" onclick="insertPhrase('Из какого ты города?')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Из какого ты города?</button>
                 </div>
             </div>
         </div>
@@ -353,16 +359,16 @@
     <div class="chat-main">
         <!-- Десктопная шапка (без изменений) -->
         <div class="chat-header desktop-header">
-            <div style="width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <div style="width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
             </div>
             <div style="flex:1;">
-                <p style="font-size:15px; font-weight:700; color:#2D3436; margin:0;">Общий чат DateBoard</p>
+                <p style="font-size:15px; font-weight:700; color:var(--text-main); margin:0;">Общий чат DateBoard</p>
                 <p style="font-size:12px; color:#00C48C; margin:0; display:flex; align-items:center; gap:5px;"><span class="online-dot"></span> Все онлайн</p>
             </div>
-            <div style="display:flex; align-items:center; gap:6px; background:rgba(255,88,88,0.06); border:1px solid rgba(255,88,88,0.15); border-radius:50px; padding:6px 14px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                <span style="font-size:12px; color:#FF5858; font-weight:600;">Знакомьтесь!</span>
+            <div style="display:flex; align-items:center; gap:6px; background:var(--hover-bg); border:1px solid var(--border); border-radius:50px; padding:6px 14px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--accent)"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <span style="font-size:12px; color:var(--accent); font-weight:600;">Знакомьтесь!</span>
             </div>
         </div>
  
@@ -428,25 +434,25 @@
  
         <!-- Панель редактирования -->
         <div class="edit-mode-bar" id="editModeBar">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            <span style="font-size:12px; color:#FF5858; font-weight:600; flex:1;">Режим редактирования</span>
-            <button onclick="cancelEdit()" style="background:none; border:none; cursor:pointer; color:#B2BEC3; font-size:12px; font-family:'Montserrat',sans-serif;">Отмена</button>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span style="font-size:12px; color:var(--accent); font-weight:600; flex:1;">Режим редактирования</span>
+            <button onclick="cancelEdit()" style="background:none; border:none; cursor:pointer; color:var(--text-muted); font-size:12px; font-family:'Montserrat',sans-serif;">Отмена</button>
         </div>
  
         <!-- Индикатор печатания -->
         <div id="typingIndicator" style="display:none; padding:4px 28px 8px; align-items:center; gap:8px;">
-            <div style="background:white; border-radius:18px; padding:10px 14px; display:inline-flex; gap:4px; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-                <div style="width:6px; height:6px; border-radius:50%; background:#B2BEC3; animation:typingAnim 1.2s infinite;"></div>
-                <div style="width:6px; height:6px; border-radius:50%; background:#B2BEC3; animation:typingAnim 1.2s 0.2s infinite;"></div>
-                <div style="width:6px; height:6px; border-radius:50%; background:#B2BEC3; animation:typingAnim 1.2s 0.4s infinite;"></div>
+            <div style="background:var(--card-bg); border-radius:18px; padding:10px 14px; display:inline-flex; gap:4px; align-items:center; box-shadow:0 2px 8px var(--shadow);">
+                <div style="width:6px; height:6px; border-radius:50%; background:var(--text-muted); animation:typingAnim 1.2s infinite;"></div>
+                <div style="width:6px; height:6px; border-radius:50%; background:var(--text-muted); animation:typingAnim 1.2s 0.2s infinite;"></div>
+                <div style="width:6px; height:6px; border-radius:50%; background:var(--text-muted); animation:typingAnim 1.2s 0.4s infinite;"></div>
             </div>
-            <span style="font-size:11px; color:#B2BEC3; margin-left:8px;">кто-то печатает...</span>
+            <span style="font-size:11px; color:var(--text-muted); margin-left:8px; opacity:0.7;">кто-то печатает...</span>
         </div>
  
         <!-- Поле ввода -->
         <div class="chat-input-area">
             <button class="photo-btn" onclick="document.getElementById('photoInput').click()" title="Отправить фото">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
             </button>
             <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="sendPhoto(this)" />
             <div style="flex:1; position:relative;">
@@ -455,7 +461,7 @@
                        maxlength="500"
                        oninput="updateCounter(this)"
                        onkeydown="if(event.key==='Enter'){ event.preventDefault(); sendMessage(); }" />
-                <span id="charCounter" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:11px; color:#B2BEC3; pointer-events:none;">0/500</span>
+                <span id="charCounter" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:11px; color:var(--text-muted); pointer-events:none; opacity:0.7;">0/500</span>
             </div>
             <button class="send-btn" onclick="sendMessage()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
@@ -643,7 +649,7 @@
         var counter = document.getElementById('charCounter');
         if (counter) {
             counter.textContent = input.value.length + '/500';
-            counter.style.color = input.value.length > 400 ? '#FF5858' : '#B2BEC3';
+            counter.style.color = input.value.length > 400 ? 'var(--accent)' : 'var(--text-muted)';
         }
         var indicator = document.getElementById("typingIndicator");
         if (indicator) {
