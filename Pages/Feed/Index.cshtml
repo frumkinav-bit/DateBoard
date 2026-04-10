@@ -10,7 +10,7 @@
  
 <style>
     .feed-page {
-        background: linear-gradient(180deg, #FFF5F7 0%, #F8F9FA 100%);
+        background: linear-gradient(180deg, var(--hover-bg) 0%, var(--bg) 100%);
         min-height: 100vh;
         padding: 20px;
         padding-bottom: 100px;
@@ -24,17 +24,17 @@
     }
  
     .filters-bar {
-        background: white;
+        background: var(--card-bg);
         border-radius: 24px;
         padding: 24px 32px;
-        box-shadow: 0 8px 32px rgba(255,88,88,0.12);
+        box-shadow: 0 8px 32px var(--shadow-hover);
         display: flex;
         gap: 16px;
         flex-wrap: wrap;
         align-items: end;
         max-width: 900px;
         width: 100%;
-        border: 1px solid #FFE8E8;
+        border: 1px solid var(--border);
     }
  
     .filter-group {
@@ -48,27 +48,27 @@
     .filter-group label {
         font-size: 11px;
         font-weight: 700;
-        color: #FF5858;
+        color: var(--accent);
         text-transform: uppercase;
         letter-spacing: 0.8px;
     }
  
     .filter-input {
-        background: #F8F9FA;
+        background: var(--bg);
         border: 2px solid transparent;
         border-radius: 16px;
         padding: 14px 18px;
         font-size: 14px;
         font-weight: 500;
-        color: #2D3436;
+        color: var(--text-main);
         transition: all 0.2s;
         font-family: 'Montserrat', sans-serif;
     }
  
     .filter-input:focus {
         outline: none;
-        border-color: #FF5858;
-        background: white;
+        border-color: var(--accent);
+        background: var(--card-bg);
     }
  
     /* Кастомный dropdown */
@@ -77,13 +77,13 @@
     }
  
     .custom-dropdown-trigger {
-        background: #F8F9FA;
+        background: var(--bg);
         border: 2px solid transparent;
         border-radius: 16px;
         padding: 14px 40px 14px 18px;
         font-size: 14px;
         font-weight: 500;
-        color: #2D3436;
+        color: var(--text-main);
         cursor: pointer;
         transition: all 0.2s;
         font-family: 'Montserrat', sans-serif;
@@ -95,8 +95,8 @@
  
     .custom-dropdown-trigger:hover,
     .custom-dropdown-wrapper.active .custom-dropdown-trigger {
-        border-color: #FF5858;
-        background: white;
+        border-color: var(--accent);
+        background: var(--card-bg);
     }
  
     .dropdown-arrow {
@@ -106,6 +106,7 @@
         transform: translateY(-50%);
         transition: transform 0.3s ease;
         pointer-events: none;
+        stroke: var(--accent);
     }
  
     .custom-dropdown-wrapper.active .dropdown-arrow {
@@ -118,12 +119,12 @@
         top: calc(100% + 8px);
         left: 0;
         right: 0;
-        background: white;
+        background: var(--card-bg);
         border-radius: 16px;
-        box-shadow: 0 16px 48px rgba(255,88,88,0.15);
+        box-shadow: 0 16px 48px var(--shadow-hover);
         z-index: 1000;
         overflow: hidden;
-        border: 1px solid #FFE8E8;
+        border: 1px solid var(--border);
         animation: dropdownFade 0.2s ease;
     }
  
@@ -140,11 +141,11 @@
         padding: 14px 18px;
         font-size: 14px;
         font-weight: 500;
-        color: #636E72;
+        color: var(--text-muted);
         cursor: pointer;
         transition: all 0.15s;
         font-family: 'Montserrat', sans-serif;
-        border-bottom: 1px solid #FFF5F5;
+        border-bottom: 1px solid var(--border);
     }
  
     .custom-dropdown-item:last-child {
@@ -152,18 +153,18 @@
     }
  
     .custom-dropdown-item:hover {
-        background: rgba(255,88,88,0.05);
-        color: #FF5858;
+        background: var(--hover-bg);
+        color: var(--accent);
     }
  
     .custom-dropdown-item.selected {
-        color: #FF5858;
+        color: var(--accent);
         font-weight: 600;
-        background: linear-gradient(90deg, #FFF5F7 0%, white 100%);
+        background: linear-gradient(90deg, var(--hover-bg) 0%, var(--card-bg) 100%);
     }
  
     .filter-btn {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         color: white;
         border: none;
         border-radius: 50px;
@@ -176,18 +177,18 @@
         gap: 10px;
         transition: all 0.3s ease;
         font-family: 'Montserrat', sans-serif;
-        box-shadow: 0 8px 24px rgba(255,88,88,0.3);
+        box-shadow: 0 8px 24px var(--shadow-hover);
     }
  
     .filter-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(255,88,88,0.4);
+        box-shadow: 0 12px 32px var(--shadow-hover);
     }
  
     .filter-reset {
-        background: #FFF5F7;
-        color: #FF5858;
-        border: 2px solid #FFE0E0;
+        background: var(--hover-bg);
+        color: var(--accent);
+        border: 2px solid var(--border);
         border-radius: 50px;
         padding: 14px 24px;
         font-size: 14px;
@@ -199,9 +200,9 @@
     }
  
     .filter-reset:hover {
-        background: #FF5858;
+        background: var(--accent);
         color: white;
-        border-color: #FF5858;
+        border-color: var(--accent);
     }
  
     /* === СОВРЕМЕННАЯ АНИМАЦИЯ СУПЕРЛАЙКА === */
@@ -225,9 +226,10 @@
         position: absolute;
         inset: 0;
         background: radial-gradient(circle at 50% 50%, 
-            rgba(255, 88, 88, 0.15) 0%, 
-            rgba(255, 88, 88, 0.05) 40%, 
+            var(--accent) 0%, 
+            rgba(0,0,0,0.05) 40%, 
             transparent 70%);
+        opacity: 0.15;
         transform: scale(0);
         transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -255,7 +257,7 @@
         width: 80px;
         height: 80px;
         fill: url(#superlikeGradient);
-        filter: drop-shadow(0 8px 32px rgba(255, 88, 88, 0.4));
+        filter: drop-shadow(0 8px 32px var(--shadow-hover));
         animation: starPulse 0.6s ease 0.3s;
     }
  
@@ -268,7 +270,8 @@
         position: absolute;
         inset: 0;
         border-radius: 50%;
-        border: 3px solid rgba(255, 88, 88, 0.3);
+        border: 3px solid var(--accent);
+        opacity: 0.3;
         transform: scale(1);
         opacity: 0;
     }
@@ -296,7 +299,7 @@
         top: 50%;
         width: 8px;
         height: 8px;
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         border-radius: 50%;
         opacity: 0;
     }
@@ -328,7 +331,7 @@
         opacity: 0;
         font-size: 24px;
         font-weight: 800;
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -361,9 +364,9 @@
     .mode-btn {
         padding: 12px 28px;
         border-radius: 24px;
-        border: 2px solid #FFE0E0;
-        background: white;
-        color: #636E72;
+        border: 2px solid var(--border);
+        background: var(--card-bg);
+        color: var(--text-muted);
         font-size: 15px;
         font-weight: 600;
         cursor: pointer;
@@ -375,16 +378,16 @@
     }
  
     .mode-btn.active {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         color: white;
         border-color: transparent;
-        box-shadow: 0 4px 20px rgba(255,88,88,0.4);
+        box-shadow: 0 4px 20px var(--shadow-hover);
         transform: translateY(-2px);
     }
  
     .mode-btn:hover:not(.active) {
-        border-color: #FF5858;
-        color: #FF5858;
+        border-color: var(--accent);
+        color: var(--accent);
         transform: translateY(-1px);
     }
  
@@ -393,15 +396,15 @@
         text-align: center;
         margin-bottom: 20px;
         padding: 12px 24px;
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--card-bg);
         backdrop-filter: blur(10px);
         border-radius: 16px;
         display: inline-flex;
         align-items: center;
         gap: 24px;
         margin: 0 auto 20px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255, 88, 88, 0.1);
+        box-shadow: 0 4px 20px var(--shadow);
+        border: 1px solid var(--border);
     }
  
     .swipe-hint-item {
@@ -410,7 +413,7 @@
         gap: 10px;
         font-size: 14px;
         font-weight: 600;
-        color: #636E72;
+        color: var(--text-muted);
     }
  
     .swipe-hint-arrow {
@@ -426,14 +429,14 @@
     }
  
     .swipe-hint-arrow.left {
-        background: #FFE0E0;
-        color: #FF5858;
+        background: var(--hover-bg);
+        color: var(--accent);
     }
  
     .swipe-hint-arrow.right {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         color: white;
-        box-shadow: 0 2px 8px rgba(255,88,88,0.3);
+        box-shadow: 0 2px 8px var(--shadow-hover);
     }
  
     .hint-container {
@@ -467,10 +470,10 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        background: white;
+        background: var(--card-bg);
         border-radius: 24px;
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        box-shadow: 0 10px 40px var(--shadow-hover);
         cursor: grab;
         user-select: none;
         touch-action: none;
@@ -547,7 +550,8 @@
         display: inline-flex;
         align-items: center;
         padding: 8px 16px;
-        background: rgba(255, 88, 88, 0.85);
+        background: var(--accent);
+        opacity: 0.85;
         backdrop-filter: blur(10px);
         border-radius: 20px;
         font-size: 14px;
@@ -566,8 +570,8 @@
         height: 16px;
         background: #00C853;
         border-radius: 50%;
-        border: 3px solid white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        border: 3px solid var(--card-bg);
+        box-shadow: 0 2px 8px var(--shadow);
         z-index: 10;
     }
  
@@ -618,13 +622,13 @@
         justify-content: center;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-        background: white;
+        box-shadow: 0 4px 16px var(--shadow-hover);
+        background: var(--card-bg);
     }
  
     .action-circle:hover {
         transform: scale(1.15);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 24px var(--shadow-hover);
     }
  
     .action-circle:active {
@@ -632,13 +636,13 @@
     }
  
     .btn-nope {
-        color: #FF5858;
-        border: 3px solid #FFE0E0;
+        color: var(--accent);
+        border: 3px solid var(--border);
     }
  
     .btn-nope:hover {
-        background: #FFF5F7;
-        border-color: #FF5858;
+        background: var(--hover-bg);
+        border-color: var(--accent);
     }
  
     .btn-superlike {
@@ -650,21 +654,21 @@
     }
  
     .btn-like {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         color: white;
     }
  
     .btn-info {
-        color: #636E72;
-        border: 2px solid #EFEFEF;
+        color: var(--text-muted);
+        border: 2px solid var(--border);
         width: 48px;
         height: 48px;
         margin-top: 8px;
     }
  
     .btn-info:hover {
-        border-color: #FF5858;
-        color: #FF5858;
+        border-color: var(--accent);
+        color: var(--accent);
     }
  
     /* Индикаторы карточек */
@@ -679,12 +683,12 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: #E0E0E0;
+        background: var(--border);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
  
     .dot.active {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         width: 24px;
         border-radius: 4px;
     }
@@ -700,16 +704,16 @@
     }
  
     .gallery-card {
-        background: white;
+        background: var(--card-bg);
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px var(--shadow);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
  
     .gallery-card:hover {
         transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 40px var(--shadow-hover);
     }
  
     .gallery-image-wrap {
@@ -775,8 +779,8 @@
         padding: 20px;
         display: flex;
         gap: 12px;
-        background: white;
-        border-top: 1px solid #F0F0F0;
+        background: var(--card-bg);
+        border-top: 1px solid var(--border);
     }
  
     .gallery-btn {
@@ -796,21 +800,21 @@
     }
  
     .gallery-btn-primary {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         color: white !important;
     }
  
     .gallery-btn-primary:hover {
         transform: scale(1.03);
-        box-shadow: 0 8px 20px rgba(255,88,88,0.4);
+        box-shadow: 0 8px 20px var(--shadow-hover);
     }
  
     .like-btn-icon {
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        border: 2px solid #E0E0E0;
-        background: #F8F9FA;
+        border: 2px solid var(--border);
+        background: var(--bg);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -820,21 +824,21 @@
     }
  
     .like-btn-icon:hover {
-        border-color: #FF5858;
-        background: #FFF5F7;
+        border-color: var(--accent);
+        background: var(--hover-bg);
         transform: scale(1.1);
     }
  
     .like-btn-icon svg {
         width: 22px;
         height: 22px;
-        stroke: #636E72;
+        stroke: var(--text-muted);
         fill: none;
         transition: all 0.3s;
     }
  
     .like-btn-icon.liked {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
         border-color: transparent;
         transform: scale(1.05);
     }
@@ -907,7 +911,7 @@
                         <input type="hidden" name="Goal" id="goalValue" value="@Model.Goal" />
                         <div class="custom-dropdown-trigger" onclick="toggleGoalDropdown(event)">
                             <span id="goalLabel">@(string.IsNullOrEmpty(Model.Goal) ? "Любая" : Model.Goal)</span>
-                            <svg class="dropdown-arrow" id="goalArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2.5">
+                            <svg class="dropdown-arrow" id="goalArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </div>
@@ -997,7 +1001,7 @@
                         }
                         else
                         {
-                            <div class="card-image" style="background: linear-gradient(135deg, #FF5858, #F857A6); display:flex; align-items:center; justify-content:center; position: relative;">
+                            <div class="card-image" style="background: linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; position: relative;">
                                 <span style="color:white; font-size:72px; font-weight:800;">@(profile.Name.Substring(0, 1).ToUpper())</span>
                                 @if (item.IsOnline)
                                 {
@@ -1102,7 +1106,7 @@
                         }
                         else
                         {
-                            <div class="gallery-image" style="background: linear-gradient(135deg, #FF5858, #F857A6); display:flex; align-items:center; justify-content:center; position: relative;">
+                            <div class="gallery-image" style="background: linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; position: relative;">
                                 <span style="color:white; font-size:64px; font-weight:800;">@(profile.Name.Substring(0, 1).ToUpper())</span>
                                 @if (item.IsOnline)
                                 {
@@ -1150,8 +1154,8 @@
         <svg width="0" height="0" style="position:absolute">
             <defs>
                 <linearGradient id="superlikeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#FF5858"/>
-                    <stop offset="100%" style="stop-color:#F857A6"/>
+                    <stop offset="0%" style="stop-color:var(--accent)"/>
+                    <stop offset="100%" style="stop-color:var(--accent2)"/>
                 </linearGradient>
             </defs>
         </svg>
@@ -1184,7 +1188,7 @@
     function selectGoal(value, label, el) {
         document.getElementById('goalValue').value = value;
         document.getElementById('goalLabel').textContent = label;
-        document.getElementById('goalLabel').style.color = value ? '#636E72' : '#2D3436';
+        document.getElementById('goalLabel').style.color = value ? 'var(--text-muted)' : 'var(--text-main)';
         
         document.querySelectorAll('#goalMenu .custom-dropdown-item').forEach(item => {
             item.classList.remove('selected');
@@ -1421,4 +1425,3 @@
  
     initCard();
 </script>
- 
