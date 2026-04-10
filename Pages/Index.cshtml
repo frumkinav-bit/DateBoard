@@ -1,912 +1,1260 @@
-﻿@page
-@model IndexModel
-@using DateBoard.Data
-@inject ApplicationDbContext Db
-@{
-    ViewData["Title"] = "DateBoard";
-    var profileCount = Db.Profiles.Count();
-    var recentProfiles = Db.Profiles.OrderByDescending(p => p.CreatedAt).Take(3).ToList();
-    var word = profileCount == 1 ? "пара подобрана" : (profileCount < 5 ? "пары подобраны" : "пар подобрано");
-}
-
-<style>
-    @@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,88,88,0.5); } 70% { box-shadow: 0 0 0 8px rgba(255,88,88,0); } 100% { box-shadow: 0 0 0 0 rgba(255,88,88,0); } }
-    @@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-14px); } }
-    @@keyframes float2 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-18px); } }
-    @@keyframes float3 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-    @@keyframes float4 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
-    @@keyframes float5 { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-16px); } }
-    @@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    @@keyframes floatMobile { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-    @@keyframes floatMobileSlow { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-6px) rotate(2deg); } }
-    @@keyframes pulseScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewData["Title"] - Свах Купидонов</title>
     
-    .hero-animate { animation: fadeUp 0.8s ease forwards; }
-    .hero-animate-delay { animation: fadeUp 0.8s ease 0.2s forwards; opacity: 0; }
-    .hero-animate-delay2 { animation: fadeUp 0.8s ease 0.4s forwards; opacity: 0; }
-    .float-card { animation: float 4s ease-in-out infinite; }
-    .float-card-2 { animation: float2 5s ease-in-out 0.5s infinite; }
-    .float-card-3 { animation: float3 3.5s ease-in-out 1s infinite; }
-    .float-card-4 { animation: float4 4.5s ease-in-out 0.8s infinite; }
-    .float-card-5 { animation: float5 3.8s ease-in-out 1.5s infinite; }
-    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red, #FF5858); animation: pulse 2s infinite; display: inline-block; flex-shrink: 0; }
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon.svg" />
+    <link rel="icon" type="image/png" href="~/images/logo_64.png" />
     
-    .search-field-card { 
-        flex: 1; 
-        background: var(--bg-color, #F8F9FA); 
-        border-radius: 14px; 
-        padding: 14px 18px; 
-        cursor: pointer; 
-        transition: background 0.2s; 
-    }
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DateBoard.styles.css" asp-append-version="true" />
     
-    [data-theme="dark"] .search-field-card {
-        background: var(--card-bg, #16213E);
-        border: 1px solid var(--border, #2D2D44);
-    }
-    
-    .search-field-card:hover { 
-        background: var(--bg-hover, rgba(255,88,88,0.07)); 
-    }
-    
-    [data-theme="dark"] .search-field-card:hover {
-        background: rgba(255,88,88,0.15);
-    }
-    
-    .search-field-card p { 
-        margin: 0 0 4px; 
-        font-size: 10px; 
-        font-weight: 700; 
-        color: var(--red, #FF5858); 
-        letter-spacing: 0.8px; 
-    }
-    
-    .search-field-card input { 
-        border: none !important; 
-        background: transparent !important; 
-        font-size: 14px !important; 
-        font-weight: 500 !important; 
-        color: var(--gray-mid, #636E72) !important; 
-        padding: 0 !important; 
-        height: auto !important; 
-        width: 100% !important; 
-        outline: none !important; 
-        box-shadow: none !important; 
-        font-family: 'Montserrat', sans-serif !important; 
-    }
-    
-    .search-field-card input::placeholder { 
-        color: var(--gray-light, #B2BEC3); 
-    }
-    
-    .custom-dropdown { position: relative; }
-    
-    .custom-dropdown-menu {
-        display: none;
-        position: absolute;
-        top: calc(100% + 8px);
-        left: -18px;
-        right: -18px;
-        background: var(--card-bg, white);
-        border-radius: 16px;
-        box-shadow: 0 16px 48px rgba(255,88,88,0.15);
-        z-index: 9999;
-        overflow: hidden;
-        border: 1px solid var(--border, #FFE8E8);
-    }
-    
-    [data-theme="dark"] .custom-dropdown-menu {
-        box-shadow: 0 16px 48px rgba(0,0,0,0.4);
-        border-color: var(--border, #2D2D44);
-    }
-    
-    .custom-dropdown-item {
-        padding: 12px 18px;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--gray-mid, #636E72);
-        cursor: pointer;
-        transition: all 0.15s;
-        font-family: 'Montserrat', sans-serif;
-        border-bottom: 1px solid var(--border, #FFF5F5);
-    }
-    
-    [data-theme="dark"] .custom-dropdown-item {
-        border-bottom-color: var(--border, #2D2D44);
-    }
-    
-    .custom-dropdown-item:last-child { border-bottom: none; }
-    
-    .custom-dropdown-item:hover { 
-        background: var(--bg-hover, rgba(255,88,88,0.05)); 
-        color: var(--red, #FF5858); 
-    }
-    
-    .custom-dropdown-item.selected { 
-        color: var(--red, #FF5858); 
-        font-weight: 600; 
-        background: var(--bg-hover, rgba(255,88,88,0.04)); 
-    }
-    
-    .step-card-custom { 
-        padding: 40px 32px; 
-        border-radius: 24px; 
-        background: var(--card-bg, white); 
-        border: 1px solid var(--border, #FFE8E8); 
-        box-shadow: 0 10px 30px rgba(255,88,88,0.06); 
-        transition: all 0.3s ease; 
-        text-align: center; 
-        position: relative; 
-        overflow: hidden; 
-    }
-    
-    [data-theme="dark"] .step-card-custom {
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    
-    .step-card-custom:hover { 
-        transform: translateY(-8px); 
-        box-shadow: 0 20px 50px rgba(255,88,88,0.14); 
-        border-color: var(--red, #FF5858); 
-    }
-    
-    [data-theme="dark"] .step-card-custom:hover {
-        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-    }
-    
-    .step-card-active { 
-        border: 1.5px solid var(--red, #FF5858) !important; 
-        box-shadow: 0 16px 40px rgba(255,88,88,0.14) !important; 
-        transform: translateY(-8px)!important; 
-    }
-    
-    [data-theme="dark"] .step-card-active {
-        box-shadow: 0 16px 40px rgba(255,88,88,0.25) !important;
-    }
-    
-    .step-bg-num { 
-        position: absolute; 
-        font-size: 120px; 
-        font-weight: 700; 
-        color: rgba(255,88,88,0.1); 
-        bottom: -20px; 
-        right: -5px; 
-        line-height: 1; 
-        z-index: 0; 
-        pointer-events: none; 
-    }
-    
-    [data-theme="dark"] .step-bg-num {
-        color: rgba(255,88,88,0.15);
-    }
-    
-    .step-content { position: relative; z-index: 1; }
-    
-    .recent-card { 
-        background: var(--card-bg, white); 
-        border-radius: 20px; 
-        padding: 24px 20px; 
-        text-align: center; 
-        box-shadow: 0 8px 24px rgba(255,88,166,0.08); 
-        border: 1px solid var(--border, #EFEFEF); 
-        transition: all 0.3s ease; 
-        cursor: pointer; 
-        height: 100%; 
-    }
-    
-    [data-theme="dark"] .recent-card {
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    }
-    
-    .recent-card:hover { 
-        transform: translateY(-6px); 
-        box-shadow: 0 16px 40px rgba(255,88,88,0.15); 
-        border-color: var(--border, #FFE0E0); 
-    }
-    
-    [data-theme="dark"] .recent-card:hover {
-        box-shadow: 0 16px 40px rgba(0,0,0,0.3);
-    }
-    
-    /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
-    @@media (max-width: 991px) {
-        .hero-section { padding: 30px 0 200px !important; position: relative; }
-        .hero-section .container { padding-left: 20px; padding-right: 20px; }
-        .hero-section h1 { font-size: 32px !important; line-height: 1.2 !important; }
-        .hero-section p { font-size: 15px !important; }
-        .hero-content { padding-right: 0 !important; }
-        .search-fields { flex-direction: column !important; gap: 12px !important; }
-        .search-field-card { width: 100%; padding: 16px 18px; min-height: 60px; }
-        .search-box { 
-            max-width: 400px; 
-            margin: 0 auto; 
-            position: relative; 
-            z-index: 100; 
-            padding: 20px !important; 
-            background: var(--card-bg, white) !important;
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        [data-theme="dark"] .search-box {
-            border-color: var(--border, #2D2D44) !important;
+
+        /* ===== CSS ПЕРЕМЕННЫЕ ===== */
+        :root {
+            --pink: #F857A6;
+            --red: #FF5858;
+            --gradient: linear-gradient(135deg, #FF5858, #F857A6);
+            --gray-dark: #2D3436;
+            --gray-mid: #636E72;
+            --gray-light: #B2BEC3;
+            --border: #EFEFEF;
+            --bg-hover: rgba(255,88,88,0.07);
+            --bg-color: #FFFFFF;
+            --text-color: #2D3436;
+            --card-bg: #FFFFFF;
+            --header-bg: #FFFFFF;
+            --side-nav-bg: #FFFFFF;
+            --overlay-bg: rgba(0,0,0,0.5);
+            --notification-bg: #FFFFFF;
+            --toast-bg: #FFFFFF;
+            --footer-bg: #FFFFFF;
+            --input-bg: #F8F9FA;
         }
-        .floating-cards-container { display: none !important; }
-        .mobile-cards-showcase { display: block !important; }
-        .steps-section { margin-top: 0 !important; padding-top: 60px !important; }
-        .steps-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-        .step-card-custom { padding: 30px 24px; }
-        .step-bg-num { font-size: 80px; }
-        .quote-section h2 { font-size: 28px !important; }
-        .quote-section { padding: 60px 0 !important; }
-        .quote-section .container { padding-left: 20px; padding-right: 20px; }
-        .stats-cards { margin-top: 40px; }
-        .recent-cards-row { flex-direction: column; }
-        .recent-cards-row .col-md-4 { margin-top: 20px !important; width: 100%; }
-        .recent-card img { height: 180px !important; }
-        .recent-section .container { padding-left: 20px; padding-right: 20px; }
-        .steps-section .container { padding-left: 20px; padding-right: 20px; }
-        .hero-section { margin-bottom: 80px !important; }
-    }
-    
-    @@media (max-width: 768px) {
-        .hero-section { padding-bottom: 220px !important; margin-bottom: 100px !important; }
-        .hero-section h1 { font-size: 28px !important; }
-        .search-box { padding: 18px !important; }
-        .search-field-card { min-height: 65px; }
-        .stats-cards { flex-direction: column; }
-        .mobile-main-card { transform: scale(0.9); }
-    }
-    
-    @@media (min-width: 992px) {
-        .floating-cards-container { display: block; }
-        .mobile-cards-showcase { display: none !important; }
-    }
-    
-    /* Мобильная композиция с центральной карточкой */
-    .mobile-cards-showcase {
-        display: none;
-        position: relative;
-        height: 220px;
-        margin: 20px auto 40px;
-        max-width: 340px;
-    }
-    
-    .mobile-main-card {
-        position: absolute;
-        top: -4%;
-        left: 28%;
-        transform: translateX(-50%);
-        background: var(--card-bg, white);
-        border-radius: 24px;
-        padding: 16px;
-        width: 150px;
-        box-shadow: 0 20px 50px rgba(255,88,88,0.2);
-        z-index: 10;
-        animation: floatMobile 4s ease-in-out infinite;
-        text-align: center;
-    }
-    
-    [data-theme="dark"] .mobile-main-card {
-        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-    }
-    
-    .mobile-main-avatar {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: linear-gradient(135deg,#FF5858,#F857A6);
-        margin: 0 auto 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 22px;
-        box-shadow: 0 8px 20px rgba(255,88,88,0.3);
-    }
-    
-    .mobile-main-card h4 {
-        margin: 0 0 3px;
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--gray-dark, #2D3436);
-    }
-    
-    .mobile-main-card p {
-        margin: 0 0 6px;
-        font-size: 10px;
-        color: var(--gray-mid, #636E72);
-    }
-    
-    .mobile-svah-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 9px;
-        font-weight: 600;
-        color: var(--red, #FF5858);
-        background: rgba(255,88,88,0.08);
-        padding: 2px 6px;
-        border-radius: 12px;
-        margin-bottom: 4px;
-    }
-    
-    [data-theme="dark"] .mobile-svah-badge {
-        background: rgba(255,88,88,0.15);
-    }
-    
-    .mobile-match-percent {
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--pink, #F857A6);
-        margin-bottom: 8px;
-    }
-    
-    .mobile-main-badge {
-        background: linear-gradient(135deg,#FF5858,#F857A6);
-        border-radius: 20px;
-        padding: 5px 10px;
-        font-size: 10px;
-        color: white;
-        font-weight: 600;
-    }
-    
-    .mobile-satellite {
-        position: absolute;
-        border-radius: 50px;
-        padding: 8px 14px;
-        font-size: 12px;
-        font-weight: 600;
-        box-shadow: 0 4px 16px rgba(255,88,88,0.15);
-        animation: floatMobileSlow 3s ease-in-out infinite;
-        white-space: nowrap;
-    }
-    
-    [data-theme="dark"] .mobile-satellite {
-        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    }
-    
-    .mobile-satellite-blur {
-        filter: blur(1px);
-        opacity: 0.7;
-    }
-    
-    .mobile-satellite-blur-more {
-        filter: blur(2px);
-        opacity: 0.5;
-    }
-    
-    .mobile-satellite-white {
-        background: var(--card-bg, white);
-        color: var(--gray-dark, #2D3436);
-        border: 1px solid var(--border, rgba(255,88,88,0.1));
-    }
-    
-    .mobile-satellite-gradient {
-        background: linear-gradient(135deg,#FF5858,#F857A6);
-        color: white;
-    }
-    
-    .mobile-satellite-light {
-        background: rgba(255,88,88,0.08);
-        color: var(--red, #FF5858);
-    }
-    
-    [data-theme="dark"] .mobile-satellite-light {
-        background: rgba(255,88,88,0.15);
-    }
-    
-    .mobile-satellite-icon {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-    
-    .satellite-1 { top: 5%; right: 0; animation-delay: 0s; }
-    .satellite-2 { top: 35%; right: -5%; animation-delay: 0.5s; }
-    .satellite-3 { bottom: 15%; left: 0; animation-delay: 1s; }
-    .satellite-4 { bottom: 0%; right: 5%; animation-delay: 1.5s; }
-    .satellite-5 { top: 45%; left: 45%; animation-delay: 0.3s; z-index: 5; }
-    .satellite-6 { top: 15%; left: 0; animation-delay: 0.8s; }
-    .satellite-7 { top: 0%; left: 5%; animation-delay: 1.2s; }
-    
-    .mobile-deco-circle {
-        position: absolute;
-        border-radius: 50%;
-        pointer-events: none;
-    }
-    
-    .mobile-deco-1 {
-        width: 100px;
-        height: 100px;
-        background: rgba(255,88,88,0.05);
-        top: 10%;
-        right: 20%;
-    }
-    
-    .mobile-deco-2 {
-        width: 60px;
-        height: 60px;
-        background: rgba(248,87,166,0.06);
-        bottom: 20%;
-        left: 30%;
-    }
-    
-    .mobile-deco-3 {
-        width: 40px;
-        height: 40px;
-        background: rgba(255,88,88,0.08);
-        top: 40%;
-        left: 10%;
-    }
-    
-    .svah-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--red, #FF5858);
-        background: rgba(255,88,88,0.08);
-        padding: 4px 12px;
-        border-radius: 20px;
-        margin-bottom: 8px;
-    }
-    
-    [data-theme="dark"] .svah-badge {
-        background: rgba(255,88,88,0.15);
-    }
-    
-    .match-percent {
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--pink, #F857A6);
-        margin-top: 8px;
-    }
-    
-    .approved-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #00B894;
-        background: rgba(0,184,148,0.08);
-        padding: 6px 14px;
-        border-radius: 20px;
-    }
-    
-    .approved-badge svg {
-        width: 14px;
-        height: 14px;
-    }
 
-    .mobile-approved-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 9px;
-        font-weight: 600;
-        color: #00B894;
-        background: rgba(0,184,148,0.08);
-        padding: 2px 6px;
-        border-radius: 12px;
-        margin-bottom: 4px;
-    }
+        /* ===== ТЁМНАЯ ТЕМА — тёплая, розовато-коричневая ===== */
+        [data-theme="dark"] {
+            --pink: #FF6B9D;
+            --red: #FF5858;
+            --gradient: linear-gradient(135deg, #FF5858, #FF6B9D);
+            --gray-dark: #FFF5F7;
+            --gray-mid: #E8D5D8;
+            --gray-light: #B8A8AA;
+            --border: #3D2B2E;
+            --bg-hover: rgba(255,88,88,0.12);
+            --bg-color: #1A1516;
+            --text-color: #FFF5F7;
+            --card-bg: #251E1F;
+            --header-bg: #251E1F;
+            --side-nav-bg: #251E1F;
+            --overlay-bg: rgba(26,21,22,0.85);
+            --notification-bg: #251E1F;
+            --toast-bg: #251E1F;
+            --footer-bg: #251E1F;
+            --input-bg: #1A1516;
+        }
 
-    .mobile-approved-badge svg {
-        width: 10px;
-        height: 10px;
-    }
-</style>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-<!-- Hero -->
-<div class="hero-section" style="background: var(--bg-color, white); padding: 50px 0 100px; position: relative; overflow: hidden; transition: background-color 0.3s;">
-    <div style="position: absolute; top: -120px; left: -120px; width: 500px; height: 500px; border-radius: 50%; background: #FF5858; filter: blur(120px); opacity: 0.05; pointer-events: none;"></div>
-    <div style="position: absolute; bottom: -120px; right: -120px; width: 500px; height: 500px; border-radius: 50%; background: #F857A6; filter: blur(120px); opacity: 0.05; pointer-events: none;"></div>
+        /* ===== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ===== */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(255,88,88,0.4);
+            z-index: 10000;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 hero-content" style="padding-left: 0; padding-right: 60px; position: relative; z-index: 10;">
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255,88,88,0.5);
+        }
 
-                <div class="hero-animate" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,88,88,0.06); border: 1px solid rgba(255,88,88,0.15); border-radius: 50px; padding: 8px 18px; margin-bottom: 28px; margin-left: 20px;">
-                    <div class="live-dot"></div>
-                    <span style="font-size: 13px; color: var(--red, #FF5858); font-weight: 600;"><span id="counter">0</span> @word</span>
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: none; }
+        [data-theme="dark"] .theme-toggle .moon { display: block; }
+
+        /* ===== ШАПКА ===== */
+        .navbar-main {
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        [data-theme="dark"] .navbar-main {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .navbar-main .container {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ===== ЛОГОТИП ===== */
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .nav-brand-logo-wrap {
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+        }
+
+        .nav-brand-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-brand-title {
+            font-weight: 800;
+            font-size: 22px;
+            line-height: 1.2;
+        }
+
+        .nav-brand-title .svah { color: var(--pink); }
+        .nav-brand-title .kupidonov { color: var(--gray-mid); }
+
+        .nav-brand-subtitle {
+            font-size: 11px;
+            color: var(--gray-light);
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        /* ===== ЦЕНТРАЛЬНОЕ МЕНЮ ===== */
+        .nav-menu-center {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-menu-center li { margin: 0 4px; }
+
+        .nav-link-custom {
+            color: var(--gray-mid);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 20px;
+            display: block;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link-custom:hover {
+            color: var(--red);
+            background: var(--bg-hover);
+        }
+
+        .nav-link-active {
+            color: var(--red) !important;
+            background: rgba(255,88,88,0.08);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .nav-link-active {
+            background: rgba(255,88,88,0.15);
+        }
+
+        .nav-link-locked::after {
+            content: "";
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 6px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23FF5858' stroke-width='2'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'%3E%3C/path%3E%3C/svg%3E");
+            background-size: contain;
+            opacity: 0.6;
+        }
+
+        /* ===== КНОПКА МЕНЮ ===== */
+        .menu-btn {
+            background: rgba(255,88,88,0.08);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--red);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        [data-theme="dark"] .menu-btn {
+            background: rgba(255,88,88,0.15);
+        }
+
+        .menu-btn:hover { background: rgba(255,88,88,0.15); }
+        [data-theme="dark"] .menu-btn:hover { background: rgba(255,88,88,0.25); }
+
+        .menu-btn svg { width: 18px; height: 18px; }
+
+        /* ===== МОБИЛЬНАЯ КНОПКА ===== */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-btn:active { background: rgba(255,88,88,0.1); }
+
+        .hamburger-line {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--red);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .mobile-menu-btn.active .hamburger-line:nth-child(2) { opacity: 0; }
+        .mobile-menu-btn.active .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* ===== БОКОВОЕ МЕНЮ ===== */
+        .nav-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--overlay-bg);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .nav-overlay.active { opacity: 1; visibility: visible; }
+
+        .side-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 380px;
+            max-width: 90vw;
+            height: 100vh;
+            background: var(--side-nav-bg);
+            z-index: 999;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-nav.active { right: 0; }
+
+        .side-nav-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(255,88,88,0.05) 0%, var(--side-nav-bg) 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        [data-theme="dark"] .side-nav-header {
+            background: linear-gradient(135deg, rgba(255,88,88,0.08) 0%, var(--side-nav-bg) 100%);
+        }
+
+        .side-nav-close {
+            background: rgba(255,88,88,0.1);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--red);
+            transition: background-color 0.2s;
+        }
+
+        [data-theme="dark"] .side-nav-close {
+            background: rgba(255,88,88,0.2);
+        }
+
+        .side-nav-content { flex: 1; padding: 20px 24px; }
+
+        .side-nav-section {
+            font-size: 11px;
+            color: var(--gray-light);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin: 24px 0 12px 4px;
+            font-weight: 700;
+        }
+
+        .side-nav-section:first-child { margin-top: 0; }
+
+        .side-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            color: var(--gray-dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 16px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+        }
+
+        .side-nav-link:hover, .side-nav-link:active {
+            background: var(--bg-hover);
+            color: var(--red);
+        }
+
+        .side-nav-link svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--red);
+            flex-shrink: 0;
+        }
+
+        /* ===== УВЕДОМЛЕНИЯ ===== */
+        .nav-notification { position: relative; margin-right: 8px; }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            position: relative;
+            color: var(--gray-mid);
+            transition: all 0.2s ease;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover { color: var(--red); background: var(--bg-hover); }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--gradient);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            box-shadow: 0 2px 8px rgba(255,88,88,0.4);
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: -10px;
+            width: 380px;
+            background: var(--notification-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        [data-theme="dark"] .notification-dropdown {
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        .notification-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        /* ===== ДЕЙСТВИЯ ===== */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-right: 8px;
+            padding: 6px 12px 6px 6px;
+            border-radius: 50px;
+            transition: all 0.2s;
+        }
+
+        .nav-user:hover { background: var(--bg-hover); }
+
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .nav-username {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-dark);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ===== УВЕДОМЛЕНИЯ — тексты сваха ===== */
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(255,88,88,0.05) 0%, var(--notification-bg) 100%);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        [data-theme="dark"] .notification-header {
+            background: linear-gradient(135deg, rgba(255,88,88,0.08) 0%, var(--notification-bg) 100%);
+        }
+
+        .notification-header span {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--gray-dark);
+        }
+
+        .notification-header button {
+            background: none;
+            border: none;
+            color: var(--red);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .notification-header button:hover { background: rgba(255,88,88,0.1); }
+        [data-theme="dark"] .notification-header button:hover { background: rgba(255,88,88,0.2); }
+
+        .notification-list { 
+            max-height: 420px; 
+            overflow-y: auto;
+        }
+
+        .notification-list::-webkit-scrollbar { width: 6px; }
+        .notification-list::-webkit-scrollbar-track { background: var(--border); }
+        .notification-list::-webkit-scrollbar-thumb { background: var(--gray-light); border-radius: 3px; }
+
+        .notification-item {
+            display: flex;
+            gap: 14px;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .notification-item:hover { background: var(--bg-hover); }
+
+        .notification-item.unread {
+            background: linear-gradient(90deg, rgba(255,88,88,0.05) 0%, transparent 100%);
+            border-left: 3px solid var(--red);
+        }
+
+        [data-theme="dark"] .notification-item.unread {
+            background: linear-gradient(90deg, rgba(255,88,88,0.1) 0%, transparent 100%);
+        }
+
+        .notification-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .notification-avatar-placeholder {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .notification-content { flex: 1; min-width: 0; }
+
+        .notification-text {
+            font-size: 14px;
+            color: var(--gray-dark);
+            margin-bottom: 6px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .notification-text strong { color: var(--red); font-weight: 700; }
+
+        .notification-time { font-size: 12px; color: var(--gray-mid); font-weight: 500; }
+
+        .notification-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-mid);
+            font-size: 14px;
+        }
+
+        .notification-empty-icon {
+            width: 64px; height: 64px;
+            margin: 0 auto 16px;
+            background: var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-light);
+        }
+
+        /* ===== ФУТЕР ===== */
+        footer {
+            background: var(--footer-bg);
+            border-top: 1px solid var(--border);
+            padding: 20px 0;
+            margin-top: auto;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: var(--toast-bg);
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 320px;
+            max-width: 400px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s;
+            border-left: 4px solid var(--red);
+        }
+
+        [data-theme="dark"] .toast {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        .toast.show { transform: translateX(0); }
+
+        .toast-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .toast-content { flex: 1; }
+
+        .toast-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-dark);
+            margin-bottom: 4px;
+        }
+
+        .toast-message { font-size: 13px; color: var(--gray-mid); }
+
+        .toast-svah-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--red);
+            background: rgba(255,88,88,0.08);
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+
+        [data-theme="dark"] .toast-svah-badge {
+            background: rgba(255,88,88,0.15);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray-light);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 20px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .toast-close:hover { color: var(--red); }
+
+        /* ===== АДАПТИВ ===== */
+        @@media (max-width: 991px) {
+            .navbar-main .container { height: 60px; }
+            .nav-menu-center { display: none; }
+            .nav-username { display: none; }
+            .nav-brand-subtitle { display: none; }
+            .nav-brand-logo-wrap { width: 38px; height: 38px; }
+            .nav-brand-title { font-size: 18px; }
+            .menu-btn { display: none; }
+            .mobile-menu-btn { display: flex; }
+            .notification-dropdown {
+                position: fixed;
+                top: 70px;
+                left: 16px;
+                right: 16px;
+                width: auto;
+            }
+            body.menu-open { overflow: hidden; }
+            .nav-actions { gap: 2px; }
+            .nav-actions .btn,
+            .nav-actions a.btn { margin-left: 0 !important; margin-right: 2px !important; }
+            .nav-actions .btn:last-child,
+            .nav-actions a.btn:last-child { margin-right: 4px !important; }
+            .nav-notification { margin-right: 2px; }
+            .nav-user { margin-right: 2px; padding: 6px; }
+            .toast-container { top: 80px; left: 16px; right: 16px; }
+            .toast { min-width: auto; max-width: none; }
+        }
+
+        @@media (max-width: 480px) {
+            .nav-brand-title { font-size: 16px; }
+            .nav-brand-logo-wrap { width: 34px; height: 34px; }
+            .theme-toggle {
+                width: 44px;
+                height: 44px;
+                bottom: 15px;
+                right: 15px;
+            }
+            .theme-toggle svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        @@media (min-width: 992px) {
+            .side-nav { width: 420px; }
+            .nav-menu-center .nav-link-locked::after { display: none; }
+        }
+
+        @@media (max-width: 768px) {
+            footer .container { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="navbar-main">
+        <div class="container">
+            <!-- Логотип -->
+            <a href="/" class="nav-brand" id="brandLogo">
+                <div class="nav-brand-logo-wrap">
+                    <img src="~/images/logo_64.png" alt="Свах Купидонов" class="nav-brand-logo" />
                 </div>
-
-                <h1 class="hero-animate-delay" style="font-size: 48px; font-weight: 700; color: var(--gray-dark, #2D3436); line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; padding-left: 20px;">
-                    Свах Купидонов уже подобрал тебе 
-                    <span style="background: linear-gradient(135deg, #FF5858, #F857A6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">пару</span>
-                </h1>
-
-                <p class="hero-animate-delay2" style="color: var(--gray-mid, #636E72); font-size: 17px; line-height: 1.8; margin-bottom: 36px; padding-left: 20px;">
-                    Это не случайность. Свах не ошибается.
-                </p>
-
-                <!-- Мобильная композиция: центральная карточка + спутники -->
-                <div class="mobile-cards-showcase">
-                    <div class="mobile-deco-circle mobile-deco-1"></div>
-                    <div class="mobile-deco-circle mobile-deco-2"></div>
-                    <div class="mobile-deco-circle mobile-deco-3"></div>
-                    
-                    <div class="mobile-satellite mobile-satellite-white mobile-satellite-blur satellite-1">
-                        <span>+12 сегодня</span>
-                    </div>
-                    
-                    <div class="mobile-satellite mobile-satellite-light mobile-satellite-blur satellite-2">
-                        <span class="mobile-satellite-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF5858"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                            3 новых
-                        </span>
-                    </div>
-                    
-                    <div class="mobile-satellite mobile-satellite-white satellite-3">
-                        <span>Дима, 31</span>
-                    </div>
-                    
-                    <div class="mobile-satellite mobile-satellite-gradient satellite-4">
-                        <span class="mobile-satellite-icon">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                            24/7
-                        </span>
-                    </div>
-                    
-                    <div class="mobile-satellite mobile-satellite-white mobile-satellite-blur-more satellite-5">
-                        <span>Москва</span>
-                    </div>
-                    
-                    <div class="mobile-satellite mobile-satellite-light satellite-6">
-                        <span>Игорь, 28</span>
-                    </div>
-                    
-                    <div class="mobile-satellite mobile-satellite-light mobile-satellite-blur-more satellite-7" style="padding: 6px 10px; font-size: 10px;">
-                        <span class="mobile-satellite-icon">
-                            <div class="live-dot" style="width: 6px; height: 6px;"></div>
-                            онлайн
-                        </span>
-                    </div>
-                    
-                    <div class="mobile-main-card">
-                        <div class="mobile-main-avatar">А</div>
-                        
-                        <div class="mobile-svah-badge">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                            Выбор Сваха
-                        </div>
-
-                        <div class="mobile-approved-badge">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            Свах одобрил
-                        </div>
-                        
-                        <h4>Анна, 24</h4>
-                        <p>Москва · Отношения</p>
-                        
-                        <div class="mobile-match-percent">Совпадение: 94%</div>
-                        
-                        <div class="mobile-main-badge">Интересно…</div>
-                    </div>
+                <div class="nav-brand-text">
+                    <span class="nav-brand-title">
+                        <span class="svah">Свах</span> <span class="kupidonov">Купидонов</span>
+                    </span>
+                    <span class="nav-brand-subtitle">Я всё устрою</span>
                 </div>
-
-                <div class="hero-animate-delay2">
-                    <form method="get" action="/Feed/Index">
-                        <div class="search-box" style="background: var(--card-bg, white); border-radius: 24px; border: 1px solid var(--border, #F0F0F0); box-shadow: 0 12px 40px rgba(255,88,88,0.08); padding: 22px; transition: all 0.3s;">
-                            <p style="margin: 0 0 14px; font-size: 14px; font-weight: 600; color: var(--gray-dark, #2D3436);">Найди людей рядом</p>
-                            <div class="search-fields" style="display: flex; gap: 10px; margin-bottom: 14px;">
-
-                                <div class="search-field-card">
-                                    <p>ГОРОД</p>
-                                    <input type="text" name="city" placeholder="Москва, Питер..." />
-                                </div>
-
-                                <div class="search-field-card" id="goalWrapper">
-                                    <p>ЦЕЛЬ</p>
-                                    <input type="hidden" name="goal" id="goalValue" value="" />
-                                    <div class="custom-dropdown" id="goalDropdown">
-                                        <div onclick="toggleGoal(event)" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; height:22px;">
-                                            <span id="goalLabel" style="font-size:14px; font-weight:500; color:var(--gray-light, #B2BEC3);">Любая</span>
-                                            <svg id="goalArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2.5" style="flex-shrink:0; transition:transform 0.2s;">
-                                                <polyline points="6 9 12 15 18 9"></polyline></svg>
-                                        </div>
-                                        <div class="custom-dropdown-menu" id="goalMenu">
-                                            <div class="custom-dropdown-item selected" onclick="chooseGoal('', 'Любая', this)">Любая</div>
-                                            <div class="custom-dropdown-item" onclick="chooseGoal('Дружба', 'Дружба', this)">Дружба</div>
-                                            <div class="custom-dropdown-item" onclick="chooseGoal('Отношения', 'Отношения', this)">Отношения</div>
-                                            <div class="custom-dropdown-item" onclick="chooseGoal('Брак', 'Брак', this)">Брак</div>
-                                            <div class="custom-dropdown-item" onclick="chooseGoal('Общение', 'Общение', this)">Общение</div>
-                                        </div>
+            </a>
+            
+            <!-- ЦЕНТР: навигация -->
+            <ul class="nav-menu-center">
+                <li><a href="/" class="nav-link-custom nav-link-active">Главная</a></li>
+                
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a href="/Feed/Index" class="nav-link-custom">Лента</a></li>
+                }
+                else
+                {
+                    <li><a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="nav-link-custom nav-link-locked">Лента</a></li>
+                }
+                
+                <li><a href="/Chat/Index" class="nav-link-custom">Общий чат</a></li>
+            </ul>
+            
+            <!-- СПРАВА -->
+            <div class="nav-actions">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <!-- Колокольчик -->
+                    <div class="nav-notification">
+                        <button class="notification-btn" onclick="toggleNotifications()" title="Уведомления">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span class="notification-badge" id="notificationCount">0</span>
+                        </button>
+                        
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <span>От Сваха Купидонова</span>
+                                <button onclick="markAllAsRead()">Прочитать все</button>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <div class="notification-empty">
+                                    <div class="notification-empty-icon">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                        </svg>
                                     </div>
+                                    Свах ещё подбирает для тебя
                                 </div>
                             </div>
-
-                            <button type="submit" style="width:100%; background:linear-gradient(135deg,#FF5858,#F857A6); border:none; border-radius:50px; padding:16px; color:white; font-weight:600; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 8px 24px rgba(255,88,88,0.3); transition:all 0.3s ease; font-family:'Montserrat',sans-serif;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                Подобрать для меня
-                            </button>
                         </div>
+                    </div>
+                    
+                    <!-- Аккаунт -->
+                    <a href="/Profile/Edit" class="nav-user" title="Мой профиль">
+                        <div class="nav-avatar">
+                            @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "U")
+                        </div>
+                        <span class="nav-username">@User.Identity.Name</span>
+                    </a>
+                }
+                else
+                {
+                    <partial name="_LoginPartial" />
+                }
+                
+                <!-- Кнопка Меню (десктоп) -->
+                <button class="menu-btn" onclick="toggleSideNav()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                    Меню
+                </button>
+                
+                <!-- Мобильная кнопка -->
+                <button class="mobile-menu-btn" onclick="toggleSideNav()" aria-label="Меню">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- БОКОВОЕ МЕНЮ -->
+    <div class="nav-overlay" onclick="toggleSideNav()"></div>
+    <nav class="side-nav">
+        <div class="side-nav-header">
+            <a href="/" class="nav-brand">
+                <div class="nav-brand-logo-wrap">
+                    <img src="~/images/logo_64.png" alt="Свах Купидонов" class="nav-brand-logo" />
+                </div>
+                <div class="nav-brand-text">
+                    <span class="nav-brand-title">
+                        <span class="svah">Свах</span> <span class="kupidonov">Купидонов</span>
+                    </span>
+                    <span class="nav-brand-subtitle">Я всё устрою</span>
+                </div>
+            </a>
+            <button class="side-nav-close" onclick="toggleSideNav()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="side-nav-content">
+            <div class="side-nav-section">Главное</div>
+            <a href="/" class="side-nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Главная
+            </a>
+            
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="/Feed/Index" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Лента анкет
+                </a>
+            }
+            else
+            {
+                <a href="/Identity/Account/Login?returnUrl=/Feed/Index" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Лента анкет
+                    <span style="margin-left: auto; font-size: 11px; color: var(--red); background: rgba(255,88,88,0.1); padding: 2px 8px; border-radius: 10px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 2px;">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </span>
+                </a>
+            }
+            
+            <a href="/Chat/Index" class="side-nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Общий чат
+            </a>
+            
+            <div class="side-nav-section">Разделы</div>
+            
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="/Messages/Index" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    Личные сообщения
+                </a>
+                
+                <div class="side-nav-section">Мой профиль</div>
+                <a href="/Profile/Edit" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Мой профиль
+                </a>
+                <a href="/Favorites/Index" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    Избранное
+                </a>
+                <a href="/Likes/Index" class="side-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                    Лайки
+                </a>
+                
+                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <form method="post" action="/Identity/Account/Logout" id="logoutForm" style="display: contents;">
+                        @Html.AntiForgeryToken()
+                        <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;" class="side-nav-link" style="color: var(--red);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            Выйти из аккаунта
+                        </a>
                     </form>
                 </div>
-            </div>
-
-            <!-- Десктоп: плавающие карточки профилей -->
-            <div class="col-lg-6 floating-cards-container" style="position: relative; height: 580px;">
-                <div style="position:absolute; width:360px; height:360px; border-radius:50%; background:linear-gradient(135deg,rgba(255,88,88,0.07),rgba(248,87,166,0.1)); top:50%; left:50%; transform:translate(-42%,-50%); z-index:0;"></div>
-                <div style="position:absolute; width:160px; height:160px; border-radius:50%; background:rgba(255,88,88,0.04); top:5%; right:8%; z-index:0;"></div>
-                <div style="position:absolute; width:80px; height:80px; border-radius:50%; background:rgba(248,87,166,0.06); bottom:10%; left:8%; z-index:0;"></div>
-
-                <!-- Главная карточка Анна -->
-                <div class="float-card" style="position:absolute; background:var(--card-bg, white); border-radius:24px; padding:28px; width:220px; box-shadow:0 20px 60px rgba(255,88,88,0.18); z-index:3; top:22%; left:35%; transform:translate(-50%,-50%); transition: background-color 0.3s;">
-                    <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
-                        <span style="color:white; font-size:28px; font-weight:700;">А</span>
-                    </div>
-                    
-                    <div class="svah-badge" style="display:flex; justify-content:center; margin-bottom:8px;">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                        Выбор Сваха
-                    </div>
-                    
-                    <p style="font-size:18px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 4px; text-align:center;">Анна, 24</p>
-                    <p style="font-size:13px; color:var(--gray-mid, #636E72); margin:0 0 12px; text-align:center;">Москва · Отношения</p>
-                    
-                    <div class="match-percent" style="text-align:center; font-size:13px; margin-bottom:12px;">
-                        Совпадение: 94%
-                    </div>
-                    
-                    <div style="background:linear-gradient(135deg,#FF5858,#F857A6); border-radius:30px; padding:10px; font-size:13px; color:white; font-weight:600; text-align:center;">Интересно…</div>
-                </div>
-
-                <!-- Карточка Игорь -->
-                <div class="float-card-2" style="position:absolute; background:var(--card-bg, white); border-radius:20px; padding:16px; width:148px; box-shadow:0 12px 32px rgba(255,88,88,0.1); z-index:4; left:0%; top:6%; transition: background-color 0.3s;">
-                    <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
-                        <span style="font-size:16px; font-weight:700; color:white;">И</span>
-                    </div>
-                    <p style="font-size:13px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 3px;">Игорь, 28</p>
-                    <p style="font-size:11px; color:var(--gray-mid, #636E72); margin:0;">Питер · Дружба</p>
-                </div>
-
-                <!-- Карточка Дима -->
-                <div class="float-card-4" style="position:absolute; background:var(--card-bg, white); border-radius:18px; padding:14px; width:138px; box-shadow:0 10px 28px rgba(248,87,166,0.1); z-index:4; right:8%; top:18%; transition: background-color 0.3s;">
-                    <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,rgba(248,87,166,0.2),rgba(255,88,88,0.15)); margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
-                        <span style="font-size:15px; font-weight:700; color:#F857A6;">Д</span>
-                    </div>
-                    <p style="font-size:13px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 2px;">Дима, 31</p>
-                    <p style="font-size:11px; color:var(--gray-mid, #636E72); margin:0;">Москва · Брак</p>
-                </div>
-
-                <!-- Карточка Катя -->
-                <div class="float-card-5" style="position:absolute; background:linear-gradient(135deg,#FF5858,#F857A6); border-radius:50px; padding:10px 16px; box-shadow:0 8px 24px rgba(255,88,88,0.25); z-index:4; left:2%; bottom:20%; display:flex; align-items:center; gap:10px;">
-                    <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;">
-                        <span style="font-size:13px; font-weight:700; color:white;">К</span>
-                    </div>
-                    <div>
-                        <p style="font-size:12px; font-weight:700; color:white; margin:0;">Катя, 22</p>
-                        <p style="font-size:10px; color:rgba(255,255,255,0.8); margin:0;">Казань</p>
-                    </div>
-                </div>
-
-                <!-- Карточка Мария - размытая -->
-                <div class="float-card-3" style="position:absolute; background:var(--card-bg, white); border-radius:14px; padding:10px 12px; width:118px; box-shadow:0 6px 20px rgba(0,0,0,0.07); z-index:2; right:12%; bottom:14%; filter:blur(1.5px); opacity:0.8; transition: background-color 0.3s;">
-                    <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,88,88,0.1); margin-bottom:6px; display:flex; align-items:center; justify-content:center;">
-                        <span style="font-size:12px; font-weight:700; color:#F857A6;">М</span>
-                    </div>
-                    <p style="font-size:12px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 1px;">Мария, 26</p>
-                    <p style="font-size:10px; color:var(--gray-mid, #636E72); margin:0;">Казань · Брак</p>
-                </div>
-
-                <!-- Карточка Саша -->
-                <div class="float-card-2" style="position:absolute; background:var(--card-bg, white); border-radius:16px; padding:12px 14px; width:130px; box-shadow:0 8px 24px rgba(255,88,88,0.08); z-index:3; right:-2%; top:48%; transition: background-color 0.3s;">
-                    <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
-                        <span style="font-size:14px; font-weight:700; color:white;">С</span>
-                    </div>
-                    <p style="font-size:13px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0 0 2px;">Саша, 25</p>
-                    <p style="font-size:11px; color:var(--gray-mid, #636E72); margin:0;">Сочи · Общение</p>
-                </div>
-
-                <!-- Метка одобрения Сваха -->
-                <div class="float-card-3" style="position:absolute; top:8%; right:35%; background:var(--card-bg, white); border-radius:50px; padding:8px 16px; box-shadow:0 4px 20px rgba(255,88,88,0.12); display:flex; align-items:center; gap:8px; z-index:5; transition: background-color 0.3s;">
-                    <div class="approved-badge" style="margin:0;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        Свах одобрил
-                    </div>
-                </div>
-
-                <!-- Метка "Я нашёл тебе пару" -->
-                <div class="float-card-4" style="position:absolute; bottom:6%; left:26%; background:linear-gradient(135deg,#FF5858,#F857A6); border-radius:50px; padding:10px 18px; box-shadow:0 4px 20px rgba(255,88,88,0.2); display:flex; align-items:center; gap:8px; z-index:5;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    <span style="font-size:12px; font-weight:600; color:white;">Я нашёл тебе пару</span>
-                </div>
-
-                <!-- Метка совпадения -->
-                <div class="float-card-3" style="position:absolute; top:38%; left:6%; background:var(--card-bg, white); border-radius:50px; padding:8px 14px; box-shadow:0 4px 16px rgba(248,87,166,0.12); display:flex; align-items:center; gap:8px; z-index:5; transition: background-color 0.3s;">
-                    <div class="svah-badge" style="margin:0;">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF5858"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                        Совпадение: 87%
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Три шага -->
-<div class="steps-section" style="background: linear-gradient(180deg, rgba(255,88,88,0.05) 0%, var(--bg-color, white) 100%); padding: 100px 0; transition: background 0.3s;">
-    <div class="container">
-        <div style="text-align: center; margin-bottom: 60px;">
-            <p style="font-size:12px; letter-spacing:2px; color:var(--pink, #F857A6); margin-bottom:10px; font-weight:600;">КАК ЭТО РАБОТАЕТ</p>
-            <h2 style="font-size:40px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0;">Три простых шага</h2>
-        </div>
-        <div class="steps-grid" style="display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap: 28px;">
-            <div class="step-card-custom">
-                <div class="step-bg-num">01</div>
-                <div class="step-content">
-                    <div style="width:72px; height:72px; border-radius:50%; background:rgba(255,88,88,0.08); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; box-shadow:0 4px 16px rgba(255,88,88,0.1);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    </div>
-                    <p style="font-size:17px; font-weight:700; color:var(--gray-dark, #2D3436); margin-bottom:14px;">Я узнаю тебя</p>
-                    <p style="font-size:14px; color:var(--gray-mid, #636E72); line-height:1.9; margin:0;">Расскажи о себе, и я пойму, кто тебе нужен. Чем больше знаю — тем точнее выбор.</p>
-                </div>
-            </div>
-            <div class="step-card-custom step-card-active">
-                <div class="step-bg-num">02</div>
-                <div class="step-content">
-                    <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; box-shadow:0 8px 24px rgba(255,88,88,0.35);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    </div>
-                    <p style="font-size:17px; font-weight:700; color:var(--gray-dark, #2D3436); margin-bottom:14px;">Я подбираю</p>
-                    <p style="font-size:14px; color:var(--gray-mid, #636E72); line-height:1.9; margin:0;">Анализирую совместимость и выбираю одного человека — того, на которого стоит обратить внимание...</p>
-                </div>
-            </div>
-            <div class="step-card-custom">
-                <div class="step-bg-num">03</div>
-                <div class="step-content">
-                    <div style="width:72px; height:72px; border-radius:50%; background:rgba(255,88,88,0.08); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; box-shadow:0 4px 16px rgba(255,88,88,0.1);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF5858" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                    </div>
-                    <p style="font-size:17px; font-weight:700; color:var(--gray-dark, #2D3436);margin-bottom:14px;">Я соединяю</p>
-                    <p style="font-size:14px; color:var(--gray-mid, #636E72); line-height:1.9; margin:0;">Чат открыт. А дальше — ваша история, не подведите!</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Последние анкеты -->
-<div class="recent-section" style="background: var(--bg-color, white); padding: 100px 0; transition: background-color 0.3s;">
-    <div class="container">
-        <div style="text-align:center; margin-bottom:48px;">
-            <p style="font-size:12px; letter-spacing:2px; color:var(--pink, #F857A6); margin-bottom:10px; font-weight:600;">НОВЫЕ УЧАСТНИКИ</p>
-            <h2 style="font-size:35px; font-weight:700; color:var(--gray-dark, #2D3436); margin:0;">Недавно зарегистрировались</h2>
-        </div>
-        <div class="row g-4 justify-content-center align-items-end recent-cards-row">
-            @{ int cardIndex = 0; }
-            @foreach (var p in recentProfiles)
+            }
+            else
             {
-                var mt = cardIndex == 1 ? "0px" : "28px";
-                cardIndex++;
-                <div class="col-md-4" style="margin-top:@mt;">
-                    <div class="recent-card">
-                        @if (!string.IsNullOrEmpty(p.PhotoPath))
-                        {
-                            <img src="@p.PhotoPath" style="width:100%; height:220px; object-fit:cover; border-radius:16px; margin-bottom:16px;" />
-                        }
-                        else
-                        {
-                            <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
-                                <span style="color:white; font-size:28px; font-weight:700;">@(p.Name != null && p.Name.Length > 0 ? p.Name.Substring(0,1) : "?")</span>
-                            </div>
-                        }
-                        <h5 style="font-size:17px; font-weight:700; color:var(--gray-dark, #2D3436); margin-bottom:6px;">@p.Name, @p.Age</h5>
-                        <p style="font-size:13px; color:var(--gray-mid, #636E72); margin-bottom:10px;">@p.City</p>
-                        <span style="display:inline-block; background:rgba(255,88,88,0.07); border-radius:20px; padding:5px 16px; font-size:12px; color:var(--red, #FF5858); font-weight:600;">@p.Goal</span>
-                    </div>
+                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <div class="side-nav-section">Аккаунт</div>
+                    <a href="/Identity/Account/Login" class="side-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10,17 15,12 10,7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                        Войти
+                    </a>
+                    <a href="/Identity/Account/Register" class="side-nav-link" style="color: var(--red);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                        Регистрация
+                    </a>
                 </div>
             }
         </div>
-        <div style="text-align:center; margin-top:48px;">
-            <a href="/Feed/Index" class="btn btn-primary" style="padding:16px 52px !important; font-size:15px !important;">
-                Смотреть все анкеты
-            </a>
+    </nav>
+    
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main role="main">
+        @RenderBody()
+    </main>
+    
+    <!-- ФУТЕР -->
+    <footer>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: var(--gray-mid); font-size: 13px;">© 2026 Свах Купидонов</span>
+            <a href="/Privacy" style="color: var(--gray-mid); font-size: 13px; text-decoration: none;">Политика конфиденциальности</a>
         </div>
-    </div>
-</div>
+    </footer>
+    
+    <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Сменить тему">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+    
+    <!-- Скрипты -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        // ===== ПЕРЕКЛЮЧЕНИЕ ТЕМЫ =====
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
 
-<!-- Цитата -->
-<div class="quote-section" style="background: linear-gradient(135deg, #FF5858 0%, #F857A6 100%); padding: 80px 0; position: relative; overflow: hidden;">
-    <div style="position:absolute; top:-80px; left:-80px; width:300px; height:300px; border-radius:50%; background:rgba(255,255,255,0.06);"></div>
-    <div style="position:absolute; bottom:-60px; right:-60px; width:240px; height:240px; border-radius:50%; background:rgba(255,255,255,0.06);"></div>
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
 
-    <div class="container" style="position:relative; z-index:1;">
-        <div class="row align-items-center">
-            <div class="col-md-7" style="padding-right: 60px;">
-                <svg style="opacity:0.25; margin-bottom:24px; display:block;" width="72" height="72" viewBox="0 0 24 24" fill="white">
-                    <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
-                    <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
-                </svg>
-                <p style="font-size:38px; font-weight:600; color:white; margin-bottom:28px; line-height:1.5; font-style:italic;">
-                    Настоящая любовь начинается там, где ничего не ожидают взамен.
-                </p>
-                <p style="font-size:15px; color:rgba(255,255,255,0.8); font-weight:500; font-style:italic; margin:0;">
-                    Антуан де Сент-Экзюпери</p>
-            </div>
+        // Инициализация темы сразу
+        initTheme();
 
-            <div class="col-md-5 stats-cards">
-                <div style="display:flex; flex-direction:column; gap:16px;">
-                    <div style="background:rgba(255,255,255,0.12); border-radius:20px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
-                        <div style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        </div>
-                        <div>
-                            <p style="font-size:22px; font-weight:700; color:white; margin:0;">@profileCount</p>
-                            <p style="font-size:13px; color:rgba(255,255,255,0.75); margin:0;">пар подобрано</p>
-                        </div>
-                    </div>
-                    <div style="background:rgba(255,255,255,0.12); border-radius:20px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
-                        <div style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                        </div>
-                        <div>
-                            <p style="font-size:22px; font-weight:700; color:white; margin:0;">24/7</p>
-                            <p style="font-size:13px; color:rgba(255,255,255,0.75); margin:0;">Свах Купидонов на связи</p>
-                        </div>
-                    </div>
-                    <div style="background:rgba(255,255,255,0.12); border-radius:20px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
-                        <div style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                        </div>
-                        <div>
-                            <p style="font-size:22px; font-weight:700; color:white; margin:0;">Бесплатно</p>
-                            <p style="font-size:13px; color:rgba(255,255,255,0.75); margin:0;">регистрация и общение</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        // ===== БОКОВОЕ МЕНЮ =====
+        function toggleSideNav() {
+            const nav = document.querySelector('.side-nav');
+            const overlay = document.querySelector('.nav-overlay');
+            const mobileBtn = document.querySelector('.mobile-menu-btn');
+            const isOpen = nav.classList.toggle('active');
+            overlay.classList.toggle('active');
+            if (mobileBtn) mobileBtn.classList.toggle('active', isOpen);
+            document.body.classList.toggle('menu-open', isOpen);
+        }
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var target = @profileCount;
-        var el = document.getElementById('counter');
-        if (el) {
-            if (target === 0) { el.textContent = 0; }
-            else {
-                var current = 0;
-                var step = Math.max(1, Math.ceil(target / 30));
-                var timer = setInterval(function () {
-                    current = Math.min(current + step, target);
-                    el.textContent = current;
-                    if (current >= target) clearInterval(timer);
-                }, 50);
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 992) {
+                document.querySelector('.side-nav')?.classList.remove('active');
+                document.querySelector('.nav-overlay')?.classList.remove('active');
+                document.querySelector('.mobile-menu-btn')?.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+        });
+
+        // ===== УВЕДОМЛЕНИЯ =====
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const isActive = dropdown.classList.toggle('active');
+            if (isActive) {
+                loadNotifications();
+                setTimeout(() => {
+                    document.addEventListener('click', closeNotificationOutside);
+                }, 100);
             }
         }
 
-        document.addEventListener('click', function (e) {
-            var menu = document.getElementById('goalMenu');
-            var arrow = document.getElementById('goalArrow');
-            if (menu && !e.target.closest('#goalDropdown')) {
-                menu.style.display = 'none';
-                if (arrow) arrow.style.transform = 'rotate(0deg)';
+        function closeNotificationOutside(e) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const btn = document.querySelector('.notification-btn');
+            if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.remove('active');
+                document.removeEventListener('click', closeNotificationOutside);
             }
-        });
-    });
+        }
 
-    function toggleGoal(e) {
-        e.stopPropagation();
-        var menu = document.getElementById('goalMenu');
-        var arrow = document.getElementById('goalArrow');
-        var isOpen = menu.style.display === 'block';
-        menu.style.display = isOpen ? 'none' : 'block';
-        arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
-    }
+        function updateBadge(count) {
+            const badge = document.getElementById('notificationCount');
+            if (badge) {
+                if (count > 0) {
+                    badge.textContent = count > 99 ? '99+' : count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
 
-    function chooseGoal(value, label, el) {
-        document.getElementById('goalValue').value = value;
-        document.getElementById('goalLabel').textContent = label;
-        document.getElementById('goalLabel').style.color = value ? 'var(--gray-mid, #636E72)' : 'var(--gray-light, #B2BEC3)';
-        document.getElementById('goalMenu').style.display = 'none';
-        document.getElementById('goalArrow').style.transform = 'rotate(0deg)';
-        document.querySelectorAll('.custom-dropdown-item').forEach(function (i) {
-            i.classList.remove('selected');
-        });
-        el.classList.add('selected');
+        function loadNotifications() { /* заглушка */ }
+        function markAllAsRead() { /* заглушка */ }
+    </script>
+    
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+        <script>
+            let notificationConnection = null;
+            let currentUserId = '@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value';
+
+            const svakhMessages = {
+                0: 'Я нашёл тебе пару',
+                1: 'Я соединил вас — взаимно',
+                2: 'Я одобрил это сообщение',
+                3: 'Посмотри, кого я выбрал',
+                4: 'Не упусти шанс — суперлайк'
+            };
+
+            async function initNotifications() {
+                if (!currentUserId) return;
+
+                notificationConnection = new signalR.HubConnectionBuilder()
+                    .withUrl("/notificationHub")
+                    .withAutomaticReconnect([0, 2000, 5000, 10000])
+                    .build();
+
+                notificationConnection.on("ReceiveNotification", function(type, message, fromUserId, fromName, fromPhoto) {
+                    showToast(type, message, fromName, fromPhoto);
+                    updateNotificationCount();
+                    if (document.getElementById('notificationDropdown').classList.contains('active')) {
+                        loadNotifications();
+                    }
+                });
+
+                notificationConnection.on("UpdateCount", function(count) {
+                    updateBadge(count);
+                });
+
+                try {
+                    await notificationConnection.start();
+                    await notificationConnection.invoke("JoinGroup", currentUserId);
+                    updateNotificationCount();
+                } catch (err) {
+                    console.error("SignalR Connection Error:", err);
+                }
+            }
+
+            async function updateNotificationCount() {
+                try {
+                    const response = await fetch('/api/notifications/count');
+                    const count = await response.json();
+                    updateBadge(count);
+                } catch (err) {
+                    console.error("Error fetching count:", err);
+                }
+            }
+
+            async function loadNotifications() {
+                try {
+                    const response = await fetch('/api/notifications');
+                    const notifications = await response.json();
+                    renderNotifications(notifications);
+                } catch (err) {
+                    console.error("Error loading notifications:", err);
+                }
+            }
+
+            function renderNotifications(notifications) {
+                const list = document.getElementById('notificationList');
+
+                if (notifications.length === 0) {
+                    list.innerHTML = `
+                        <div class="notification-empty">
+                            <div class="notification-empty-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                            </div>
+                            Свах ещё подбирает для тебя
+                        </div>`;
+                    return;
+                }
+
+                list.innerHTML = notifications.map(n => {
+                    const avatar = n.fromProfile?.photoPath
+                        ? `<img src="${n.fromProfile.photoPath}" class="notification-avatar" alt="" />`
+                        : `<div class="notification-avatar-placeholder">${n.fromProfile?.name?.[0] || '?'}</div>`;
+                    const link = getNotificationLink(n);
+                    const svakhLabel = svakhMessages[n.type] || 'Свах одобрил';
+
+                    return `
+                        <a href="${link}" class="notification-item ${n.isRead ? '' : 'unread'}" onclick="handleNotificationClick(${n.id}, event)">
+                            ${avatar}
+                            <div class="notification-content">
+                                <div style="font-size:11px;color:#FF5858;font-weight:700;margin-bottom:3px;">${escapeHtml(svakhLabel)}</div>
+                                <div class="notification-text">${escapeHtml(n.message)}</div>
+                                <div class="notification-time">${timeAgo(n.createdAt)}</div>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+            }
+
+            function getNotificationLink(notification) {
+                switch(notification.type) {
+                    case 0: case 4: case 3: return `/Profile/View/${notification.fromProfile?.id || ''}`;
+                    case 1: case 2: return `/Messages/Dialog/${notification.fromUserId}`;
+                    default: return '#';
+                }
+            }
+
+            async function handleNotificationClick(id, event) {
+                if (event.currentTarget.getAttribute('href') === '#') event.preventDefault();
+                try {
+                    await fetch(`/api/notifications/mark-read/${id}`, { method: 'POST' });
+                    updateNotificationCount();
+                    event.currentTarget.classList.remove('unread');
+                } catch (err) {
+                    console.error("Error marking as read:", err);
+                }
+            }
+
+            async function markAllAsRead() {
+                try {
+                    await fetch('/api/notifications/mark-all-read', { method: 'POST' });
+                    updateBadge(0);
+                    loadNotifications();
+                } catch (err) {
+                    console.error("Error marking all as read:", err);
+                }
+            }
+
+            function showToast(type, message, fromName, fromPhoto) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                const svakhLabel = svakhMessages[type] || 'Свах одобрил';
+
+                toast.innerHTML = `
+                    <img src="${fromPhoto || '/images/default-avatar.png'}" class="toast-avatar" onerror="this.src='/images/default-avatar.png'" />
+                    <div class="toast-content">
+                        <div class="toast-svah-badge">${escapeHtml(svakhLabel)}</div>
+                        <div class="toast-title">${escapeHtml(fromName || 'Кто-то')}</div>
+                        <div class="toast-message">${escapeHtml(message)}</div>
+                    </div>
+                    <button class="toast-close" onclick="this.parentElement.remove()">&#215;</button>
+                `;
+
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 10);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 400);
+                }, 5000);
+            }
+
+            function timeAgo(date) {
+                const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+                if (seconds < 60) return 'только что';
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `${minutes} мин. назад`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours} ч. назад`;
+                const days = Math.floor(hours / 24);
+                if (days < 7) return `${days} д. назад`;
+                return new Date(date).toLocaleDateString('ru-RU');
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            document.addEventListener('DOMContentLoaded', initNotifications);
+
+            window.addEventListener('beforeunload', async function() {
+                if (notificationConnection && currentUserId) {
+                    await notificationConnection.invoke("LeaveGroup", currentUserId);
+                }
+            });
+        </script>
     }
-</script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
