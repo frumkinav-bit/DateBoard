@@ -1,4 +1,4 @@
-using DateBoard.Data;
+﻿using DateBoard.Data;
 using DateBoard.Hubs;
 using DateBoard.Middleware;
 using DateBoard.Services;
@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ===== ВРЕМЕННО: Включить Development режим для диагностики =====
+// Удалите эту строку после исправления ошибки!
+Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
 
 // ===== НАСТРОЙКА ПОРТА ДЛЯ RAILWAY =====
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
@@ -18,9 +22,9 @@ var connectionString = GetConnectionString()
     ?? throw new InvalidOperationException("Connection string not found");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));  // ← ИСПРАВЛЕНО: UseNpgsql вместо UseSqlServer
+    options.UseNpgsql(connectionString));
 
-// ===== SignalR (ДО builder.Build()!) =====
+// ===== SignalR =====
 builder.Services.AddSignalR(options =>
 {
     options.MaximumReceiveMessageSize = 10 * 1024 * 1024;
@@ -34,7 +38,7 @@ builder.Services.AddScoped<IOnlineStatusService, OnlineStatusService>();
 // ===== IDENTITY =====
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false;  // ← false для простоты
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
@@ -43,9 +47,19 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddRazorPages();
+// ===== Razor Pages с детальными ошибками =====
+builder.Services.AddRazorPages()
+    .AddRazorPagesOptions(options =>
+    {
+        options.Conventions.ConfigureFilter(new Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute());
+    });
 
-// ===== СТРОИМ ПРИЛОЖЕНИЕ (после всех сервисов!) =====
+// Добавляем логирование для диагностики
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
+// ===== СТРОИМ ПРИЛОЖЕНИЕ =====
 var app = builder.Build();
 
 // ===== МИГРАЦИИ (при старте) =====
@@ -55,30 +69,37 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync();
 }
 
-// ===== MIDDLEWARE ПАЙПЛАЙН =====
-if (!app.Environment.IsDevelopment())
+// ===== MIDDLEWARE ПАЙПЛАЙН (ИСПРАВЛЕННЫЙ ПОРЯДОК!) =====
+
+// В Development показываем детальные ошибки
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage(); // ← ПОКАЗЫВАЕТ ДЕТАЛИ ОШИБКИ
+}
+else
 {
     app.UseExceptionHandler("/Error");
-    // app.UseHsts();  // ← закомментировано для Railway
 }
 
-// app.UseHttpsRedirection();  // ← УБРАНО для Railway!
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();  // ← ДОБАВЛЕНО (было пропущено!)
+
+// Аутентификация и авторизация
+app.UseAuthentication();
 app.UseAuthorization();
 
-// ===== HUBS (ДО app.Run()!) =====
-app.MapHub<ChatHub>("/chatHub");
-app.MapHub<PrivateHub>("/privateHub");
-app.MapHub<NotificationHub>("/notificationHub");  // ← добавлен
-
-app.MapRazorPages();
-
-// ===== MIDDLEWARE ОНЛАЙН СТАТУСА =====
+// Middleware онлайн статуса (ДО MapRazorPages!)
 app.UseMiddleware<OnlineStatusMiddleware>();
 
-// ===== ЗАПУСК (В САМОМ КОНЦЕ!) =====
+// ===== HUBS =====
+app.MapHub<ChatHub>("/chatHub");
+app.MapHub<PrivateHub>("/privateHub");
+app.MapHub<NotificationHub>("/notificationHub");
+
+// ===== Razor Pages =====
+app.MapRazorPages();
+
+// ===== ЗАПУСК =====
 app.Run();
 
 // ===== МЕТОД ДЛЯ RAILWAY CONNECTION STRING =====
