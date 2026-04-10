@@ -30,7 +30,8 @@
             --gray-light: #B2BEC3;
             --border: #EFEFEF;
             --bg-hover: rgba(255,88,88,0.07);
-            --bg-color: #FFFFFF;
+            /* Основные фоны светлой темы */
+            --bg-color: #F8F9FA;
             --text-color: #2D3436;
             --card-bg: #FFFFFF;
             --header-bg: #FFFFFF;
@@ -41,22 +42,23 @@
             --footer-bg: #FFFFFF;
         }
 
-        /* ===== ТЁМНАЯ ТЕМА ===== */
+        /* ===== ТЁМНАЯ ТЕМА — тёплая, розовато-коричневая ===== */
         [data-theme="dark"] {
-            --gray-dark: #EAEAEA;
-            --gray-mid: #A0A0A0;
-            --gray-light: #6C6C6C;
-            --border: #2D2D44;
-            --bg-hover: rgba(255,88,88,0.15);
-            --bg-color: #1A1A2E;
-            --text-color: #EAEAEA;
-            --card-bg: #16213E;
-            --header-bg: #16213E;
-            --side-nav-bg: #16213E;
+            --gray-dark: #FFF5F7;      /* Светлый текст */
+            --gray-mid: #E8D5D8;       /* Приглушённый текст */
+            --gray-light: #A89094;     /* Мутный текст */
+            --border: #3D2B2E;         /* Тёплый тёмный бордер */
+            --bg-hover: rgba(255,88,88,0.12);
+            /* Основные фоны тёмной темы — тёплые, не синие! */
+            --bg-color: #1A1516;       /* Глубокий тёплый коричнево-розовый */
+            --text-color: #FFF5F7;     /* Тёплый белый */
+            --card-bg: #251E1F;        /* Карточки — тёплый тёмный */
+            --header-bg: #251E1F;       /* Шапка */
+            --side-nav-bg: #251E1F;    /* Боковое меню */
             --overlay-bg: rgba(0,0,0,0.7);
-            --notification-bg: #16213E;
-            --toast-bg: #16213E;
-            --footer-bg: #16213E;
+            --notification-bg: #251E1F;
+            --toast-bg: #251E1F;
+            --footer-bg: #251E1F;
         }
 
         body {
@@ -556,6 +558,10 @@
             object-fit: cover;
             flex-shrink: 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] .notification-avatar {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .notification-avatar-placeholder {

@@ -41,8 +41,8 @@
     }
     
     [data-theme="dark"] .search-field-card {
-        background: var(--card-bg, #16213E);
-        border: 1px solid var(--border, #2D2D44);
+        background: var(--card-bg, #251E1F);
+        border: 1px solid var(--border, #3D2B2E);
     }
     
     .search-field-card:hover { 
@@ -97,7 +97,7 @@
     
     [data-theme="dark"] .custom-dropdown-menu {
         box-shadow: 0 16px 48px rgba(0,0,0,0.4);
-        border-color: var(--border, #2D2D44);
+        border-color: var(--border, #3D2B2E);
     }
     
     .custom-dropdown-item {
@@ -112,7 +112,7 @@
     }
     
     [data-theme="dark"] .custom-dropdown-item {
-        border-bottom-color: var(--border, #2D2D44);
+        border-bottom-color: var(--border, #3D2B2E);
     }
     
     .custom-dropdown-item:last-child { border-bottom: none; }
@@ -142,6 +142,7 @@
     
     [data-theme="dark"] .step-card-custom {
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        border-color: var(--border, #3D2B2E);
     }
     
     .step-card-custom:hover { 
@@ -196,6 +197,7 @@
     
     [data-theme="dark"] .recent-card {
         box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        border-color: var(--border, #3D2B2E);
     }
     
     .recent-card:hover { 
@@ -206,6 +208,7 @@
     
     [data-theme="dark"] .recent-card:hover {
         box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+        border-color: var(--border, #3D2B2E);
     }
     
     /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
@@ -226,7 +229,7 @@
             background: var(--card-bg, white) !important;
         }
         [data-theme="dark"] .search-box {
-            border-color: var(--border, #2D2D44) !important;
+            border-color: var(--border, #3D2B2E) !important;
         }
         .floating-cards-container { display: none !important; }
         .mobile-cards-showcase { display: block !important; }
@@ -499,7 +502,7 @@
 </style>
 
 <!-- Hero -->
-<div class="hero-section" style="background: var(--bg-color, white); padding: 50px 0 100px; position: relative; overflow: hidden; transition: background-color 0.3s;">
+<div class="hero-section" style="background: var(--bg-color, #F8F9FA); padding: 50px 0 100px; position: relative; overflow: hidden; transition: background-color 0.3s;">
     <div style="position: absolute; top: -120px; left: -120px; width: 500px; height: 500px; border-radius: 50%; background: #FF5858; filter: blur(120px); opacity: 0.05; pointer-events: none;"></div>
     <div style="position: absolute; bottom: -120px; right: -120px; width: 500px; height: 500px; border-radius: 50%; background: #F857A6; filter: blur(120px); opacity: 0.05; pointer-events: none;"></div>
 
@@ -588,7 +591,7 @@
 
                 <div class="hero-animate-delay2">
                     <form method="get" action="/Feed/Index">
-                        <div class="search-box" style="background: var(--card-bg, white); border-radius: 24px; border: 1px solid var(--border, #F0F0F0); box-shadow: 0 12px 40px rgba(255,88,88,0.08); padding: 22px; transition: all 0.3s;">
+                        <div class="search-box" style="background: var(--card-bg, white); border-radius: 24px; border: 1px solid var(--border, #EFEFEF); box-shadow: 0 12px 40px rgba(255,88,88,0.08); padding: 22px; transition: all 0.3s;">
                             <p style="margin: 0 0 14px; font-size: 14px; font-weight: 600; color: var(--gray-dark, #2D3436);">Найди людей рядом</p>
                             <div class="search-fields" style="display: flex; gap: 10px; margin-bottom: 14px;">
 
@@ -633,7 +636,7 @@
                 <div style="position:absolute; width:80px; height:80px; border-radius:50%; background:rgba(248,87,166,0.06); bottom:10%; left:8%; z-index:0;"></div>
 
                 <!-- Главная карточка Анна -->
-                <div class="float-card" style="position:absolute; background:var(--card-bg, white); border-radius:24px; padding:28px; width:220px; box-shadow:0 20px 60px rgba(255,88,88,0.18); z-index:3; top:22%; left:35%; transform:translate(-50%,-50%); transition: background-color 0.3s;">
+                <div class="float-card" style="position:absolute; background:var(--card-bg, white); border-radius:24px; padding:28px; width:220px; box-shadow:0 20px 60px rgba(255,88,88,0.18); z-index:3; top:22%; left:35%; transform:translate(-50%,-50%); transition: background-color 0.3s, box-shadow 0.3s;">
                     <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
                         <span style="color:white; font-size:28px; font-weight:700;">А</span>
                     </div>
@@ -654,7 +657,7 @@
                 </div>
 
                 <!-- Карточка Игорь -->
-                <div class="float-card-2" style="position:absolute; background:var(--card-bg, white); border-radius:20px; padding:16px; width:148px; box-shadow:0 12px 32px rgba(255,88,88,0.1); z-index:4; left:0%; top:6%; transition: background-color 0.3s;">
+                <div class="float-card-2" style="position:absolute; background:var(--card-bg, white); border-radius:20px; padding:16px; width:148px; box-shadow:0 12px 32px rgba(255,88,88,0.1); z-index:4; left:0%; top:6%; transition: background-color 0.3s, box-shadow 0.3s;">
                     <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:16px; font-weight:700; color:white;">И</span>
                     </div>
@@ -663,7 +666,7 @@
                 </div>
 
                 <!-- Карточка Дима -->
-                <div class="float-card-4" style="position:absolute; background:var(--card-bg, white); border-radius:18px; padding:14px; width:138px; box-shadow:0 10px 28px rgba(248,87,166,0.1); z-index:4; right:8%; top:18%; transition: background-color 0.3s;">
+                <div class="float-card-4" style="position:absolute; background:var(--card-bg, white); border-radius:18px; padding:14px; width:138px; box-shadow:0 10px 28px rgba(248,87,166,0.1); z-index:4; right:8%; top:18%; transition: background-color 0.3s, box-shadow 0.3s;">
                     <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,rgba(248,87,166,0.2),rgba(255,88,88,0.15)); margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:15px; font-weight:700; color:#F857A6;">Д</span>
                     </div>
@@ -692,7 +695,7 @@
                 </div>
 
                 <!-- Карточка Саша -->
-                <div class="float-card-2" style="position:absolute; background:var(--card-bg, white); border-radius:16px; padding:12px 14px; width:130px; box-shadow:0 8px 24px rgba(255,88,88,0.08); z-index:3; right:-2%; top:48%; transition: background-color 0.3s;">
+                <div class="float-card-2" style="position:absolute; background:var(--card-bg, white); border-radius:16px; padding:12px 14px; width:130px; box-shadow:0 8px 24px rgba(255,88,88,0.08); z-index:3; right:-2%; top:48%; transition: background-color 0.3s, box-shadow 0.3s;">
                     <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#FF5858,#F857A6); margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
                         <span style="font-size:14px; font-weight:700; color:white;">С</span>
                     </div>
@@ -727,7 +730,7 @@
 </div>
 
 <!-- Три шага -->
-<div class="steps-section" style="background: linear-gradient(180deg, rgba(255,88,88,0.05) 0%, var(--bg-color, white) 100%); padding: 100px 0; transition: background 0.3s;">
+<div class="steps-section" style="background: linear-gradient(180deg, rgba(255,88,88,0.05) 0%, var(--bg-color, #F8F9FA) 100%); padding: 100px 0; transition: background 0.3s;">
     <div class="container">
         <div style="text-align: center; margin-bottom: 60px;">
             <p style="font-size:12px; letter-spacing:2px; color:var(--pink, #F857A6); margin-bottom:10px; font-weight:600;">КАК ЭТО РАБОТАЕТ</p>
@@ -769,7 +772,7 @@
 </div>
 
 <!-- Последние анкеты -->
-<div class="recent-section" style="background: var(--bg-color, white); padding: 100px 0; transition: background-color 0.3s;">
+<div class="recent-section" style="background: var(--bg-color, #F8F9FA); padding: 100px 0; transition: background-color 0.3s;">
     <div class="container">
         <div style="text-align:center; margin-bottom:48px;">
             <p style="font-size:12px; letter-spacing:2px; color:var(--pink, #F857A6); margin-bottom:10px; font-weight:600;">НОВЫЕ УЧАСТНИКИ</p>
