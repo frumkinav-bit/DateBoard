@@ -405,7 +405,8 @@
                                 </div>
                             }
                             <div class="like-gradient"></div>
-                            <div class="like-like-info">
+                            <!-- ИСПРАВЛЕНО: like-info вместо like-like-info -->
+                            <div class="like-info">
                                 <div class="like-name">
                                     @like.Profile.Name
                                     <span class="like-age">@like.Profile.Age</span>
@@ -589,18 +590,15 @@
 
 <script>
     function switchTab(tab) {
-        // Обновить URL без перезагрузки
         const url = new URL(window.location);
         url.searchParams.set('tab', tab);
         window.history.pushState({}, '', url);
 
-        // Переключить активность кнопок
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         event.target.closest('.tab-btn').classList.add('active');
 
-        // Переключить контент
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
         });
@@ -614,7 +612,6 @@
             });
             
             if (response.ok) {
-                // Удалить карточку с анимацией
                 const card = btn.closest('.like-card');
                 card.style.transition = 'all 0.3s ease';
                 card.style.opacity = '0';
@@ -623,10 +620,9 @@
                 setTimeout(() => {
                     card.remove();
                     
-                    // Проверить, остались ли карточки
                     const container = document.getElementById('sent').querySelector('.likes-grid');
                     if (container && container.children.length === 0) {
-                        location.reload(); // Перезагрузить для показа empty state
+                        location.reload();
                     }
                 }, 300);
             }
@@ -635,7 +631,6 @@
         }
     }
 
-    // Обработка кнопок назад/вперёд браузера
     window.addEventListener('popstate', function() {
         const params = new URLSearchParams(window.location.search);
         const tab = params.get('tab') || 'received';
