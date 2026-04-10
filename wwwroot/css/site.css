@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg: #F8F9FA;
     --white: #FFFFFF;
     --text-main: #2D3436;
@@ -6,17 +6,119 @@
     --accent: #FF5858;
     --accent2: #F857A6;
     --border: #EFEFEF;
+    --card-bg: #FFFFFF;
+    --input-bg: #FFFFFF;
+    --hover-bg: rgba(255,88,88,0.07);
+    --shadow: rgba(0,0,0,0.05);
+    --shadow-hover: rgba(0,0,0,0.1);
+}
+
+/* ===== ТЁМНАЯ ТЕМА ===== */
+[data-theme="dark"] {
+    --bg: #1a1a2e;
+    --white: #16213e;
+    --text-main: #eaeaea;
+    --text-muted: #a0a0a0;
+    --accent: #FF5858;
+    --accent2: #F857A6;
+    --border: #2d2d44;
+    --card-bg: #16213e;
+    --input-bg: #0f3460;
+    --hover-bg: rgba(255,88,88,0.15);
+    --shadow: rgba(0,0,0,0.3);
+    --shadow-hover: rgba(0,0,0,0.5);
 }
 
 * {
     font-family: 'Montserrat', sans-serif !important;
     font-style: normal !important;
 }
+    <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Сменить тему">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <script>
+        // ===== ПЕРЕКЛЮЧЕНИЕ ТЕМЫ =====
+        function initTheme() {
+            // Проверяем сохранённую тему
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Инициализация при загрузке
+        initTheme();
+    </script>
 
 body {
     background-color: var(--bg);
     color: var(--text-main);
     font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ===== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ===== */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--gradient, linear-gradient(135deg, #FF5858 0%, #F857A6 100%));
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255,88,88,0.4);
+    z-index: 9999;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .theme-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(255,88,88,0.5);
+    }
+
+    .theme-toggle svg {
+        width: 24px;
+        height: 24px;
+        color: white;
+    }
+
+    /* Скрываем иконку луны в светлой теме, солнце в тёмной */
+    .theme-toggle .moon {
+        display: none;
+    }
+
+[data-theme="dark"] .theme-toggle .sun {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle .moon {
+    display: block;
 }
 
 /* ===== КНОПКИ ===== */
@@ -60,15 +162,15 @@ body {
 .card {
     border: 1px solid var(--border) !important;
     border-radius: 20px !important;
-    background: var(--white) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+    background: var(--card-bg) !important;
+    box-shadow: 0 10px 30px var(--shadow) !important;
     overflow: hidden !important;
-    transition: transform 0.2s, box-shadow 0.2s !important;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s !important;
 }
 
     .card:hover {
         transform: translateY(-6px) !important;
-        box-shadow: 0 16px 40px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 16px 40px var(--shadow-hover) !important;
     }
 
 .card-img-top {
@@ -95,14 +197,15 @@ body {
 
 /* ===== ФОРМЫ ===== */
 .form-control, .form-select {
-    border: 1px solid #DDDDDD !important;
+    border: 1px solid var(--border) !important;
     border-radius: 12px !important;
-    background: var(--white) !important;
+    background: var(--input-bg) !important;
     color: var(--text-main) !important;
     font-size: 14px !important;
     height: 50px !important;
     padding: 12px 20px !important;
     box-shadow: none !important;
+    transition: all 0.3s !important;
 }
 
     .form-control:focus, .form-select:focus {
@@ -132,13 +235,14 @@ h1, h2, h3, h4, h5 {
 footer {
     background: var(--white) !important;
     border-top: 1px solid var(--border) !important;
-    color: #888888 !important;
+    color: var(--text-muted) !important;
     font-size: 13px !important;
     padding: 20px 0 !important;
+    transition: all 0.3s !important;
 }
 
     footer a {
-        color: #888888 !important;
+        color: var(--text-muted) !important;
         text-decoration: none !important;
     }
 
@@ -148,22 +252,23 @@ footer {
 
 /* ===== ЧАТ ===== */
 #chatBox {
-    background: #f9f9f9 !important;
+    background: var(--bg) !important;
     border: 1px solid var(--border) !important;
     border-radius: 20px !important;
     padding: 20px !important;
 }
 
 .chat-bubble {
-    background: white;
+    background: var(--card-bg);
     border-radius: 18px 18px 18px 4px;
     padding: 12px 16px;
     margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px var(--shadow);
     display: flex;
     gap: 12px;
     align-items: flex-start;
     max-width: 85%;
+    transition: background-color 0.3s;
 }
 
 .chat-avatar {
@@ -188,15 +293,15 @@ header div ul li a {
 
     header div ul li a:hover {
         color: #FF5858 !important;
-        background: rgba(255,88,88,0.07) !important;
+        background: var(--hover-bg) !important;
     }
 
 /* ===== LOGOUT КНОПКА ===== */
 form[action*="logout"] button {
     background: transparent !important;
-    border: 1px solid #DDDDDD !important;
+    border: 1px solid var(--border) !important;
     border-radius: 20px !important;
-    color: #636E72 !important;
+    color: var(--text-muted) !important;
     font-size: 13px !important;
     padding: 6px 16px !important;
     font-weight: 500 !important;
