@@ -3,50 +3,92 @@
 @{
     ViewData["Title"] = "История лайков";
 }
- 
+
 <style>
+    /* ===== CSS ПЕРЕМЕННЫЕ ДЛЯ ТЕМ ===== */
+    :root {
+        --likes-bg: #FFF5F7;
+        --likes-bg-secondary: #F8F9FA;
+        --text-main: #2D3436;
+        --text-muted: #636E72;
+        --accent: #FF5858;
+        --accent2: #F857A6;
+        --border: #EFEFEF;
+        --card-bg: #FFFFFF;
+        --hover-bg: rgba(255,88,88,0.07);
+        --shadow: rgba(0,0,0,0.08);
+        --shadow-hover: rgba(0,0,0,0.15);
+        --gradient-primary: linear-gradient(135deg, #FF5858 0%, #F857A6 100%);
+        --gradient-bg: linear-gradient(180deg, #FFF5F7 0%, #F8F9FA 100%);
+        --badge-bg: #FF5858;
+        --match-border: #FF5858;
+    }
+
+    /* Изумрудно-голубая тема */
+    [data-theme="teal"] {
+        --likes-bg: #F0F9F7;
+        --likes-bg-secondary: #F8F9FA;
+        --text-main: #2D3436;
+        --text-muted: #636E72;
+        --accent: #00BFA6;
+        --accent2: #00A8E8;
+        --border: #E0F2F0;
+        --card-bg: #FFFFFF;
+        --hover-bg: rgba(0,191,166,0.08);
+        --shadow: rgba(0,191,166,0.08);
+        --shadow-hover: rgba(0,191,166,0.15);
+        --gradient-primary: linear-gradient(135deg, #00BFA6 0%, #00A8E8 100%);
+        --gradient-bg: linear-gradient(180deg, #F0F9F7 0%, #F8F9FA 100%);
+        --badge-bg: #00BFA6;
+        --match-border: #00BFA6;
+    }
+
     .likes-page {
-        background: linear-gradient(180deg, #FFF5F7 0%, #F8F9FA 100%);
+        background: var(--gradient-bg);
         min-height: 100vh;
         padding: 24px;
+        transition: background 0.3s ease;
     }
- 
+
     .likes-header {
         text-align: center;
         margin-bottom: 32px;
     }
- 
+
     .likes-header h1 {
         font-size: 32px;
         font-weight: 800;
-        color: #2D3436;
+        color: var(--text-main);
         margin-bottom: 8px;
+        transition: color 0.3s ease;
     }
- 
+
     .likes-header p {
-        color: #636E72;
+        color: var(--text-muted);
         font-size: 15px;
+        transition: color 0.3s ease;
     }
- 
+
     .tabs {
         display: flex;
         justify-content: center;
         gap: 8px;
         margin-bottom: 32px;
-        background: white;
+        background: var(--card-bg);
         padding: 8px;
         border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px var(--shadow);
         max-width: 500px;
         margin: 0 auto 32px;
+        transition: all 0.3s ease;
     }
- 
+
     .tab-btn {
         flex: 1;
         padding: 12px 20px;
         border: none;
         background: transparent;
-        color: #636E72;
+        color: var(--text-muted);
         font-size: 14px;
         font-weight: 600;
         border-radius: 12px;
@@ -54,18 +96,18 @@
         transition: all 0.3s ease;
         position: relative;
     }
- 
+
     .tab-btn.active {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: var(--gradient-primary);
         color: white;
-        box-shadow: 0 4px 15px rgba(255,88,88,0.3);
+        box-shadow: 0 4px 15px var(--shadow-hover);
     }
- 
+
     .tab-btn .badge {
         position: absolute;
         top: 6px;
         right: 6px;
-        background: #FF5858;
+        background: var(--badge-bg);
         color: white;
         font-size: 11px;
         font-weight: 700;
@@ -75,8 +117,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: background 0.3s ease;
     }
- 
+
     .likes-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -84,57 +127,57 @@
         max-width: 1200px;
         margin: 0 auto;
     }
- 
+
     .like-card {
-        background: white;
+        background: var(--card-bg);
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px var(--shadow);
         transition: all 0.3s ease;
         position: relative;
     }
- 
+
     .like-card:hover {
         transform: translateY(-6px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        box-shadow: 0 12px 30px var(--shadow-hover);
     }
- 
+
     .like-card.match {
-        border: 2px solid #FF5858;
+        border: 2px solid var(--match-border);
     }
- 
+
     .match-badge {
         position: absolute;
         top: 12px;
         left: 12px;
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: var(--gradient-primary);
         color: white;
         padding: 6px 14px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 700;
         z-index: 10;
-        box-shadow: 0 4px 12px rgba(255,88,88,0.4);
+        box-shadow: 0 4px 12px var(--shadow-hover);
     }
- 
+
     .like-image-wrap {
         position: relative;
         height: 320px;
         overflow: hidden;
         cursor: pointer;
     }
- 
+
     .like-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
         transition: transform 0.4s ease;
     }
- 
+
     .like-card:hover .like-image {
         transform: scale(1.05);
     }
- 
+
     .like-gradient {
         position: absolute;
         bottom: 0;
@@ -143,7 +186,7 @@
         height: 60%;
         background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
     }
- 
+
     .like-info {
         position: absolute;
         bottom: 0;
@@ -152,7 +195,7 @@
         padding: 20px;
         color: white;
     }
- 
+
     .like-name {
         font-size: 22px;
         font-weight: 700;
@@ -161,19 +204,19 @@
         align-items: baseline;
         gap: 8px;
     }
- 
+
     .like-age {
         font-size: 16px;
         font-weight: 500;
         opacity: 0.9;
     }
- 
+
     .like-meta {
         font-size: 13px;
         opacity: 0.9;
         margin-top: 4px;
     }
- 
+
     .like-date {
         position: absolute;
         top: 12px;
@@ -186,14 +229,15 @@
         font-weight: 500;
         backdrop-filter: blur(4px);
     }
- 
+
     .like-actions {
         padding: 16px;
         display: flex;
         gap: 10px;
-        background: white;
+        background: var(--card-bg);
+        transition: background 0.3s ease;
     }
- 
+
     .like-btn {
         flex: 1;
         height: 44px;
@@ -209,82 +253,96 @@
         transition: all 0.2s ease;
         text-decoration: none;
     }
- 
+
     .like-btn-primary {
-        background: linear-gradient(135deg, #FF5858, #F857A6);
+        background: var(--gradient-primary);
         color: white;
     }
- 
+
     .like-btn-primary:hover {
         transform: scale(1.02);
-        box-shadow: 0 6px 20px rgba(255,88,88,0.4);
+        box-shadow: 0 6px 20px var(--shadow-hover);
     }
- 
+
     .like-btn-secondary {
-        background: #F8F9FA;
-        color: #636E72;
-        border: 2px solid #EFEFEF;
+        background: var(--likes-bg-secondary);
+        color: var(--text-muted);
+        border: 2px solid var(--border);
+        transition: all 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
- 
+
     .like-btn-secondary:hover {
-        border-color: #FF5858;
-        color: #FF5858;
-        background: #FFF5F7;
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--likes-bg);
     }
- 
+
     .empty-state {
         text-align: center;
         padding: 80px 20px;
-        color: #636E72;
+        color: var(--text-muted);
+        transition: color 0.3s ease;
     }
- 
+
     .empty-icon {
         width: 100px;
         height: 100px;
-        background: white;
+        background: var(--card-bg);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 24px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-        color: #DDD;
+        box-shadow: 0 8px 30px var(--shadow);
+        color: var(--border);
+        transition: all 0.3s ease;
     }
- 
+
     .empty-state h3 {
         font-size: 20px;
         font-weight: 700;
-        color: #2D3436;
+        color: var(--text-main);
         margin-bottom: 8px;
+        transition: color 0.3s ease;
     }
- 
+
     .empty-state p {
         font-size: 14px;
         max-width: 300px;
         margin: 0 auto;
+        color: var(--text-muted);
+        transition: color 0.3s ease;
     }
- 
+
     .tab-content {
         display: none;
     }
- 
+
     .tab-content.active {
         display: block;
         animation: fadeIn 0.3s ease;
     }
- 
-    @@keyframes fadeIn {
+
+    @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Градиент для аватаров без фото */
+    .avatar-gradient {
+        background: var(--gradient-primary) !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
- 
+
 <div class="likes-page">
     <div class="likes-header">
         <h1>История лайков</h1>
         <p>Управляйте своими симпатиями и находите взаимные совпадения</p>
     </div>
- 
+
     <div class="tabs">
         <button class="tab-btn @(Model.ActiveTab == "received" ? "active" : "")" onclick="switchTab('received')">
             Меня лайкнули
@@ -304,7 +362,7 @@
             Я лайкнул(а)
         </button>
     </div>
- 
+
     <!-- Полученные лайки -->
     <div class="tab-content @(Model.ActiveTab == "received" ? "active" : "")" id="received">
         @if (Model.ReceivedLikes.Count == 0)
@@ -334,7 +392,7 @@
                         {
                             <div class="like-date">@like.LikeDate.Value.ToString("dd.MM")</div>
                         }
- 
+
                         <div class="like-image-wrap" onclick="window.location.href='/Profile/View/@like.Profile.Id'">
                             @if (!string.IsNullOrEmpty(like.Profile.PhotoPath))
                             {
@@ -342,12 +400,12 @@
                             }
                             else
                             {
-                                <div class="like-image" style="background: linear-gradient(135deg, #FF5858, #F857A6); display:flex; align-items:center; justify-content:center;">
+                                <div class="like-image avatar-gradient">
                                     <span style="color:white; font-size:64px; font-weight:800;">@(like.Profile.Name.Substring(0, 1).ToUpper())</span>
                                 </div>
                             }
                             <div class="like-gradient"></div>
-                            <div class="like-info">
+                            <div class="like-like-info">
                                 <div class="like-name">
                                     @like.Profile.Name
                                     <span class="like-age">@like.Profile.Age</span>
@@ -355,7 +413,7 @@
                                 <div class="like-meta">@like.Profile.City</div>
                             </div>
                         </div>
- 
+
                         <div class="like-actions">
                             @if (like.IsMatch)
                             {
@@ -384,7 +442,7 @@
             </div>
         }
     </div>
- 
+
     <!-- Взаимные лайки -->
     <div class="tab-content @(Model.ActiveTab == "matches" ? "active" : "")" id="matches">
         @if (Model.Matches.Count == 0)
@@ -411,7 +469,7 @@
                         {
                             <div class="like-date">@match.LikeDate.Value.ToString("dd.MM")</div>
                         }
- 
+
                         <div class="like-image-wrap" onclick="window.location.href='/Profile/View/@match.Profile.Id'">
                             @if (!string.IsNullOrEmpty(match.Profile.PhotoPath))
                             {
@@ -419,7 +477,7 @@
                             }
                             else
                             {
-                                <div class="like-image" style="background: linear-gradient(135deg, #FF5858, #F857A6); display:flex; align-items:center; justify-content:center;">
+                                <div class="like-image avatar-gradient">
                                     <span style="color:white; font-size:64px; font-weight:800;">@(match.Profile.Name.Substring(0, 1).ToUpper())</span>
                                 </div>
                             }
@@ -432,7 +490,7 @@
                                 <div class="like-meta">@match.Profile.City</div>
                             </div>
                         </div>
- 
+
                         <div class="like-actions">
                             <a href="/Messages/Dialog/@match.Profile.UserId" class="like-btn like-btn-primary">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -446,7 +504,7 @@
             </div>
         }
     </div>
- 
+
     <!-- Отправленные лайки -->
     <div class="tab-content @(Model.ActiveTab == "sent" ? "active" : "")" id="sent">
         @if (Model.SentLikes.Count == 0)
@@ -476,7 +534,7 @@
                         {
                             <div class="like-date">@like.LikeDate.Value.ToString("dd.MM")</div>
                         }
- 
+
                         <div class="like-image-wrap" onclick="window.location.href='/Profile/View/@like.Profile.Id'">
                             @if (!string.IsNullOrEmpty(like.Profile.PhotoPath))
                             {
@@ -484,7 +542,7 @@
                             }
                             else
                             {
-                                <div class="like-image" style="background: linear-gradient(135deg, #FF5858, #F857A6); display:flex; align-items:center; justify-content:center;">
+                                <div class="like-image avatar-gradient">
                                     <span style="color:white; font-size:64px; font-weight:800;">@(like.Profile.Name.Substring(0, 1).ToUpper())</span>
                                 </div>
                             }
@@ -497,7 +555,7 @@
                                 <div class="like-meta">@like.Profile.City</div>
                             </div>
                         </div>
- 
+
                         <div class="like-actions">
                             @if (like.IsMatch)
                             {
@@ -528,27 +586,27 @@
         }
     </div>
 </div>
- 
+
 <script>
     function switchTab(tab) {
         // Обновить URL без перезагрузки
         const url = new URL(window.location);
         url.searchParams.set('tab', tab);
         window.history.pushState({}, '', url);
- 
+
         // Переключить активность кнопок
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         event.target.closest('.tab-btn').classList.add('active');
- 
+
         // Переключить контент
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
         });
         document.getElementById(tab).classList.add('active');
     }
- 
+
     async function unlike(profileId, btn) {
         try {
             const response = await fetch(`/Feed/Unlike?id=${profileId}`, {
@@ -576,7 +634,7 @@
             console.error('Error:', err);
         }
     }
- 
+
     // Обработка кнопок назад/вперёд браузера
     window.addEventListener('popstate', function() {
         const params = new URLSearchParams(window.location.search);
@@ -595,4 +653,3 @@
         document.getElementById(tab)?.classList.add('active');
     });
 </script>
- 

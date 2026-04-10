@@ -43,12 +43,11 @@
 
         /* ===== ИЗУМРУДНО-ГОЛУБАЯ ТЕМА (акцентная) ===== */
         [data-theme="teal"] {
-            --primary: #00BFA6;        /* Изумрудный */
-            --primary2: #00A8E8;       /* Голубой */
+            --primary: #00BFA6;
+            --primary2: #00A8E8;
             --gradient: linear-gradient(135deg, #00BFA6, #00A8E8);
             --bg-hover: rgba(0,191,166,0.08);
-            /* Фон остаётся светлым! */
-            --bg-color: #F0F9F7;       /* Слегка зеленоватый оттенок */
+            --bg-color: #F0F9F7;
             --card-bg: #FFFFFF;
             --header-bg: #FFFFFF;
             --side-nav-bg: #FFFFFF;
@@ -61,40 +60,36 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* ===== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ===== */
-        .theme-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--gradient);
+        /* ===== КНОПКА ТЕМЫ В ШАПКЕ ===== */
+        .nav-theme-toggle {
+            background: none;
             border: none;
             cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 10000;
-            transition: transform 0.2s, box-shadow 0.2s;
+            color: var(--gray-mid);
+            transition: all 0.2s ease;
+            margin-right: 4px;
+            width: 40px;
+            height: 40px;
         }
 
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        .nav-theme-toggle:hover {
+            color: var(--primary);
+            background: var(--bg-hover);
         }
 
-        .theme-toggle svg {
-            width: 24px;
-            height: 24px;
-            color: white;
+        .nav-theme-toggle svg {
+            width: 22px;
+            height: 22px;
         }
 
-        /* Иконки переключения */
-        .theme-toggle .teal-icon { display: none; }
-        [data-theme="teal"] .theme-toggle .pink-icon { display: none; }
-        [data-theme="teal"] .theme-toggle .teal-icon { display: block; }
+        .theme-icon-teal { display: none; }
+        [data-theme="teal"] .theme-icon-pink { display: none; }
+        [data-theme="teal"] .theme-icon-teal { display: block; }
 
         /* ===== ШАПКА ===== */
         .navbar-main {
@@ -688,7 +683,7 @@
         .toast-close:hover { color: var(--primary); }
 
         /* ===== АДАПТИВ ===== */
-        @@media (max-width: 991px) {
+        @media (max-width: 991px) {
             .navbar-main .container { height: 60px; }
             .nav-menu-center { display: none; }
             .nav-username { display: none; }
@@ -716,27 +711,17 @@
             .toast { min-width: auto; max-width: none; }
         }
 
-        @@media (max-width: 480px) {
+        @media (max-width: 480px) {
             .nav-brand-title { font-size: 16px; }
             .nav-brand-logo-wrap { width: 34px; height: 34px; }
-            .theme-toggle {
-                width: 44px;
-                height: 44px;
-                bottom: 15px;
-                right: 15px;
-            }
-            .theme-toggle svg {
-                width: 20px;
-                height: 20px;
-            }
         }
 
-        @@media (min-width: 992px) {
+        @media (min-width: 992px) {
             .side-nav { width: 420px; }
             .nav-menu-center .nav-link-locked::after { display: none; }
         }
 
-        @@media (max-width: 768px) {
+        @media (max-width: 768px) {
             footer .container { flex-direction: column; gap: 12px; text-align: center; }
         }
     </style>
@@ -780,6 +765,18 @@
             <div class="nav-actions">
                 @if (User.Identity.IsAuthenticated)
                 {
+                    <!-- КНОПКА СМЕНЫ ТЕМЫ -->
+                    <button class="nav-theme-toggle" onclick="toggleTheme()" title="Сменить цветовую схему">
+                        <!-- Розовое сердце -->
+                        <svg class="theme-icon-pink" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <!-- Изумрудная волна -->
+                        <svg class="theme-icon-teal" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </button>
+
                     <!-- Колокольчик -->
                     <div class="nav-notification">
                         <button class="notification-btn" onclick="toggleNotifications()" title="Уведомления">
@@ -916,6 +913,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     Избранное
                 </a>
+                <!-- ССЫЛКА НА ЛАЙКИ - ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ -->
                 <a href="/Likes/Index" class="side-nav-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
                     Лайки
@@ -963,18 +961,6 @@
             <a href="/Privacy" style="color: var(--gray-mid); font-size: 13px; text-decoration: none;">Политика конфиденциальности</a>
         </div>
     </footer>
-    
-    <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ -->
-    <button class="theme-toggle" onclick="toggleTheme()" title="Сменить цветовую схему">
-        <!-- Розовое сердце -->
-        <svg class="pink-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-        </svg>
-        <!-- Изумрудная волна -->
-        <svg class="teal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-        </svg>
-    </button>
     
     <!-- Скрипты -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
