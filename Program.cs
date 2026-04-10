@@ -8,11 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ===== ПРИНУДИТЕЛЬНО ВКЛЮЧАЕМ DEVELOPMENT ДЛЯ ДИАГНОСТИКИ =====
-// Удалите после исправления ошибки!
-builder.Environment.EnvironmentName = "Development";
-Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
-
 // ===== НАСТРОЙКА ПОРТА ДЛЯ RAILWAY =====
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
@@ -54,7 +49,7 @@ builder.Services.AddRazorPages();
 // Логирование
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-builder.Logging.SetMinimumLevel(LogLevel.Debug);
+builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 // ===== СТРОИМ ПРИЛОЖЕНИЕ =====
 var app = builder.Build();
@@ -67,8 +62,14 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ===== MIDDLEWARE ПАЙПЛАЙН =====
-// ВСЕГДА показываем детальные ошибки (временно!)
-app.UseDeveloperExceptionPage();
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+}
 
 app.UseStaticFiles();
 app.UseRouting();
@@ -76,6 +77,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Middleware онлайн статуса (ДО MapRazorPages!)
 app.UseMiddleware<OnlineStatusMiddleware>();
 
 // ===== HUBS =====
@@ -86,6 +88,7 @@ app.MapHub<NotificationHub>("/notificationHub");
 // ===== Razor Pages =====
 app.MapRazorPages();
 
+// ===== ЗАПУСК =====
 app.Run();
 
 // ===== МЕТОД ДЛЯ RAILWAY CONNECTION STRING =====

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -8,16 +8,21 @@ using DateBoard.Models;
 
 namespace DateBoard.Pages.Likes
 {
-    [Authorize] //  ДОБАВЛЕНО: только для авторизованных пользователей
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ILogger<IndexModel> _logger;
 
-        public IndexModel(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public IndexModel(
+            ApplicationDbContext context,
+            UserManager<IdentityUser> userManager,
+            ILogger<IndexModel> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public List<LikeViewModel> ReceivedLikes { get; set; } = new();
@@ -27,75 +32,88 @@ namespace DateBoard.Pages.Likes
 
         public async Task<IActionResult> OnGetAsync(string tab = "received")
         {
-            ActiveTab = tab;
-
-            var currentUser = await _userManager.GetUserAsync(User);
-
-            //  ПРОВЕРКА: если пользователь не авторизован — редирект на логин
-            if (currentUser == null)
+            try
             {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
+                ActiveTab = tab;
+
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    _logger.LogWarning("User not authenticated");
+                    return RedirectToPage("/Account/Login", new { area = "Identity" });
+                }
+
+                _logger.LogInformation("Loading likes for user: {UserId}", currentUser.Id);
+
+                var myProfileId = await _context.Profiles
+                    .Where(p => p.UserId == currentUser.Id)
+                    .Select(p => (int?)p.Id)
+                    .FirstOrDefaultAsync();
+
+                if (myProfileId == null)
+                {
+                    _logger.LogWarning("Profile not found for user: {UserId}", currentUser.Id);
+                    // ИСПРАВЛЕНО: /Profile/Create вместо /Profiles/Create
+                    return RedirectToPage("/Profile/Create");
+                }
+
+                // Кто меня лайкнул
+                var receivedFavoriteIds = await _context.Favorites
+                    .Where(f => f.ProfileId == myProfileId)
+                    .Select(f => f.UserId)
+                    .ToListAsync();
+
+                _logger.LogInformation("Received {Count} favorites", receivedFavoriteIds.Count);
+
+                ReceivedLikes = await _context.Profiles
+                    .Where(p => receivedFavoriteIds.Contains(p.UserId))
+                    .Select(p => new LikeViewModel
+                    {
+                        Profile = p,
+                        IsMatch = _context.Favorites.Any(f => f.UserId == currentUser.Id && f.ProfileId == p.Id),
+                        LikeDate = _context.Favorites
+                            .Where(f => f.UserId == p.UserId && f.ProfileId == myProfileId)
+                            .Select(f => (DateTime?)f.CreatedAt)
+                            .FirstOrDefault()
+                    })
+                    .ToListAsync();
+
+                // Кого я лайкнул
+                var sentFavoriteIds = await _context.Favorites
+                    .Where(f => f.UserId == currentUser.Id)
+                    .Select(f => f.ProfileId)
+                    .ToListAsync();
+
+                SentLikes = await _context.Profiles
+                    .Where(p => sentFavoriteIds.Contains(p.Id))
+                    .Select(p => new LikeViewModel
+                    {
+                        Profile = p,
+                        IsMatch = _context.Favorites.Any(f => f.UserId == p.UserId && f.ProfileId == myProfileId),
+                        LikeDate = _context.Favorites
+                            .Where(f => f.UserId == currentUser.Id && f.ProfileId == p.Id)
+                            .Select(f => (DateTime?)f.CreatedAt)
+                            .FirstOrDefault()
+                    })
+                    .ToListAsync();
+
+                Matches = ReceivedLikes.Where(r => r.IsMatch).ToList();
+
+                _logger.LogInformation("Loaded: Received={Received}, Sent={Sent}, Matches={Matches}",
+                    ReceivedLikes.Count, SentLikes.Count, Matches.Count);
+
+                return Page();
             }
-
-            //  ПРОВЕРКА: получаем ID профиля
-            var myProfileId = await _context.Profiles
-                .Where(p => p.UserId == currentUser.Id)
-                .Select(p => p.Id)
-                .FirstOrDefaultAsync();
-
-            //  ПРОВЕРКА: если профиль не создан — редирект на создание профиля
-            if (myProfileId == 0)
+            catch (Exception ex)
             {
-                return RedirectToPage("/Profiles/Create");
+                _logger.LogError(ex, "Error loading likes page");
+                throw;
             }
-
-            // Кто меня лайкнул
-            var receivedFavoriteIds = await _context.Favorites
-                .Where(f => f.ProfileId == myProfileId)
-                .Select(f => f.UserId)
-                .ToListAsync();
-
-            ReceivedLikes = await _context.Profiles
-                .Where(p => receivedFavoriteIds.Contains(p.UserId))
-                .Select(p => new LikeViewModel
-                {
-                    Profile = p,
-                    IsMatch = _context.Favorites.Any(f => f.UserId == currentUser.Id && f.ProfileId == p.Id),
-                    LikeDate = _context.Favorites
-                        .Where(f => f.UserId == p.UserId && f.ProfileId == myProfileId)
-                        .Select(f => (DateTime?)f.CreatedAt)
-                        .FirstOrDefault()
-                })
-                .ToListAsync();
-
-            // Кого я лайкнул
-            var sentFavoriteIds = await _context.Favorites
-                .Where(f => f.UserId == currentUser.Id)
-                .Select(f => f.ProfileId)
-                .ToListAsync();
-
-            SentLikes = await _context.Profiles
-                .Where(p => sentFavoriteIds.Contains(p.Id))
-                .Select(p => new LikeViewModel
-                {
-                    Profile = p,
-                    IsMatch = _context.Favorites.Any(f => f.UserId == p.UserId && f.ProfileId == myProfileId),
-                    LikeDate = _context.Favorites
-                        .Where(f => f.UserId == currentUser.Id && f.ProfileId == p.Id)
-                        .Select(f => (DateTime?)f.CreatedAt)
-                        .FirstOrDefault()
-                })
-                .ToListAsync();
-
-            // Взаимные лайки
-            Matches = ReceivedLikes.Where(r => r.IsMatch).ToList();
-
-            return Page();
         }
 
         public class LikeViewModel
         {
-            public DateBoard.Models.Profile Profile { get; set; }
+            public DateBoard.Models.Profile Profile { get; set; } = null!;
             public bool IsMatch { get; set; }
             public DateTime? LikeDate { get; set; }
         }
