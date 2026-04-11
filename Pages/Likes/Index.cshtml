@@ -344,21 +344,21 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-btn @(Model.ActiveTab == "received" ? "active" : "")" onclick="switchTab('received')">
+        <button class="tab-btn @(Model.ActiveTab == "received" ? "active" : "")" onclick="switchTab('received', event)">
             Меня лайкнули
             @if (Model.ReceivedLikes.Count > 0)
             {
                 <span class="badge">@Model.ReceivedLikes.Count</span>
             }
         </button>
-        <button class="tab-btn @(Model.ActiveTab == "matches" ? "active" : "")" onclick="switchTab('matches')">
+        <button class="tab-btn @(Model.ActiveTab == "matches" ? "active" : "")" onclick="switchTab('matches', event)">
             Взаимные лайки 
             @if (Model.Matches.Count > 0)
             {
                 <span class="badge">@Model.Matches.Count</span>
             }
         </button>
-        <button class="tab-btn @(Model.ActiveTab == "sent" ? "active" : "")" onclick="switchTab('sent')">
+        <button class="tab-btn @(Model.ActiveTab == "sent" ? "active" : "")" onclick="switchTab('sent', event)">
             Я лайкнул(а)
         </button>
     </div>
@@ -405,7 +405,6 @@
                                 </div>
                             }
                             <div class="like-gradient"></div>
-                            <!-- ИСПРАВЛЕНО: like-info вместо like-like-info -->
                             <div class="like-info">
                                 <div class="like-name">
                                     @like.Profile.Name
@@ -589,7 +588,7 @@
 </div>
 
 <script>
-    function switchTab(tab) {
+    function switchTab(tab, event) {
         const url = new URL(window.location);
         url.searchParams.set('tab', tab);
         window.history.pushState({}, '', url);

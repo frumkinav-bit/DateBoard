@@ -53,8 +53,11 @@ namespace DateBoard.Pages.Likes
                 if (myProfileId == null)
                 {
                     _logger.LogWarning("Profile not found for user: {UserId}", currentUser.Id);
-                    // ИСПРАВЛЕНО: /Profile/Create вместо /Profiles/Create
-                    return RedirectToPage("/Profile/Create");
+                    // ✅ ИСПРАВЛЕНО: Показываем страницу с пустыми списками вместо редиректа
+                    ReceivedLikes = new List<LikeViewModel>();
+                    SentLikes = new List<LikeViewModel>();
+                    Matches = new List<LikeViewModel>();
+                    return Page();
                 }
 
                 // Кто меня лайкнул
